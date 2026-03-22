@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       admins: {
@@ -25,6 +25,7 @@ export interface Database {
           note?: string | null;
           user_id?: string;
         };
+        Relationships: [];
       };
       case_studies: {
         Row: {
@@ -87,6 +88,7 @@ export interface Database {
           title?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       events: {
         Row: {
@@ -119,6 +121,7 @@ export interface Database {
           session_id?: string | null;
           user_agent?: string | null;
         };
+        Relationships: [];
       };
       leads: {
         Row: {
@@ -169,6 +172,7 @@ export interface Database {
           timeline_band?: string | null;
           website?: string | null;
         };
+        Relationships: [];
       };
       posts: {
         Row: {
@@ -187,7 +191,7 @@ export interface Database {
           updated_at: string;
         };
         Insert: {
-          content_md?: string;
+          content_md: string;
           cover_image_url?: string | null;
           created_at?: string;
           excerpt?: string | null;
@@ -216,6 +220,7 @@ export interface Database {
           title?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       redirects: {
         Row: {
@@ -242,6 +247,7 @@ export interface Database {
           to_path?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       services: {
         Row: {
@@ -286,6 +292,7 @@ export interface Database {
           title?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       testimonials: {
         Row: {
@@ -324,38 +331,160 @@ export interface Database {
           role?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      [_ in never]: never;
+    };
     Functions: {
       bootstrap_first_admin: {
-        Args: {
-          admin_note?: string;
-          target_email: string;
-        };
+        Args: { admin_note?: string; target_email: string };
         Returns: string;
       };
       is_admin: {
-        Args: {
-          uid: string;
-        };
+        Args: { uid: string };
         Returns: boolean;
       };
     };
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
+};
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof DatabaseWithoutInternals,
+  "public"
+>];
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
 }
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer Row;
+    }
+    ? Row
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer Row;
+      }
+      ? Row
+      : never
+    : never;
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer Insert;
+    }
+    ? Insert
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer Insert;
+      }
+      ? Insert
+      : never
+    : never;
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer Update;
+    }
+    ? Update
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer Update;
+      }
+      ? Update
+      : never
+    : never;
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  DefaultSchemaCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends DefaultSchemaCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = DefaultSchemaCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : DefaultSchemaCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][DefaultSchemaCompositeTypeNameOrOptions]
+    : never;
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const;
 
 type PublicSchema = Database["public"];
 
 export type TableName = keyof PublicSchema["Tables"];
-
-export type TableRow<Name extends TableName> =
-  PublicSchema["Tables"][Name]["Row"];
-
-export type TableInsert<Name extends TableName> =
-  PublicSchema["Tables"][Name]["Insert"];
-
-export type TableUpdate<Name extends TableName> =
-  PublicSchema["Tables"][Name]["Update"];
+export type TableRow<Name extends TableName> = Tables<Name>;
+export type TableInsert<Name extends TableName> = TablesInsert<Name>;
+export type TableUpdate<Name extends TableName> = TablesUpdate<Name>;

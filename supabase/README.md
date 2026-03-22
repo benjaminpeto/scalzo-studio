@@ -30,6 +30,7 @@ npm run supabase:admin:bootstrap:local -- you@example.com
 npm run supabase:migration:new -- add_feature_name
 npm run supabase:db:diff
 npm run supabase:types:local
+npm run supabase:types:linked
 npm run supabase:stop
 ```
 
@@ -42,6 +43,7 @@ What they do:
 - `supabase:migration:new -- <name>`: creates a new empty migration file
 - `supabase:db:diff`: diffs the local database against the committed migrations
 - `supabase:types:local`: regenerates [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts) from the local database
+- `supabase:types:linked`: regenerates [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts) from the linked hosted database
 - `supabase:stop`: stops the local stack
 
 Local app setup:
@@ -69,6 +71,12 @@ App helper mapping:
 - `createServerSupabaseClient()` uses the same public values and carries request cookies for session-aware RLS access
 - `createServiceRoleSupabaseClient()` uses `SUPABASE_SERVICE_ROLE_KEY` and is reserved for trusted server-only workflows
 - `getCurrentUser()`, `getCurrentUserAdminState()`, and `isCurrentUserAdmin()` resolve the current request user/admin state without redirecting or mutating UI state
+
+Type generation rules:
+
+- Treat [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts) as generated output from the Supabase CLI.
+- Regenerate it after schema or auth-significant database changes.
+- Prefer `supabase:types:local` while developing against the local stack and `supabase:types:linked` when you need the hosted source of truth.
 
 Seed flow:
 

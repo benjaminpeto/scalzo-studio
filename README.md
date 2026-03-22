@@ -61,6 +61,7 @@ npm run supabase:admin:bootstrap:local -- you@example.com
 npm run supabase:db:push
 npm run supabase:migration:new -- add_feature_name
 npm run supabase:types:local
+npm run supabase:types:linked
 ```
 
 What they do:
@@ -83,6 +84,7 @@ What they do:
 - `npm run supabase:db:push`: pushes committed migrations to the linked hosted Supabase project
 - `npm run supabase:migration:new -- <name>`: creates a new migration file
 - `npm run supabase:types:local`: regenerates app database types from the local database
+- `npm run supabase:types:linked`: regenerates app database types from the linked hosted database
 
 ## Environment variables
 
@@ -110,6 +112,10 @@ Runtime validation is implemented in:
 
 - [`public.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/public.ts)
 - [`server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/server.ts)
+
+The checked-in Supabase database contract lives in
+[`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts)
+and should be regenerated with the Supabase CLI instead of edited by hand.
 
 Notes:
 
