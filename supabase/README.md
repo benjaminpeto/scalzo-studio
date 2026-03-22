@@ -26,6 +26,7 @@ Primary commands:
 npm run supabase:start
 npm run supabase:status
 npm run supabase:db:reset
+npm run supabase:admin:bootstrap:local -- you@example.com
 npm run supabase:migration:new -- add_feature_name
 npm run supabase:db:diff
 npm run supabase:types:local
@@ -37,6 +38,7 @@ What they do:
 - `supabase:start`: starts the local Postgres/Auth/Storage/Studio stack
 - `supabase:status`: shows local URLs, anon key, service role key, and service endpoints
 - `supabase:db:reset`: drops and recreates the local database from committed migrations, then runs configured seeds
+- `supabase:admin:bootstrap:local -- <email>`: promotes the first signed-up local auth user into `public.admins`
 - `supabase:migration:new -- <name>`: creates a new empty migration file
 - `supabase:db:diff`: diffs the local database against the committed migrations
 - `supabase:types:local`: regenerates [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts) from the local database
@@ -67,6 +69,25 @@ Seed flow:
 - Use numbered SQL files so seed execution order stays deterministic.
 - Keep repeatable local/dev bootstrap data here. Initial admin bootstrap belongs to `ST-015`.
 
+First admin bootstrap flow:
+
+1. Start the local stack with `npm run supabase:start`.
+2. Create the auth user through the app sign-up flow or Supabase Studio Auth.
+3. Run `npm run supabase:admin:bootstrap:local -- you@example.com`.
+4. Sign in with that user and verify admin access in the protected app shell.
+
+Hosted project bootstrap flow:
+
+1. Ensure the project is linked with `npx supabase link --project-ref <your-project-ref>`.
+2. Create the auth user in the hosted project.
+3. Run `npm run supabase:admin:bootstrap:linked -- you@example.com`.
+
+Bootstrap safety rules:
+
+- `bootstrap_first_admin` works only while `public.admins` is empty.
+- It looks up the auth user by email and inserts exactly one initial admin record.
+- The function is revoked from `anon`, `authenticated`, and `public`, so it must be executed from a privileged SQL/CLI context.
+
 Hosted project workflow:
 
 - Link a hosted project with `npx supabase link --project-ref <your-project-ref>`.
@@ -78,6 +99,8 @@ Hosted project workflow:
 
 - Initial schema migration:
   [`20260322000100_initial_schema.sql`](/Users/benji/WORK/Projects/scalzo-studio/supabase/migrations/20260322000100_initial_schema.sql)
+- First-admin bootstrap migration:
+  [`20260323000100_bootstrap_first_admin.sql`](/Users/benji/WORK/Projects/scalzo-studio/supabase/migrations/20260323000100_bootstrap_first_admin.sql)
 - Source starter SQL from the project kit:
   [`supabase_schema.sql`](/Users/benji/WORK/Projects/scalzo-studio/.agents/project/supabase_schema.sql)
 - App-side typed database contract:

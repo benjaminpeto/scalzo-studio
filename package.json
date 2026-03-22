@@ -23,6 +23,8 @@
     "supabase:db:push:local": "npx supabase db push --local",
     "supabase:migration:new": "npx supabase migration new",
     "supabase:db:diff": "npx supabase db diff",
+    "supabase:admin:bootstrap:local": "node scripts/bootstrap-first-admin.mjs --local",
+    "supabase:admin:bootstrap:linked": "node scripts/bootstrap-first-admin.mjs --linked",
     "supabase:types:local": "npx supabase gen types --local --lang typescript --schema public > apps/web/lib/supabase/database.types.ts",
     "supabase:types:linked": "npx supabase gen types --linked --lang typescript --schema public > apps/web/lib/supabase/database.types.ts",
     "lint": "npm run lint --workspaces --if-present",

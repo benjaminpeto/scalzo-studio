@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { getCurrentUserAdminState } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
 
@@ -27,6 +28,11 @@ export default function ProtectedPage() {
         </p>
       </div>
       <div className="space-y-3">
+        <Suspense>
+          <AdminStatus />
+        </Suspense>
+      </div>
+      <div className="space-y-3">
         <h2 className="text-lg font-semibold">Session claims</h2>
         <pre className="max-h-80 overflow-auto rounded-lg border bg-card p-4 text-xs">
           <Suspense>
@@ -35,5 +41,20 @@ export default function ProtectedPage() {
         </pre>
       </div>
     </div>
+  );
+}
+
+async function AdminStatus() {
+  const { isAdmin } = await getCurrentUserAdminState();
+
+  return (
+    <>
+      <h2 className="text-lg font-semibold">Admin access</h2>
+      <p className="text-sm text-muted-foreground">
+        {isAdmin
+          ? "This account is registered in public.admins."
+          : "This account is authenticated but does not have admin access yet."}
+      </p>
+    </>
   );
 }

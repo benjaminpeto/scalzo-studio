@@ -328,6 +328,13 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
+      bootstrap_first_admin: {
+        Args: {
+          admin_note?: string;
+          target_email: string;
+        };
+        Returns: string;
+      };
       is_admin: {
         Args: {
           uid: string;

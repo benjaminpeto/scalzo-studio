@@ -100,6 +100,7 @@ Common local commands from the repository root:
 npm run supabase:start
 npm run supabase:status
 npm run supabase:db:reset
+npm run supabase:admin:bootstrap:local -- you@example.com
 npm run supabase:types:local
 ```
 
@@ -108,5 +109,6 @@ Typical local cycle:
 1. Start the local stack with `npm run supabase:start`.
 2. Copy the local Supabase URL and keys from `npm run supabase:status` into `apps/web/.env.local`.
 3. Run `npm run supabase:db:reset` whenever you want to replay migrations and seeds deterministically.
-4. After schema changes, regenerate app types with `npm run supabase:types:local`.
-5. Run `npm run dev` for the web app.
+4. Create your first auth user, then promote it with `npm run supabase:admin:bootstrap:local -- you@example.com`.
+5. After schema changes, regenerate app types with `npm run supabase:types:local`.
+6. Run `npm run dev` for the web app.

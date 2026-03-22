@@ -57,6 +57,7 @@ npm run supabase:start
 npm run supabase:stop
 npm run supabase:status
 npm run supabase:db:reset
+npm run supabase:admin:bootstrap:local -- you@example.com
 npm run supabase:db:push
 npm run supabase:migration:new -- add_feature_name
 npm run supabase:types:local
@@ -78,6 +79,7 @@ What they do:
 - `npm run supabase:stop`: stops the local Supabase stack
 - `npm run supabase:status`: shows the local Supabase URLs and keys
 - `npm run supabase:db:reset`: reapplies local migrations and seeds from scratch
+- `npm run supabase:admin:bootstrap:local -- <email>`: promotes the first local auth user into the `admins` table
 - `npm run supabase:db:push`: pushes committed migrations to the linked hosted Supabase project
 - `npm run supabase:migration:new -- <name>`: creates a new migration file
 - `npm run supabase:types:local`: regenerates app database types from the local database
