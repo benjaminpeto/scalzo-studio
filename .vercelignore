@@ -1,0 +1,6 @@
+.agents
+.github
+.husky
+.next
+node_modules
+coverage

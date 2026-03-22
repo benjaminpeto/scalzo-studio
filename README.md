@@ -38,6 +38,12 @@ npm run check
 - CI runs formatting, lint, typecheck, and build checks on pull requests and `main`.
 - `npm run check` runs the full validation suite locally.
 
+## Deployment
+
+Vercel deployment setup, branch rules, preview environment guidance, and cache
+header verification steps are documented in
+[`docs/deployment/vercel.md`](/Users/benji/WORK/Projects/scalzo-studio/docs/deployment/vercel.md).
+
 ## Environment
 
 The Next.js app now lives in [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/web). Local environment files should live beside that app:
