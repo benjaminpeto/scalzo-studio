@@ -1,5 +1,16 @@
 import type { Metadata } from "next";
+import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
+
+const displayFont = Manrope({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
+const bodyFont = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -7,8 +18,9 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Supabase Auth App",
-  description: "Minimal authentication starter built with Next.js and Supabase",
+  title: "Scalzo Studio",
+  description:
+    "Editorial product, brand, and content design for growing businesses in the Canary Islands and beyond.",
 };
 
 export default function RootLayout({
@@ -18,7 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body
+        className={`${bodyFont.variable} ${displayFont.variable} antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
