@@ -65,11 +65,11 @@ export function BlogPostCard({
               sizes={image.sizes ?? "(min-width: 1024px) 55vw, 100vw"}
               className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
+            <div className="absolute inset-0 bg-linear-to-t from-black via-black/45 to-black/10" />
           </>
         ) : null}
 
-        <div className="relative flex min-h-[29rem] flex-col justify-end p-7 sm:p-8">
+        <div className="relative flex min-h-116 flex-col justify-end p-7 sm:p-8">
           {metadata ? (
             <p className="text-sm text-white/68">{metadata}</p>
           ) : null}

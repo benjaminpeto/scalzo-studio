@@ -21,6 +21,22 @@ Use this workflow until that lands:
 4. Update app code, query helpers, and env docs together when Supabase requirements change.
 5. Document any operational setup changes in the root README or deployment docs.
 
+## Current schema baseline
+
+- Initial schema migration:
+  [`20260322000100_initial_schema.sql`](/Users/benji/WORK/Projects/scalzo-studio/supabase/migrations/20260322000100_initial_schema.sql)
+- Source starter SQL from the project kit:
+  [`supabase_schema.sql`](/Users/benji/WORK/Projects/scalzo-studio/.agents/project/supabase_schema.sql)
+- App-side typed database contract:
+  [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts)
+
+The initial migration mirrors the starter Supabase schema in the project kit and covers:
+
+- content tables: `services`, `case_studies`, `posts`, `testimonials`
+- operational tables: `admins`, `redirects`, `leads`, `events`
+- helpers and automation: `is_admin()`, `set_updated_at()`, update triggers
+- access control: published-content read policies plus admin-only CRUD policies under RLS
+
 ## Environment variables commonly involved
 
 - `NEXT_PUBLIC_SUPABASE_URL`
