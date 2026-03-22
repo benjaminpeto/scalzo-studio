@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
+
+import { publicEnv } from "@/lib/env/public";
+
 import "./globals.css";
 
 const displayFont = Manrope({
@@ -12,12 +15,8 @@ const bodyFont = Inter({
   variable: "--font-body",
 });
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: new URL(publicEnv.siteUrl),
   title: "Scalzo Studio",
   description:
     "Editorial product, brand, and content design for growing businesses in the Canary Islands and beyond.",

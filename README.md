@@ -49,9 +49,23 @@ apps/web/.env.local
 Expected variables at this stage:
 
 ```env
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+NEXT_PUBLIC_ANALYTICS_PROVIDER=
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+RESEND_API_KEY=
+CONTACT_TO_EMAIL=
+TURNSTILE_SECRET_KEY=
 ```
+
+Environment variables are validated at runtime through
+[`public.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/public.ts)
+and
+[`server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/server.ts).
+Public Supabase keys support either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or
+the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 
 ## Aliases
 
