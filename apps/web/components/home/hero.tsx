@@ -46,13 +46,13 @@ export function Hero() {
                   asChild
                   className="h-14 rounded-full bg-primary px-8 text-[0.8rem] uppercase tracking-[0.2em] text-primary-foreground hover:bg-primary/92"
                 >
-                  <Link href="#contact">
+                  <Link href="/#contact">
                     Parlez-nous de votre projet
                     <MoveRight className="size-4" aria-hidden="true" />
                   </Link>
                 </Button>
                 <Link
-                  href="#projects"
+                  href="/#projects"
                   className="inline-flex size-12 items-center justify-center rounded-full border border-white/28 text-white transition-transform duration-300 hover:scale-105 hover:border-primary hover:text-primary"
                   aria-label="Scroll to projects"
                 >

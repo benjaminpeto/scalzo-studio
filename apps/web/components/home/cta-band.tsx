@@ -28,7 +28,7 @@ export function CtaBand() {
                 asChild
                 className="h-13 rounded-full bg-[#0d0f0c] px-7 text-[0.78rem] uppercase tracking-[0.22em] text-white hover:bg-[#191c18]"
               >
-                <Link href="#contact">
+                <Link href="/#contact">
                   Book a discovery call
                   <ArrowUpRight className="size-4" aria-hidden="true" />
                 </Link>
@@ -38,7 +38,7 @@ export function CtaBand() {
                 variant="outline"
                 className="h-13 rounded-full border-border bg-white px-7 text-[0.78rem] uppercase tracking-[0.22em] text-foreground hover:bg-white"
               >
-                <Link href="#journal">Read the journal</Link>
+                <Link href="/#journal">Read the journal</Link>
               </Button>
             </div>
           </ScrollFloat>

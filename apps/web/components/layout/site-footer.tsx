@@ -57,6 +57,8 @@ export function SiteFooter() {
                 <Link
                   href={item.href}
                   className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   {item.label}
                 </Link>

@@ -1,9 +1,14 @@
 export const navigationLinks = [
-  { href: "#studio", label: "Studio" },
-  { href: "#projects", label: "Projects" },
-  { href: "#journal", label: "Journal" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#studio", label: "Studio" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#journal", label: "Journal" },
+  { href: "/#contact", label: "Contact" },
 ] as const;
+
+export const primaryCta = {
+  href: "/#contact",
+  label: "Start a project",
+} as const;
 
 export const trustMarks = [
   { name: "Picture", note: "Outdoor hospitality" },
@@ -176,14 +181,14 @@ export const faqItems = [
 
 export const footerLinks = {
   primary: [
-    { href: "#studio", label: "Studio" },
-    { href: "#projects", label: "Projects" },
-    { href: "#journal", label: "Journal" },
+    { href: "/#studio", label: "Studio" },
+    { href: "/#projects", label: "Projects" },
+    { href: "/#journal", label: "Journal" },
   ],
   secondary: [
-    { href: "#method", label: "Method" },
-    { href: "#faq", label: "FAQ" },
-    { href: "#contact", label: "Start a project" },
+    { href: "/#method", label: "Method" },
+    { href: "/#faq", label: "FAQ" },
+    { href: "/#contact", label: "Start a project" },
   ],
   legal: [
     { href: "/privacy", label: "Privacy" },
