@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -15,6 +14,7 @@ import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
+import { CaseStudyCard } from "@ui/components/marketing/case-study-card";
 
 export function FeaturedWork() {
   return (
@@ -60,34 +60,27 @@ export function FeaturedWork() {
                 <RevealItem key={project.title}>
                   <ScrollFloat offset={18}>
                     <HoverCard>
-                      <article className="group overflow-hidden rounded-[1.7rem] bg-white shadow-[0_8px_26px_rgba(27,28,26,0.04)] ring-1 ring-black/4">
-                        <div className="relative overflow-hidden">
-                          <Image
-                            src={project.image}
-                            alt={`Abstract placeholder artwork for ${project.title}`}
-                            width={1200}
-                            height={900}
-                            className="aspect-[1.08] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                          />
-                          <div className="absolute inset-0 bg-linear-to-t from-black/18 via-transparent to-transparent" />
-                        </div>
-                        <div className="flex items-start justify-between gap-4 border-t border-black/6 px-5 py-4 sm:px-6">
-                          <div>
-                            <h3 className="font-display text-[1.85rem] leading-none tracking-[-0.04em] text-foreground">
-                              {project.title}
-                            </h3>
-                            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                              {project.category} / {project.accent}
-                            </p>
-                          </div>
-                          <span className="mt-1 inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-colors duration-300 group-hover:border-primary group-hover:text-primary">
+                      <CaseStudyCard
+                        title={project.title}
+                        variant="compact"
+                        metadata={
+                          <>
+                            {project.category} / {project.accent}
+                          </>
+                        }
+                        image={{
+                          src: project.image,
+                          alt: `Abstract placeholder artwork for ${project.title}`,
+                        }}
+                        footerAccessory={
+                          <span className="inline-flex size-8 items-center justify-center rounded-full border border-border text-foreground transition-colors duration-300 group-hover:border-primary group-hover:text-primary">
                             <ArrowUpRight
                               className="size-4"
                               aria-hidden="true"
                             />
                           </span>
-                        </div>
-                      </article>
+                        }
+                      />
                     </HoverCard>
                   </ScrollFloat>
                 </RevealItem>

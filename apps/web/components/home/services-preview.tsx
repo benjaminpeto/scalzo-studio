@@ -6,6 +6,7 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import { ServiceCard } from "@ui/components/marketing/service-card";
 
 export function ServicesPreview() {
   return (
@@ -26,27 +27,12 @@ export function ServicesPreview() {
         <RevealGroup className="mt-12 grid gap-8 lg:grid-cols-3" stagger={0.1}>
           {serviceGroups.map((service, index) => (
             <RevealItem key={service.title}>
-              <article className="rounded-[1.7rem] bg-transparent px-2 py-1">
-                <div className="inline-flex items-center gap-1">
-                  <span className="inline-block size-2 rounded-full bg-primary" />
-                  <span className="inline-block size-2 rounded-full bg-primary/70" />
-                  <span className="inline-block size-2 rounded-full bg-border" />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  0{index + 1}
-                </p>
-                <h3 className="mt-3 font-display text-[2rem] leading-none tracking-[-0.04em] text-foreground">
-                  {service.title}
-                </h3>
-                <p className="mt-5 text-base leading-7 text-muted-foreground">
-                  {service.intro}
-                </p>
-                <ul className="mt-7 space-y-3 text-base leading-7 text-foreground">
-                  {service.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
+              <ServiceCard
+                title={service.title}
+                indexLabel={`0${index + 1}`}
+                description={service.intro}
+                items={service.items}
+              />
             </RevealItem>
           ))}
         </RevealGroup>

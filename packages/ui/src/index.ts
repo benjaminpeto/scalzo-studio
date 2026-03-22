@@ -13,5 +13,8 @@ export * from "./components/marketing/cta-band";
 export * from "./components/marketing/faq-accordion";
 export * from "./components/marketing/hero";
 export * from "./components/marketing/metric-block";
+export * from "./components/marketing/blog-post-card";
+export * from "./components/marketing/case-study-card";
+export * from "./components/marketing/service-card";
 export * from "./components/marketing/testimonial-card";
 export * from "./lib/utils";
