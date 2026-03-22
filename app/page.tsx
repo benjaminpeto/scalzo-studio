@@ -5,7 +5,7 @@ import { Suspense } from "react";
 export default function Home() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md rounded-2xl border bg-card p-8 shadow-sm">
+      <div className="w-full max-w-md rounded-2xl border bg-card p-8 shadow-xs">
         <div className="space-y-3">
           <p className="text-sm font-medium text-muted-foreground">
             Authentication
