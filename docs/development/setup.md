@@ -36,6 +36,7 @@ Use these from the repository root:
 
 - `npm run lint`
 - `npm run typecheck`
+- `npm run test --workspace @scalzo/ui`
 - `npm run format`
 - `npm run build`
 - `npm run check`

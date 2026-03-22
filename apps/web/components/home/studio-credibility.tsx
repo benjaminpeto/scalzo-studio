@@ -8,6 +8,7 @@ import {
   RevealItem,
   ScrollFloat,
 } from "@/components/home/motion";
+import { MetricBlock } from "@ui/components/marketing/metric-block";
 
 export function StudioCredibility() {
   return (
@@ -74,14 +75,7 @@ export function StudioCredibility() {
         <RevealGroup className="mt-10 grid gap-4 sm:grid-cols-3" stagger={0.08}>
           {credibilityStats.map((item) => (
             <RevealItem key={item.value}>
-              <div className="rounded-[1.5rem] bg-white px-5 py-6 shadow-[0_10px_24px_rgba(27,28,26,0.04)] ring-1 ring-black/4">
-                <p className="font-display text-[2rem] leading-none tracking-[-0.04em] text-foreground">
-                  {item.value}
-                </p>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                  {item.label}
-                </p>
-              </div>
+              <MetricBlock label={item.label} value={item.value} />
             </RevealItem>
           ))}
         </RevealGroup>

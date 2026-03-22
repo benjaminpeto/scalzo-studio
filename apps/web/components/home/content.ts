@@ -156,6 +156,30 @@ export const credibilityStats = [
   { value: "Content", label: "Editorial structure that lasts" },
 ] as const;
 
+export const testimonials = [
+  {
+    quote:
+      "The homepage finally started sounding like the business we were already running behind the scenes.",
+    name: "Marta R.",
+    role: "Founder",
+    company: "Coastal hospitality brand",
+  },
+  {
+    quote:
+      "What changed most was clarity. Prospects understood the offer faster and the team had a clearer story to support.",
+    name: "Daniel V.",
+    role: "Managing director",
+    company: "Service-led growth studio",
+  },
+  {
+    quote:
+      "The new direction felt premium without becoming distant. It gave us a sharper first impression and a calmer sales conversation.",
+    name: "Lucia P.",
+    role: "Brand lead",
+    company: "Launch-stage product team",
+  },
+] as const;
+
 export const faqItems = [
   {
     question: "What kind of homepage projects are the best fit?",

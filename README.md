@@ -47,6 +47,7 @@ npm run build
 npm run lint
 npm run lint:fix
 npm run typecheck
+npm run test --workspace @scalzo/ui
 npm run format
 npm run format:write
 npm run check
@@ -59,6 +60,7 @@ What they do:
 - `npm run lint`: runs workspace ESLint checks
 - `npm run lint:fix`: applies ESLint autofixes
 - `npm run typecheck`: runs TypeScript checks across workspaces
+- `npm run test --workspace @scalzo/ui`: runs shared UI component tests
 - `npm run format`: checks Prettier formatting
 - `npm run format:write`: writes Prettier formatting changes
 - `npm run check`: runs format, lint, typecheck, and build in sequence

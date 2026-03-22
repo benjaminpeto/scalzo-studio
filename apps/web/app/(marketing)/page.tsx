@@ -7,6 +7,7 @@ import { NewsletterSignup } from "@/components/home/newsletter-signup";
 import { ProcessMethod } from "@/components/home/process-method";
 import { ServicesPreview } from "@/components/home/services-preview";
 import { StudioCredibility } from "@/components/home/studio-credibility";
+import { Testimonials } from "@/components/home/testimonials";
 import { TrustStrip } from "@/components/home/trust-strip";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
       <JournalPreview />
       <ProcessMethod />
       <StudioCredibility />
+      <Testimonials />
       <FaqList />
       <NewsletterSignup />
       <CtaBand />

@@ -1,18 +1,14 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-
 import { faqItems } from "@/components/home/content";
 import { Reveal, RevealGroup, RevealItem } from "@/components/home/motion";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
+import { FaqAccordion } from "@ui/components/marketing/faq-accordion";
 
 export function FaqList() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
   return (
     <Section id="faq">
       <Reveal>
@@ -28,63 +24,11 @@ export function FaqList() {
           </Stack>
 
           <RevealGroup stagger={0.08}>
-            <Stack gap="md">
-              {faqItems.map((item, index) => {
-                const isOpen = openIndex === index;
-
-                return (
-                  <RevealItem key={item.question}>
-                    <div className="rounded-[1.7rem] bg-white p-6 shadow-[0_10px_26px_rgba(27,28,26,0.04)] ring-1 ring-black/4">
-                      <button
-                        type="button"
-                        className="flex w-full items-start justify-between gap-5 text-left"
-                        aria-expanded={isOpen}
-                        onClick={() =>
-                          setOpenIndex((current) =>
-                            current === index ? null : index,
-                          )
-                        }
-                      >
-                        <span className="font-display text-[1.9rem] leading-none tracking-[-0.04em] text-foreground">
-                          {item.question}
-                        </span>
-                        <motion.span
-                          className="section-kicker pt-1"
-                          animate={{
-                            rotate: isOpen ? 45 : 0,
-                            color: isOpen
-                              ? "var(--brand-primary)"
-                              : "var(--foreground)",
-                          }}
-                          transition={{ duration: 0.24, ease: "easeOut" }}
-                        >
-                          +
-                        </motion.span>
-                      </button>
-
-                      <AnimatePresence initial={false}>
-                        {isOpen ? (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{
-                              duration: 0.32,
-                              ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="overflow-hidden"
-                          >
-                            <Prose className="mt-5 border-t border-border/70 pt-5">
-                              {item.answer}
-                            </Prose>
-                          </motion.div>
-                        ) : null}
-                      </AnimatePresence>
-                    </div>
-                  </RevealItem>
-                );
-              })}
-            </Stack>
+            <FaqAccordion
+              items={faqItems}
+              itemWrapper={RevealItem}
+              className="space-y-4"
+            />
           </RevealGroup>
         </Grid>
       </Reveal>
