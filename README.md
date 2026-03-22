@@ -117,6 +117,21 @@ Notes:
 - Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
 - CI uses safe placeholder public envs for build-only validation.
 
+## Supabase client helpers
+
+App-side Supabase access is split by execution context:
+
+- [`client.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/client.ts): `createBrowserSupabaseClient()` for client components and browser auth flows
+- [`server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/server.ts): `createServerSupabaseClient()` for request-scoped server components, route handlers, and server actions that should honor the current user session
+- [`service-role.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/service-role.ts): `createServiceRoleSupabaseClient()` for privileged server-only workflows that intentionally bypass RLS
+- [`auth.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/auth.ts): shared side-effect-free helpers such as `getCurrentUser()`, `getCurrentUserAdminState()`, and `isCurrentUserAdmin()`
+
+Rules:
+
+- Never import the service-role helper into client code.
+- Prefer the request-scoped server helper for normal authenticated reads and writes so RLS continues to enforce access.
+- Use the service-role helper only for trusted backend workflows such as privileged ingestion or administrative automation where bypassing RLS is intentional.
+
 ## Quality gates
 
 - Pre-commit runs `lint-staged` through Husky.

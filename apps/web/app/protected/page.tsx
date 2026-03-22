@@ -1,18 +1,16 @@
 import { redirect } from "next/navigation";
 
-import { getCurrentUserAdminState } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
+import { getCurrentUser, getCurrentUserAdminState } from "@/lib/supabase/auth";
 
 async function UserDetails() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
+  const user = await getCurrentUser();
 
-  if (error || !data?.claims) {
+  if (!user) {
     redirect("/auth/login");
   }
 
-  return JSON.stringify(data.claims, null, 2);
+  return JSON.stringify(user.claims, null, 2);
 }
 
 export default function ProtectedPage() {

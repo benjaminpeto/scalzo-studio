@@ -63,6 +63,13 @@ Env mapping for the web app:
 - local anon key -> `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - local service role key -> `SUPABASE_SERVICE_ROLE_KEY`
 
+App helper mapping:
+
+- `createBrowserSupabaseClient()` uses `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `createServerSupabaseClient()` uses the same public values and carries request cookies for session-aware RLS access
+- `createServiceRoleSupabaseClient()` uses `SUPABASE_SERVICE_ROLE_KEY` and is reserved for trusted server-only workflows
+- `getCurrentUser()`, `getCurrentUserAdminState()`, and `isCurrentUserAdmin()` resolve the current request user/admin state without redirecting or mutating UI state
+
 Seed flow:
 
 - Files under `supabase/seed/` are executed after migrations during `npm run supabase:db:reset`.
@@ -87,6 +94,19 @@ Bootstrap safety rules:
 - `bootstrap_first_admin` works only while `public.admins` is empty.
 - It looks up the auth user by email and inserts exactly one initial admin record.
 - The function is revoked from `anon`, `authenticated`, and `public`, so it must be executed from a privileged SQL/CLI context.
+
+## App-side client boundaries
+
+- Browser auth screens and interactive client components should use [`client.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/client.ts).
+- Server components, route handlers, and server actions that should respect the signed-in user session should use [`server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/server.ts).
+- Privileged backend-only jobs that intentionally bypass RLS should use [`service-role.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/service-role.ts).
+- Shared request-level auth/admin lookups live in [`auth.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/auth.ts).
+
+Service-role usage rules:
+
+- Keep service-role access server-only.
+- Do not use service-role access for normal signed-in application reads or writes.
+- Prefer RLS-enforced request-scoped access unless the workflow explicitly requires elevated privileges.
 
 Hosted project workflow:
 
