@@ -8,6 +8,9 @@ export function createNextEslintConfig(baseDirectory, options = {}) {
   return [
     {
       ignores: [".next/**", "out/**", ...(options.ignores ?? [])],
+      settings: {
+        ...(options.settings ?? {}),
+      },
       rules: {
         "@next/next/no-html-link-for-pages": "off",
         ...(options.rules ?? {}),

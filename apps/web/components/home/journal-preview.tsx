@@ -50,7 +50,9 @@ export function JournalPreview() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
                   <div className="relative flex min-h-[29rem] flex-col justify-end p-7 sm:p-8">
-                    <p className="text-sm text-white/68">{featuredEntry.date}</p>
+                    <p className="text-sm text-white/68">
+                      {featuredEntry.date}
+                    </p>
                     <h3 className="mt-4 max-w-xl font-display text-[2.5rem] leading-[0.98] tracking-[-0.05em] text-white sm:text-[3.2rem]">
                       {featuredEntry.title}
                     </h3>

@@ -9,13 +9,16 @@
     "node": ">=20.11.0"
   },
   "scripts": {
+    "prepare": "husky",
     "dev": "npm run dev --workspace @scalzo/web",
     "build": "npm run build --workspace @scalzo/web",
     "start": "npm run start --workspace @scalzo/web",
     "lint": "npm run lint --workspaces --if-present",
     "lint:fix": "npm run lint:fix --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "format": "npm run format --workspaces --if-present"
+    "format": "prettier . --check",
+    "format:write": "prettier . --write",
+    "check": "npm run format && npm run lint && npm run typecheck && npm run build"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -41,7 +44,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "postcss": "^8",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4.2.2",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"

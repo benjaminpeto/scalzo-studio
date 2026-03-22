@@ -28,7 +28,10 @@ export function ProcessMethod() {
             </TextReveal>
           </ScrollFloat>
 
-          <RevealGroup className="mt-12 grid gap-4 lg:grid-cols-4" stagger={0.08}>
+          <RevealGroup
+            className="mt-12 grid gap-4 lg:grid-cols-4"
+            stagger={0.08}
+          >
             {processSteps.map((step, index) => (
               <RevealItem key={step.step}>
                 <HoverCard>

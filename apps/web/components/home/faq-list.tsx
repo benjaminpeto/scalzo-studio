@@ -46,7 +46,9 @@ export function FaqList() {
                       className="section-kicker pt-1"
                       animate={{
                         rotate: isOpen ? 45 : 0,
-                        color: isOpen ? "var(--brand-primary)" : "var(--foreground)",
+                        color: isOpen
+                          ? "var(--brand-primary)"
+                          : "var(--foreground)",
                       }}
                       transition={{ duration: 0.24, ease: "easeOut" }}
                     >
@@ -60,7 +62,10 @@ export function FaqList() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{
+                          duration: 0.32,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
                         className="overflow-hidden"
                       >
                         <p className="mt-5 border-t border-border/70 pt-5 text-base leading-7 text-muted-foreground">

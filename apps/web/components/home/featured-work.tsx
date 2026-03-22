@@ -42,8 +42,9 @@ export function FeaturedWork() {
           </ScrollFloat>
           <ScrollFloat offset={34}>
             <p className="max-w-sm text-base leading-7 text-muted-foreground lg:justify-self-end">
-              Editorial case studies with one large visual rhythm, a quieter text
-              line, and enough asymmetry to feel designed rather than templated.
+              Editorial case studies with one large visual rhythm, a quieter
+              text line, and enough asymmetry to feel designed rather than
+              templated.
             </p>
           </ScrollFloat>
         </div>

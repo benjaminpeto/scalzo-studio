@@ -27,9 +27,16 @@ npm run build
 npm run lint
 npm run typecheck
 npm run format
+npm run check
 ```
 
-Current formatting is driven by ESLint autofixes. Prettier, Husky, lint-staged, and CI enforcement are scheduled for `ST-004`.
+`npm run format` checks Prettier formatting. Use `npm run format:write` to apply formatting locally.
+
+## Quality gates
+
+- Pre-commit runs `lint-staged` through Husky.
+- CI runs formatting, lint, typecheck, and build checks on pull requests and `main`.
+- `npm run check` runs the full validation suite locally.
 
 ## Environment
 

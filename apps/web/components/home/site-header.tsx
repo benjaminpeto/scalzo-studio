@@ -24,7 +24,10 @@ export function SiteHeader() {
           scalzo
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-16 lg:flex">
+        <nav
+          aria-label="Primary"
+          className="hidden items-center gap-16 lg:flex"
+        >
           {navigationLinks.map((item) => (
             <Link
               key={item.label}

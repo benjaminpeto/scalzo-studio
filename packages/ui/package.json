@@ -2,6 +2,8 @@
   "name": "@scalzo/ui",
   "private": true,
   "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --project tsconfig.json --noEmit"
   }
 }

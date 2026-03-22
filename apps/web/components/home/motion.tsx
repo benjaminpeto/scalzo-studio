@@ -287,7 +287,11 @@ export function FoldOnScroll({ children, className }: FoldOnScrollProps) {
     mass: 0.5,
   });
 
-  const scale = useTransform(progress, [0, 1], reduceMotion ? [1, 1] : [1, 0.94]);
+  const scale = useTransform(
+    progress,
+    [0, 1],
+    reduceMotion ? [1, 1] : [1, 0.94],
+  );
   const rotateX = useTransform(
     progress,
     [0, 1],
@@ -325,10 +329,7 @@ export function FoldOnScroll({ children, className }: FoldOnScrollProps) {
   );
 }
 
-export function DeckRevealOnScroll({
-  children,
-  className,
-}: DeckRevealProps) {
+export function DeckRevealOnScroll({ children, className }: DeckRevealProps) {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
@@ -363,11 +364,7 @@ export function DeckRevealOnScroll({
   }
 
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      style={{ y, opacity, scale }}
-    >
+    <motion.div ref={ref} className={className} style={{ y, opacity, scale }}>
       {children}
     </motion.div>
   );

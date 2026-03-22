@@ -41,7 +41,8 @@ const sheetVariants = cva(
 );
 
 interface SheetContentProps
-  extends Omit<
+  extends
+    Omit<
       React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
       "className"
     >,
