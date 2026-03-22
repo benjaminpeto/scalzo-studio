@@ -2,6 +2,23 @@
 
 Scalzo Studio is a conversion-focused marketing site and internal operations platform for a multidisciplinary design studio serving businesses in the Canary Islands and international clients.
 
+## Quick start
+
+Prerequisites:
+
+- Node.js `>=20.11.0`
+- npm `11.7.0`
+
+Install and run from the repository root:
+
+```bash
+npm install
+cp apps/web/.env.example apps/web/.env.local
+npm run dev
+```
+
+The site runs from [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/web).
+
 ## Workspace layout
 
 ```text
@@ -9,12 +26,15 @@ Scalzo Studio is a conversion-focused marketing site and internal operations pla
 |-- apps/
 |   `-- web/              # Next.js App Router application
 |-- packages/
-|   |-- config/           # Shared TypeScript and ESLint config
+|   |-- config/           # Shared TypeScript, ESLint, and workspace config
 |   `-- ui/               # Shared UI primitives and utilities
 |-- supabase/
 |   |-- migrations/       # SQL migrations
-|   `-- seed/             # Seed scripts or reference data
-|-- .agents/              # Project planning and agent docs
+|   `-- seed/             # Seed data and bootstrap scripts
+|-- docs/
+|   |-- deployment/       # Deployment and environment docs
+|   `-- development/      # Local developer setup docs
+|-- .agents/              # Planning and backlog source files
 ```
 
 ## Scripts
@@ -25,34 +45,33 @@ Run all commands from the repository root:
 npm run dev
 npm run build
 npm run lint
+npm run lint:fix
 npm run typecheck
 npm run format
+npm run format:write
 npm run check
 ```
 
-`npm run format` checks Prettier formatting. Use `npm run format:write` to apply formatting locally.
+What they do:
 
-## Quality gates
+- `npm run dev`: starts the Next.js app in `apps/web`
+- `npm run build`: creates a production build
+- `npm run lint`: runs workspace ESLint checks
+- `npm run lint:fix`: applies ESLint autofixes
+- `npm run typecheck`: runs TypeScript checks across workspaces
+- `npm run format`: checks Prettier formatting
+- `npm run format:write`: writes Prettier formatting changes
+- `npm run check`: runs format, lint, typecheck, and build in sequence
 
-- Pre-commit runs `lint-staged` through Husky.
-- CI runs formatting, lint, typecheck, and build checks on pull requests and `main`.
-- `npm run check` runs the full validation suite locally.
+## Environment variables
 
-## Deployment
-
-Vercel deployment setup, branch rules, preview environment guidance, and cache
-header verification steps are documented in
-[`docs/deployment/vercel.md`](/Users/benji/WORK/Projects/scalzo-studio/docs/deployment/vercel.md).
-
-## Environment
-
-The Next.js app now lives in [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/web). Local environment files should live beside that app:
+Local environment files live beside the app:
 
 ```bash
 apps/web/.env.local
 ```
 
-Expected variables at this stage:
+Current variable contract:
 
 ```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -66,22 +85,28 @@ CONTACT_TO_EMAIL=
 TURNSTILE_SECRET_KEY=
 ```
 
-Environment variables are validated at runtime through
-[`public.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/public.ts)
-and
-[`server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/server.ts).
-Public Supabase keys support either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or
-the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+Runtime validation is implemented in:
 
-## Aliases
+- [`public.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/public.ts)
+- [`server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/server.ts)
 
-The workspace uses:
+Notes:
 
-- `@/*` for `apps/web`
-- `@ui/*` for `packages/ui/src`
+- Public Supabase auth supports either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
+- CI uses safe placeholder public envs for build-only validation.
 
-These aliases are defined in [`apps/web/tsconfig.json`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/tsconfig.json) and mirrored at the root [`tsconfig.json`](/Users/benji/WORK/Projects/scalzo-studio/tsconfig.json) for editor tooling.
+## Quality gates
 
-## Supabase
+- Pre-commit runs `lint-staged` through Husky.
+- CI runs formatting, lint, typecheck, and build checks on pull requests and `main`.
+- `npm run check` is the local pre-merge validation command.
 
-The [`supabase`](/Users/benji/WORK/Projects/scalzo-studio/supabase) directory is the home for local database configuration, migrations, and seed material. Initial structure is in place so future schema/auth tickets have a stable location to land in.
+## Documentation
+
+- Local setup and day-to-day development:
+  [`docs/development/setup.md`](/Users/benji/WORK/Projects/scalzo-studio/docs/development/setup.md)
+- Vercel project setup and deployment flow:
+  [`docs/deployment/vercel.md`](/Users/benji/WORK/Projects/scalzo-studio/docs/deployment/vercel.md)
+- Supabase directory usage and workflow:
+  [`supabase/README.md`](/Users/benji/WORK/Projects/scalzo-studio/supabase/README.md)

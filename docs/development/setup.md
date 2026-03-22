@@ -1,0 +1,91 @@
+# Development Setup
+
+This guide covers the current local development workflow for the Scalzo Studio monorepo.
+
+## Requirements
+
+- Node.js `>=20.11.0`
+- npm `11.7.0`
+
+The repository pins npm through the root [`package.json`](/Users/benji/WORK/Projects/scalzo-studio/package.json) `packageManager` field.
+
+## Initial setup
+
+From the repository root:
+
+```bash
+npm install
+cp apps/web/.env.example apps/web/.env.local
+```
+
+Then update [`apps/web/.env.local`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/.env.local) with real values for any integrations you need locally.
+
+## Running the app
+
+Use:
+
+```bash
+npm run dev
+```
+
+The root script delegates to the `@scalzo/web` workspace and starts the Next.js App Router app in [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/web).
+
+## Validation commands
+
+Use these from the repository root:
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run format`
+- `npm run build`
+- `npm run check`
+
+`npm run check` is the best pre-commit or pre-PR validation command when you want the full pass.
+
+## Workspace notes
+
+- `apps/web`: Next.js app
+- `packages/ui`: shared UI primitives
+- `packages/config`: shared config files
+- `supabase`: SQL migrations and seed assets
+
+Path aliases:
+
+- `@/*` maps to `apps/web`
+- `@ui/*` maps to `packages/ui/src`
+
+## Environment behavior
+
+Environment validation is strict by design.
+
+- Missing required public variables fail fast during build and app startup.
+- Optional server-only integrations are allowed to stay unset until those features are implemented.
+- GitHub Actions injects safe placeholder public envs so CI can validate production builds without real secrets.
+
+## Pre-commit hooks
+
+Husky is enabled for this repository.
+
+- Pre-commit runs `lint-staged`
+- Staged app and UI files are linted and formatted before commit
+
+If hooks stop working, run:
+
+```bash
+npm run prepare
+```
+
+## Deployment flow
+
+The deployment setup lives in [`docs/deployment/vercel.md`](/Users/benji/WORK/Projects/scalzo-studio/docs/deployment/vercel.md).
+
+Short version:
+
+1. Open a feature branch.
+2. Push changes and review the Preview Deployment.
+3. Run `npm run check` locally before merge.
+4. Merge to `main` for production deployment.
+
+## Supabase workflow
+
+Supabase-specific file placement and workflow guidance lives in [`supabase/README.md`](/Users/benji/WORK/Projects/scalzo-studio/supabase/README.md).
