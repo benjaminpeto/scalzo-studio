@@ -28,7 +28,7 @@ export function StudioCredibility() {
             <h2 className="max-w-3xl font-display text-[2.9rem] leading-[0.95] tracking-[-0.055em] text-foreground sm:text-[4.1rem] lg:text-[4.8rem]">
               More than logos, we give your brand a clearer commercial role.
             </h2>
-            <div className="mt-10 rounded-[2rem] bg-white p-6 shadow-[0_10px_30px_rgba(27,28,26,0.04)] ring-1 ring-black/4 sm:p-8">
+            <div className="mt-10 rounded-4xl bg-white p-6 shadow-[0_10px_30px_rgba(27,28,26,0.04)] ring-1 ring-black/4 sm:p-8">
               <p className="font-display text-[3.4rem] leading-[0.92] tracking-[-0.07em] text-foreground sm:text-[4.9rem]">
                 Deux expertises,
                 <br />
@@ -43,7 +43,7 @@ export function StudioCredibility() {
                 <ScrollFloat offset={16}>
                   <HoverCard>
                     <article className="group overflow-hidden rounded-[1.7rem] bg-white shadow-[0_10px_30px_rgba(27,28,26,0.05)] ring-1 ring-black/4">
-                      <div className="grid min-h-[18rem] grid-cols-[0.58fr_0.42fr]">
+                      <div className="grid min-h-72 grid-cols-[0.58fr_0.42fr]">
                         <div className="p-6">
                           <p className="section-kicker">{profile.role}</p>
                           <h3 className="mt-4 font-display text-[2rem] leading-none tracking-[-0.04em] text-foreground">

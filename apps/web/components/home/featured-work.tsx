@@ -69,7 +69,7 @@ export function FeaturedWork() {
                             height={900}
                             className="aspect-[1.08] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-linear-to-t from-black/18 via-transparent to-transparent" />
                         </div>
                         <div className="flex items-start justify-between gap-4 border-t border-black/6 px-5 py-4 sm:px-6">
                           <div>
