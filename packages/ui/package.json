@@ -1,0 +1,7 @@
+{
+  "name": "@scalzo/ui",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --project tsconfig.json --noEmit"
+  }
+}
