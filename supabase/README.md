@@ -9,17 +9,70 @@ This directory is the single home for database-oriented work in the repository.
 
 Future Supabase auth, RLS, and schema changes should land here instead of being scattered through the app workspace.
 
-## Current workflow
+## Local CLI workflow
 
-At the moment, the project is prepared for Supabase work but does not yet include a committed local CLI setup or generated project config.
+The repository now includes committed Supabase CLI configuration in
+[`config.toml`](/Users/benji/WORK/Projects/scalzo-studio/supabase/config.toml)
+and uses the root `npm` scripts as the primary local workflow.
 
-Use this workflow until that lands:
+Prerequisites:
 
-1. Keep application env vars in `apps/web/.env.local`.
-2. Add schema changes as SQL files under `supabase/migrations/`.
-3. Add any repeatable bootstrap data under `supabase/seed/`.
-4. Update app code, query helpers, and env docs together when Supabase requirements change.
-5. Document any operational setup changes in the root README or deployment docs.
+- Docker Desktop or an equivalent Docker runtime
+- `npm install` run from the repository root
+
+Primary commands:
+
+```bash
+npm run supabase:start
+npm run supabase:status
+npm run supabase:db:reset
+npm run supabase:migration:new -- add_feature_name
+npm run supabase:db:diff
+npm run supabase:types:local
+npm run supabase:stop
+```
+
+What they do:
+
+- `supabase:start`: starts the local Postgres/Auth/Storage/Studio stack
+- `supabase:status`: shows local URLs, anon key, service role key, and service endpoints
+- `supabase:db:reset`: drops and recreates the local database from committed migrations, then runs configured seeds
+- `supabase:migration:new -- <name>`: creates a new empty migration file
+- `supabase:db:diff`: diffs the local database against the committed migrations
+- `supabase:types:local`: regenerates [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts) from the local database
+- `supabase:stop`: stops the local stack
+
+Local app setup:
+
+1. Start Supabase with `npm run supabase:start`.
+2. Read the local URL and keys with `npm run supabase:status`.
+3. Copy those values into `apps/web/.env.local`.
+4. Run `npm run dev`.
+
+If your local env file is already configured, you can use one command for the normal startup flow:
+
+```bash
+npm run dev:local
+```
+
+Env mapping for the web app:
+
+- local API URL -> `NEXT_PUBLIC_SUPABASE_URL`
+- local anon key -> `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- local service role key -> `SUPABASE_SERVICE_ROLE_KEY`
+
+Seed flow:
+
+- Files under `supabase/seed/` are executed after migrations during `npm run supabase:db:reset`.
+- Use numbered SQL files so seed execution order stays deterministic.
+- Keep repeatable local/dev bootstrap data here. Initial admin bootstrap belongs to `ST-015`.
+
+Hosted project workflow:
+
+- Link a hosted project with `npx supabase link --project-ref <your-project-ref>`.
+- Apply committed migrations to the linked project with `npm run supabase:db:push`.
+- Include seed data in a remote push only when that is intentional:
+  `npx supabase db push --linked --include-seed`.
 
 ## Current schema baseline
 
@@ -48,12 +101,15 @@ These are validated in:
 - [`public.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/public.ts)
 - [`server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/env/server.ts)
 
-## When the local CLI setup is added
+## Local service defaults
 
-Once the repo includes committed Supabase CLI configuration, extend this directory with:
+- Local Supabase Studio runs on `http://127.0.0.1:54323`
+- Local API runs on `http://127.0.0.1:54321`
+- Local database listens on port `54322`
+- Seed files are loaded from `supabase/seed/*.sql`
 
-- project config
-- local start/stop commands
-- migration application steps
-- seed execution steps
+Future follow-up work can still extend this setup with:
+
 - branch or preview database guidance
+- remote environment conventions
+- generated type automation in CI

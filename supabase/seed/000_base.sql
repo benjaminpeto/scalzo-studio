@@ -1,0 +1,3 @@
+-- Base seed placeholder for local/dev resets.
+-- Keep this file deterministic and idempotent.
+-- ST-015 will add the first real admin/bootstrap flow.

@@ -8,6 +8,7 @@ Prerequisites:
 
 - Node.js `>=20.11.0`
 - npm `11.7.0`
+- Docker Desktop or an equivalent Docker runtime for local Supabase development
 
 Install and run from the repository root:
 
@@ -43,6 +44,7 @@ Run all commands from the repository root:
 
 ```bash
 npm run dev
+npm run dev:local
 npm run build
 npm run lint
 npm run lint:fix
@@ -51,11 +53,19 @@ npm run test --workspace @scalzo/ui
 npm run format
 npm run format:write
 npm run check
+npm run supabase:start
+npm run supabase:stop
+npm run supabase:status
+npm run supabase:db:reset
+npm run supabase:db:push
+npm run supabase:migration:new -- add_feature_name
+npm run supabase:types:local
 ```
 
 What they do:
 
 - `npm run dev`: starts the Next.js app in `apps/web`
+- `npm run dev:local`: starts local Supabase first, then starts the Next.js app
 - `npm run build`: creates a production build
 - `npm run lint`: runs workspace ESLint checks
 - `npm run lint:fix`: applies ESLint autofixes
@@ -64,6 +74,13 @@ What they do:
 - `npm run format`: checks Prettier formatting
 - `npm run format:write`: writes Prettier formatting changes
 - `npm run check`: runs format, lint, typecheck, and build in sequence
+- `npm run supabase:start`: starts the local Supabase stack, including Studio
+- `npm run supabase:stop`: stops the local Supabase stack
+- `npm run supabase:status`: shows the local Supabase URLs and keys
+- `npm run supabase:db:reset`: reapplies local migrations and seeds from scratch
+- `npm run supabase:db:push`: pushes committed migrations to the linked hosted Supabase project
+- `npm run supabase:migration:new -- <name>`: creates a new migration file
+- `npm run supabase:types:local`: regenerates app database types from the local database
 
 ## Environment variables
 

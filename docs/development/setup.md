@@ -6,6 +6,7 @@ This guide covers the current local development workflow for the Scalzo Studio m
 
 - Node.js `>=20.11.0`
 - npm `11.7.0`
+- Docker Desktop or an equivalent Docker runtime if you want to run Supabase locally
 
 The repository pins npm through the root [`package.json`](/Users/benji/WORK/Projects/scalzo-studio/package.json) `packageManager` field.
 
@@ -26,9 +27,11 @@ Use:
 
 ```bash
 npm run dev
+npm run dev:local
 ```
 
 The root script delegates to the `@scalzo/web` workspace and starts the Next.js App Router app in [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/web).
+`npm run dev:local` starts Supabase first, then launches the web app.
 
 ## Validation commands
 
@@ -90,3 +93,20 @@ Short version:
 ## Supabase workflow
 
 Supabase-specific file placement and workflow guidance lives in [`supabase/README.md`](/Users/benji/WORK/Projects/scalzo-studio/supabase/README.md).
+
+Common local commands from the repository root:
+
+```bash
+npm run supabase:start
+npm run supabase:status
+npm run supabase:db:reset
+npm run supabase:types:local
+```
+
+Typical local cycle:
+
+1. Start the local stack with `npm run supabase:start`.
+2. Copy the local Supabase URL and keys from `npm run supabase:status` into `apps/web/.env.local`.
+3. Run `npm run supabase:db:reset` whenever you want to replay migrations and seeds deterministically.
+4. After schema changes, regenerate app types with `npm run supabase:types:local`.
+5. Run `npm run dev` for the web app.
