@@ -189,6 +189,12 @@ Practical rule:
 - Challenge, approach, testimonial, and visual composition fall back to a static case-study layer when the CMS row does not yet provide enough editorial detail on its own.
 - Work detail metadata prefers case-study SEO fields from Supabase and otherwise falls back to the static route copy.
 
+## Insights index boundary
+
+- `/insights` loads the published posts index from Supabase through `apps/web/lib/content/insights.ts`.
+- The route supports a server-rendered `?tag=` filter for the tag UI and falls back to in-repo editorial entries when the `posts` table is empty or unavailable.
+- Featured and supporting cards stay teaser-only for now; the full article route is completed under `ST-031`.
+
 ## Admin auth verification
 
 Use this checklist when validating the current admin auth UX:
