@@ -75,10 +75,10 @@ export interface FooterLinks {
 }
 
 export const navigationLinks = [
-  { href: "/#studio", label: "Studio" },
-  { href: "/#projects", label: "Projects" },
-  { href: "/#journal", label: "Journal" },
-  { href: "/#contact", label: "Contact" },
+  { href: "/about", label: "About" },
+  { href: "/services", label: "Services" },
+  { href: "/work", label: "Work" },
+  { href: "/insights", label: "Insights" },
 ] as const;
 
 export const primaryCta = {
@@ -284,9 +284,10 @@ export const faqItems = [
 
 export const footerLinks = {
   primary: [
-    { href: "/#studio", label: "Studio" },
-    { href: "/#projects", label: "Projects" },
-    { href: "/#journal", label: "Journal" },
+    { href: "/about", label: "About" },
+    { href: "/services", label: "Services" },
+    { href: "/work", label: "Work" },
+    { href: "/insights", label: "Insights" },
   ],
   secondary: [
     { href: "/#method", label: "Method" },

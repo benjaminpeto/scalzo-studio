@@ -167,7 +167,7 @@ async function getHomeJournalEntries() {
   }));
 }
 
-async function getHomeTestimonials() {
+export async function getHomeTestimonials() {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("testimonials")

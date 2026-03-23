@@ -201,6 +201,12 @@ Practical rule:
 - Article body markdown is rendered safely without raw HTML support, with custom heading, link, and image rendering for the editorial article layout.
 - If the CMS row is missing or incomplete, the route falls back to in-repo article content, image, and metadata helpers for the matching slug.
 
+## About page boundary
+
+- `/about` is a static in-repo marketing route composed through `apps/web/lib/content/about.ts`.
+- The capabilities section reuses the published services index loader from `apps/web/lib/content/services.ts` and falls back to the in-repo service dataset when needed.
+- The proof section reuses the published testimonials loader from `apps/web/lib/content/home.ts` and falls back to the in-repo testimonial and trust-mark content when needed.
+
 ## Admin auth verification
 
 Use this checklist when validating the current admin auth UX:
