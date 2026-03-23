@@ -54,7 +54,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="min-h-screen px-4 py-4 md:px-6 md:py-6">
       <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-7xl gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
-        <aside className="flex flex-col justify-between rounded-[2rem] border border-border/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(245,244,240,0.96))] p-5 shadow-[0_24px_80px_rgba(27,28,26,0.08)] backdrop-blur">
+        <aside className="flex flex-col justify-between rounded-4xl border border-border/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(245,244,240,0.96))] p-5 shadow-[0_24px_80px_rgba(27,28,26,0.08)] backdrop-blur">
           <div className="space-y-8">
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
@@ -123,7 +123,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               />
               <Link
                 href="/"
-                className="inline-flex h-10 items-center rounded-[0.375rem] bg-transparent px-4 text-sm font-semibold tracking-[0.02em] text-foreground underline decoration-editorial-underline underline-offset-4"
+                className="inline-flex h-10 items-center rounded-sm bg-transparent px-4 text-sm font-semibold tracking-[0.02em] text-foreground underline decoration-editorial-underline underline-offset-4"
               >
                 View site
               </Link>
@@ -132,7 +132,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         <div className="space-y-4">
-          <header className="rounded-[2rem] border border-border/70 bg-card/85 px-6 py-5 shadow-[0_20px_60px_rgba(27,28,26,0.06)] backdrop-blur">
+          <header className="rounded-4xl border border-border/70 bg-card/85 px-6 py-5 shadow-[0_20px_60px_rgba(27,28,26,0.06)] backdrop-blur">
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div className="space-y-3">
@@ -190,7 +190,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          <section className="rounded-[2rem] border border-border/70 bg-card/88 p-6 shadow-[0_24px_80px_rgba(27,28,26,0.08)] backdrop-blur md:p-8">
+          <section className="rounded-4xl border border-border/70 bg-card/88 p-6 shadow-[0_24px_80px_rgba(27,28,26,0.08)] backdrop-blur md:p-8">
             {children}
           </section>
         </div>
