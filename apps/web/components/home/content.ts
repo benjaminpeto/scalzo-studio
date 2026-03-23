@@ -82,8 +82,8 @@ export const navigationLinks = [
 ] as const;
 
 export const primaryCta = {
-  href: "/#contact",
-  label: "Start a project",
+  href: "/contact",
+  label: "Book a call",
 } as const;
 
 export const trustMarks = [
@@ -292,7 +292,7 @@ export const footerLinks = {
   secondary: [
     { href: "/#method", label: "Method" },
     { href: "/#faq", label: "FAQ" },
-    { href: "/#contact", label: "Start a project" },
+    { href: "/contact", label: "Contact" },
   ],
   legal: [
     { href: "/privacy", label: "Privacy" },

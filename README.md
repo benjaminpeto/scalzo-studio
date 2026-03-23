@@ -207,6 +207,12 @@ Practical rule:
 - The capabilities section reuses the published services index loader from `apps/web/lib/content/services.ts` and falls back to the in-repo service dataset when needed.
 - The proof section reuses the published testimonials loader from `apps/web/lib/content/home.ts` and falls back to the in-repo testimonial and trust-mark content when needed.
 
+## Contact page boundary
+
+- `/contact` is a static in-repo marketing route composed through `apps/web/lib/content/contact.ts`.
+- Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
+- The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
+
 ## Admin auth verification
 
 Use this checklist when validating the current admin auth UX:
