@@ -178,6 +178,12 @@ Practical rule:
 - Problem framing, process/timeline, FAQ, and fallback related-work composition are completed with a static content layer when the CMS row does not yet provide everything needed.
 - Service detail metadata prefers service-specific SEO fields from Supabase and falls back to the shared summary/problem framing.
 
+## Work index boundary
+
+- `/work` loads the published case-study grid from Supabase through `apps/web/lib/content/work.ts`.
+- The route falls back to the current in-repo featured-work content when the CMS table is empty or unavailable.
+- Work cards currently show summary, industry/service metadata, and a key metric, while detail-page navigation remains deferred to `ST-029`.
+
 ## Admin auth verification
 
 Use this checklist when validating the current admin auth UX:
