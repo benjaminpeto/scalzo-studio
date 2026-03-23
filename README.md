@@ -167,6 +167,12 @@ Practical rule:
 - Hero, navigation/footer links, trust strip, process, studio credibility, FAQ, newsletter shell, and CTA band stay on static config for now.
 - If the CMS tables are empty or unavailable, the loader falls back to the current in-repo home content so the page design and structure remain unchanged.
 
+## Services index boundary
+
+- `/services` loads the published services list from Supabase through `apps/web/lib/content/services.ts`.
+- The packages section, services FAQ, and CTA band are static for now.
+- Service cards currently route CTA traffic to the existing contact funnel instead of `/services/[slug]`; dedicated detail pages land in `ST-026`.
+
 ## Admin auth verification
 
 Use this checklist when validating the current admin auth UX:
