@@ -53,8 +53,8 @@ function ServicesGrid({
           <ServiceCard
             className="h-full rounded-[1.8rem] bg-white p-6 shadow-[0_16px_44px_rgba(27,28,26,0.05)] ring-1 ring-black/4"
             cta={{
-              href: "/#contact",
-              label: "Discuss this service",
+              href: `/services/${service.slug}`,
+              label: "Explore service",
             }}
             description={service.summary}
             indexLabel={`0${index + 1}`}

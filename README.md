@@ -171,7 +171,12 @@ Practical rule:
 
 - `/services` loads the published services list from Supabase through `apps/web/lib/content/services.ts`.
 - The packages section, services FAQ, and CTA band are static for now.
-- Service cards currently route CTA traffic to the existing contact funnel instead of `/services/[slug]`; dedicated detail pages land in `ST-026`.
+
+## Service detail boundary
+
+- `/services/[slug]` loads the published service row from Supabase through `apps/web/lib/content/services.ts`.
+- Problem framing, process/timeline, FAQ, and fallback related-work composition are completed with a static content layer when the CMS row does not yet provide everything needed.
+- Service detail metadata prefers service-specific SEO fields from Supabase and falls back to the shared summary/problem framing.
 
 ## Admin auth verification
 
