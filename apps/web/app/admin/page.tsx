@@ -1,28 +1,38 @@
-import { requireCurrentAdminAccess } from "@/actions/admin/server";
+import { Children } from "react";
 
-const focusAreas = [
-  {
-    description:
-      "Services, case studies, and insights editing should land here first once CRUD work starts.",
-    id: "content",
-    title: "Content stack",
-  },
-  {
-    description:
-      "Lead review, qualification, and response handoff will share the same admin shell.",
-    id: "operations",
-    title: "Lead inbox",
-  },
-  {
-    description:
-      "Auth events, admin checks, and session diagnostics stay visible while the shell evolves.",
-    id: "audit",
-    title: "Audit trail",
-  },
-];
+import { requireCurrentAdminAccess } from "@/actions/admin/server";
+import { adminDashboardSections } from "@/lib/admin/navigation";
+
+const focusAreaBodyById = {
+  audit:
+    "Auth events, admin checks, and session diagnostics stay visible while the shell evolves.",
+  content:
+    "Services, case studies, and insights editing should land here first once CRUD work starts.",
+  operations:
+    "Lead review, qualification, and response handoff will share the same admin shell.",
+} as const;
 
 export default async function AdminPage() {
   const { user } = await requireCurrentAdminAccess("/admin");
+  const dashboardCards = Children.toArray(
+    adminDashboardSections.map((area, index) => (
+      <article
+        key={area.id}
+        id={area.id}
+        className="rounded-[1.75rem] border border-border/70 bg-surface-container-lowest/82 p-6"
+      >
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+          0{index + 1}
+        </p>
+        <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-foreground">
+          {area.label}
+        </h2>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">
+          {focusAreaBodyById[area.id]}
+        </p>
+      </article>
+    )),
+  );
 
   return (
     <div className="space-y-8">
@@ -69,25 +79,7 @@ export default async function AdminPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-3">
-        {focusAreas.map((area, index) => (
-          <article
-            key={area.id}
-            id={area.id}
-            className="rounded-[1.75rem] border border-border/70 bg-surface-container-lowest/82 p-6"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-              0{index + 1}
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-foreground">
-              {area.title}
-            </h2>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              {area.description}
-            </p>
-          </article>
-        ))}
-      </section>
+      <section className="grid gap-4 xl:grid-cols-3">{dashboardCards}</section>
 
       <section
         id="session"

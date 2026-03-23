@@ -1,24 +1,12 @@
 import Link from "next/link";
 
 import { LogoutButton } from "@/components/logout-button";
-
-const dashboardSections = [
-  {
-    description: "Publishing workflow, collections, and storage-backed assets.",
-    href: "/admin#content",
-    label: "Content stack",
-  },
-  {
-    description: "Lead triage, contact handoff, and follow-up automation.",
-    href: "/admin#operations",
-    label: "Lead inbox",
-  },
-  {
-    description: "Audit trail, events, and auth/session inspection.",
-    href: "/admin#audit",
-    label: "Audit trail",
-  },
-];
+import {
+  ADMIN_DASHBOARD_BREADCRUMB,
+  ADMIN_DASHBOARD_HEADING,
+  adminDashboardSections,
+  adminPrimaryNavigation,
+} from "@/lib/admin/navigation";
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
@@ -46,15 +34,18 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 Routes
               </p>
               <nav className="space-y-2">
-                <Link
-                  href="/admin"
-                  className="block rounded-2xl border border-transparent bg-primary px-4 py-3 text-primary-foreground shadow-[0_20px_45px_rgba(115,92,0,0.18)] transition-transform hover:-translate-y-0.5"
-                >
-                  <div className="text-sm font-semibold">Dashboard</div>
-                  <div className="mt-1 text-xs leading-5 text-primary-foreground/80">
-                    Overview, session health, and next implementation slices.
-                  </div>
-                </Link>
+                {adminPrimaryNavigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="block rounded-2xl border border-transparent bg-primary px-4 py-3 text-primary-foreground shadow-[0_20px_45px_rgba(115,92,0,0.18)] transition-transform hover:-translate-y-0.5"
+                  >
+                    <div className="text-sm font-semibold">{item.label}</div>
+                    <div className="mt-1 text-xs leading-5 text-primary-foreground/80">
+                      {item.description}
+                    </div>
+                  </Link>
+                ))}
               </nav>
             </div>
 
@@ -63,7 +54,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 Dashboard sections
               </p>
               <nav className="space-y-2">
-                {dashboardSections.map((item) => (
+                {adminDashboardSections.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -88,26 +79,60 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 The admin shell stays behind middleware and server-side checks.
               </p>
             </div>
-            <div className="mt-4">
-              <LogoutButton />
+            <div className="mt-4 flex flex-wrap gap-3">
+              <LogoutButton
+                className="hidden lg:inline-flex"
+                message="You have been signed out of the admin session."
+              />
+              <Link
+                href="/"
+                className="inline-flex h-10 items-center rounded-[0.375rem] bg-transparent px-4 text-sm font-semibold tracking-[0.02em] text-foreground underline decoration-editorial-underline underline-offset-4"
+              >
+                View site
+              </Link>
             </div>
           </div>
         </aside>
 
         <div className="space-y-4">
           <header className="rounded-[2rem] border border-border/70 bg-card/85 px-6 py-5 shadow-[0_20px_60px_rgba(27,28,26,0.06)] backdrop-blur">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-                  Admin / Dashboard
-                </p>
-                <h2 className="text-3xl font-semibold tracking-[-0.04em] text-foreground">
-                  Operational dashboard
-                </h2>
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                    {ADMIN_DASHBOARD_BREADCRUMB}
+                  </p>
+                  <h2 className="text-3xl font-semibold tracking-[-0.04em] text-foreground">
+                    {ADMIN_DASHBOARD_HEADING}
+                  </h2>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="rounded-full border border-border/70 bg-surface-container-low px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                    Internal access only
+                  </div>
+                  <LogoutButton
+                    className="lg:hidden"
+                    message="You have been signed out of the admin session."
+                    size="sm"
+                    variant="outline"
+                  />
+                </div>
               </div>
-              <div className="rounded-full border border-border/70 bg-surface-container-low px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Internal access only
-              </div>
+
+              <nav
+                aria-label="Dashboard sections"
+                className="flex flex-wrap gap-2"
+              >
+                {adminDashboardSections.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="rounded-full border border-border/70 bg-surface-container-low px-3 py-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
             </div>
           </header>
 

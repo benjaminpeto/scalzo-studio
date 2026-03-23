@@ -34,6 +34,8 @@ export function LoginForm({
   const searchParams = useSearchParams();
   const next = normalizeAuthRedirectPath(searchParams.get("next"));
   const authError = searchParams.get("error");
+  const authMessage = searchParams.get("message");
+  const isBusy = isLoading || isMagicLinkLoading;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,9 +107,11 @@ export function LoginForm({
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
+                  aria-invalid={Boolean(error || authError)}
                   id="email"
                   type="email"
                   placeholder="m@example.com"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -123,28 +127,45 @@ export function LoginForm({
                   </Link>
                 </div>
                 <Input
+                  aria-invalid={Boolean(error || authError)}
                   id="password"
                   type="password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               {error ? (
-                <p className="text-sm text-red-500">{error}</p>
+                <p className="text-sm text-red-500" role="alert">
+                  {error}
+                </p>
               ) : authError ? (
-                <p className="text-sm text-red-500">{authError}</p>
+                <p className="text-sm text-red-500" role="alert">
+                  {authError}
+                </p>
               ) : null}
               {successMessage ? (
-                <p className="text-sm text-emerald-700">{successMessage}</p>
+                <p className="text-sm text-emerald-700" role="status">
+                  {successMessage}
+                </p>
               ) : null}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              {!successMessage && authMessage ? (
+                <p className="text-sm text-emerald-700" role="status">
+                  {authMessage}
+                </p>
+              ) : null}
+              <div className="rounded-2xl border border-border/70 bg-surface-container-low px-4 py-3 text-sm text-muted-foreground">
+                After sign-in you will continue to{" "}
+                <code className="font-semibold text-foreground">{next}</code>.
+              </div>
+              <Button type="submit" className="w-full" disabled={isBusy}>
                 {isLoading ? "Logging in..." : "Log in with password"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 className="w-full"
-                disabled={isMagicLinkLoading}
+                disabled={isBusy}
                 onClick={handleMagicLinkLogin}
               >
                 {isMagicLinkLoading
@@ -152,7 +173,7 @@ export function LoginForm({
                   : "Send magic link"}
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-4 text-center text-sm leading-6">
               Access is provisioned manually. Contact an existing admin if you
               need an account.
             </div>
