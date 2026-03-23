@@ -77,7 +77,7 @@ Admin auth flow:
 - Password login is supported for existing admin auth users.
 - Email magic-link login is supported with `shouldCreateUser: false`, so it does not create new auth users during sign-in.
 - Magic-link and confirmation emails should redirect through `/auth/confirm`, which validates the token and then redirects to the sanitized `next` path.
-- The local redirect allow-list in [`config.toml`](/Users/benji/WORK/Projects/scalzo-studio/supabase/config.toml) includes `/auth/confirm`, `/protected`, and `/auth/update-password`.
+- The canonical post-login destination is `/admin`, and the local redirect allow-list in [`config.toml`](/Users/benji/WORK/Projects/scalzo-studio/supabase/config.toml) includes `/admin`, `/auth/confirm`, and `/auth/update-password`. `/protected` is kept only as a compatibility alias.
 - Non-admin accounts are signed back out after successful authentication and shown a deterministic admin-access error.
 - Public self-service signup is disabled in local config and should stay disabled in the hosted project as well.
 - The email auth provider itself remains enabled so pre-provisioned admin users can still use password and magic-link login.
@@ -100,7 +100,7 @@ First admin bootstrap flow:
 1. Start the local stack with `npm run supabase:start`.
 2. Create the auth user through Supabase Studio Auth.
 3. Run `npm run supabase:admin:bootstrap:local -- you@example.com`.
-4. Sign in with that user and verify admin access in the protected app shell.
+4. Sign in with that user and verify admin access in the `/admin` app shell.
 
 Hosted project bootstrap flow:
 
@@ -125,6 +125,8 @@ Auth orchestration boundaries:
 
 - Route handlers and server actions should delegate multi-step auth flow logic to [`apps/web/actions/auth/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/auth/server.ts).
 - Client auth components should delegate browser Supabase calls to [`apps/web/actions/auth/client.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/auth/client.ts).
+- Proxy/session orchestration should delegate to [`apps/web/actions/session/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/session/server.ts).
+- Admin route guards should delegate to [`apps/web/actions/admin/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/admin/server.ts).
 - Keep [`apps/web/lib/supabase/auth.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/auth.ts) focused on side-effect-free request/user/admin lookup helpers rather than redirects or UI flow control.
 - Do not reintroduce direct Supabase client creation into auth route files or UI components when the action modules can own that orchestration.
 

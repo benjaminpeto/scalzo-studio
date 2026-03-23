@@ -31,7 +31,7 @@ export function UpdatePasswordForm({
 
     try {
       await updateCurrentUserPassword({ password });
-      router.push("/protected");
+      router.push("/admin");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

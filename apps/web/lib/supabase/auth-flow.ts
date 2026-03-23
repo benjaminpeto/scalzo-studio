@@ -1,4 +1,4 @@
-export const AUTH_DEFAULT_REDIRECT_PATH = "/protected";
+export const AUTH_DEFAULT_REDIRECT_PATH = "/admin";
 
 export const ADMIN_AUTH_ACCESS_DENIED_MESSAGE =
   "This account is authenticated but does not have admin access.";

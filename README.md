@@ -152,6 +152,7 @@ Use these boundaries:
 Practical rule:
 
 - Pages, route handlers, and UI components should stay thin and delegate multi-step auth or data-flow logic into action modules instead of importing Supabase clients directly.
+- Apply the same rule to proxy/session and admin-route orchestration: keep `apps/web/proxy.ts` and `/admin` route files as integration shells that delegate into domain action modules.
 
 ## Quality gates
 

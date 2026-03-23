@@ -1,8 +1,9 @@
 import "server-only";
 
-import type { JwtPayload } from "@supabase/supabase-js";
+import type { JwtPayload, SupabaseClient } from "@supabase/supabase-js";
 
 import { ADMIN_AUTH_ACCESS_DENIED_MESSAGE } from "@/lib/supabase/auth-flow";
+import type { Database } from "@/lib/supabase/database.types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export type CurrentUserClaims = JwtPayload & {
@@ -23,12 +24,12 @@ export interface CurrentUserAdminState {
   userId: string | null;
 }
 
-type ServerSupabaseClient = Awaited<
+export type RequestSupabaseClient = Awaited<
   ReturnType<typeof createServerSupabaseClient>
 >;
 
 async function getAdminStateForUserId(
-  supabase: ServerSupabaseClient,
+  supabase: SupabaseClient<Database>,
   userId: string,
 ) {
   const { data: adminRow, error: adminError } = await supabase
@@ -41,7 +42,7 @@ async function getAdminStateForUserId(
 }
 
 async function resolveCurrentUser(
-  supabase: ServerSupabaseClient,
+  supabase: SupabaseClient<Database>,
 ): Promise<CurrentUser | null> {
   const { data, error } = await supabase.auth.getClaims();
   const claims = data?.claims;
@@ -62,14 +63,14 @@ async function resolveCurrentUser(
   };
 }
 
-export async function getCurrentUser(supabase?: ServerSupabaseClient) {
+export async function getCurrentUser(supabase?: RequestSupabaseClient) {
   const resolvedSupabase = supabase ?? (await createServerSupabaseClient());
 
   return resolveCurrentUser(resolvedSupabase);
 }
 
 export async function getCurrentUserAdminState(
-  supabase?: ServerSupabaseClient,
+  supabase?: RequestSupabaseClient,
 ): Promise<CurrentUserAdminState> {
   const resolvedSupabase = supabase ?? (await createServerSupabaseClient());
   const user = await resolveCurrentUser(resolvedSupabase);
@@ -97,4 +98,11 @@ export async function isCurrentUserAdmin() {
   const { isAdmin } = await getCurrentUserAdminState();
 
   return isAdmin;
+}
+
+export async function isUserIdAdmin(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+) {
+  return getAdminStateForUserId(supabase, userId);
 }

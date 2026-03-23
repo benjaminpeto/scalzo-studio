@@ -19,3 +19,8 @@ Current auth example:
 
 - [`apps/web/app/auth/confirm/route.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/app/auth/confirm/route.ts) parses the request and delegates to [`apps/web/actions/auth/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/auth/server.ts)
 - [`apps/web/components/login-form.tsx`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/components/login-form.tsx), [`apps/web/components/forgot-password-form.tsx`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/components/forgot-password-form.tsx), [`apps/web/components/update-password-form.tsx`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/components/update-password-form.tsx), and [`apps/web/components/logout-button.tsx`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/components/logout-button.tsx) delegate browser auth flows to [`apps/web/actions/auth/client.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/auth/client.ts)
+
+Current admin/session example:
+
+- [`apps/web/proxy.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/proxy.ts) delegates request/session orchestration to [`apps/web/actions/session/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/session/server.ts)
+- [`apps/web/app/admin/page.tsx`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/app/admin/page.tsx) and [`apps/web/app/admin/layout.tsx`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/app/admin/layout.tsx) delegate admin-route access control and shell composition to [`apps/web/actions/admin/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/admin/server.ts) plus dedicated admin UI components
