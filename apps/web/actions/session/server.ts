@@ -9,47 +9,41 @@ import {
 import { normalizeAuthRedirectPath } from "@/lib/supabase/auth-flow";
 import { createProxySupabaseContext } from "@/lib/supabase/proxy";
 
-function isAnonymousPublicRoute(pathname: string) {
-  return (
-    pathname === "/" ||
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/login")
-  );
-}
-
 function buildAnonymousLoginRedirect(request: NextRequest) {
   const loginUrl = request.nextUrl.clone();
+  const requestPath =
+    request.nextUrl.pathname +
+    (request.nextUrl.search ? request.nextUrl.search : "");
 
   loginUrl.pathname = "/auth/login";
-  loginUrl.searchParams.set(
-    "next",
-    normalizeAuthRedirectPath(request.nextUrl.pathname),
-  );
+  loginUrl.searchParams.set("next", normalizeAuthRedirectPath(requestPath));
 
   return loginUrl;
 }
 
 export async function updateSession(request: NextRequest) {
   const proxyContext = createProxySupabaseContext(request);
+  if (!isAdminAppRoute(request.nextUrl.pathname)) {
+    return proxyContext.response;
+  }
+
   const { data } = await proxyContext.supabase.auth.getClaims();
   const user = data?.claims;
 
-  if (!user && !isAnonymousPublicRoute(request.nextUrl.pathname)) {
+  if (!user) {
     return NextResponse.redirect(buildAnonymousLoginRedirect(request));
   }
 
-  if (user && isAdminAppRoute(request.nextUrl.pathname)) {
-    const adminRedirectPath = await getAdminAppRouteRedirect({
-      pathname: request.nextUrl.pathname,
-      supabase: proxyContext.supabase,
-      userId: user.sub,
-    });
+  const adminRedirectPath = await getAdminAppRouteRedirect({
+    pathname: request.nextUrl.pathname,
+    supabase: proxyContext.supabase,
+    userId: user.sub,
+  });
 
-    if (adminRedirectPath) {
-      return NextResponse.redirect(
-        new URL(adminRedirectPath, request.nextUrl.origin),
-      );
-    }
+  if (adminRedirectPath) {
+    return NextResponse.redirect(
+      new URL(adminRedirectPath, request.nextUrl.origin),
+    );
   }
 
   return proxyContext.response;

@@ -1,14 +1,56 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { LogoutButton } from "@/components/logout-button";
 import {
-  ADMIN_DASHBOARD_BREADCRUMB,
-  ADMIN_DASHBOARD_HEADING,
   adminDashboardSections,
   adminPrimaryNavigation,
+  getAdminRouteMetadata,
+  isAdminNavigationItemActive,
+  type AdminNavigationItem,
 } from "@/lib/admin/navigation";
 
+function NavigationLink({
+  item,
+  pathname,
+}: {
+  item: AdminNavigationItem;
+  pathname: string;
+}) {
+  const isActive = isAdminNavigationItemActive(pathname, item);
+
+  return (
+    <Link
+      href={item.href}
+      aria-current={isActive ? "page" : undefined}
+      className={`block rounded-2xl border px-4 py-3 text-sm transition-colors ${
+        isActive
+          ? "border-primary/30 bg-primary text-primary-foreground shadow-[0_20px_45px_rgba(115,92,0,0.18)]"
+          : "border-border/60 bg-surface-container-lowest/70 text-foreground hover:border-primary/30 hover:bg-card"
+      }`}
+    >
+      <div className="font-semibold">{item.label}</div>
+      <div
+        className={`mt-1 text-xs leading-5 ${
+          isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+        }`}
+      >
+        {item.description}
+      </div>
+    </Link>
+  );
+}
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const currentRoute = getAdminRouteMetadata(pathname);
+  const breadcrumbItems = currentRoute?.breadcrumb ?? ["Admin"];
+  const heading = currentRoute?.heading ?? "Operational dashboard";
+  const sectionNavigationLabel =
+    currentRoute?.sectionNavigationLabel ?? "Dashboard sections";
+
   return (
     <main className="min-h-screen px-4 py-4 md:px-6 md:py-6">
       <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-7xl gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
@@ -33,18 +75,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
                 Routes
               </p>
-              <nav className="space-y-2">
+              <nav aria-label="Admin routes" className="space-y-2">
                 {adminPrimaryNavigation.map((item) => (
-                  <Link
+                  <NavigationLink
                     key={item.href}
-                    href={item.href}
-                    className="block rounded-2xl border border-transparent bg-primary px-4 py-3 text-primary-foreground shadow-[0_20px_45px_rgba(115,92,0,0.18)] transition-transform hover:-translate-y-0.5"
-                  >
-                    <div className="text-sm font-semibold">{item.label}</div>
-                    <div className="mt-1 text-xs leading-5 text-primary-foreground/80">
-                      {item.description}
-                    </div>
-                  </Link>
+                    item={item}
+                    pathname={pathname}
+                  />
                 ))}
               </nav>
             </div>
@@ -53,7 +90,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
                 Dashboard sections
               </p>
-              <nav className="space-y-2">
+              <nav aria-label="Dashboard section links" className="space-y-2">
                 {adminDashboardSections.map((item) => (
                   <Link
                     key={item.href}
@@ -76,7 +113,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 Session
               </p>
               <p className="text-sm leading-6 text-foreground">
-                The admin shell stays behind middleware and server-side checks.
+                The admin shell stays behind proxy and server-side checks.
               </p>
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
@@ -98,12 +135,29 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <header className="rounded-[2rem] border border-border/70 bg-card/85 px-6 py-5 shadow-[0_20px_60px_rgba(27,28,26,0.06)] backdrop-blur">
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-                    {ADMIN_DASHBOARD_BREADCRUMB}
-                  </p>
+                <div className="space-y-3">
+                  <nav aria-label="Breadcrumb">
+                    <ol className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                      {breadcrumbItems.map((item, index) => (
+                        <li
+                          key={`${item}-${index}`}
+                          className="flex items-center gap-2"
+                        >
+                          {index > 0 ? (
+                            <span
+                              aria-hidden="true"
+                              className="text-muted-foreground/60"
+                            >
+                              /
+                            </span>
+                          ) : null}
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </nav>
                   <h2 className="text-3xl font-semibold tracking-[-0.04em] text-foreground">
-                    {ADMIN_DASHBOARD_HEADING}
+                    {heading}
                   </h2>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
@@ -120,7 +174,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </div>
 
               <nav
-                aria-label="Dashboard sections"
+                aria-label={sectionNavigationLabel}
                 className="flex flex-wrap gap-2"
               >
                 {adminDashboardSections.map((item) => (

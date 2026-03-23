@@ -154,6 +154,26 @@ Practical rule:
 - Pages, route handlers, and UI components should stay thin and delegate multi-step auth or data-flow logic into action modules instead of importing Supabase clients directly.
 - Apply the same rule to proxy/session and admin-route orchestration: keep `apps/web/proxy.ts` and `/admin` route files as integration shells that delegate into domain action modules.
 
+## Route boundaries
+
+- Public marketing pages stay in the `(marketing)` route group and remain anonymously accessible.
+- Admin pages live under the internal `(admin)` route group while keeping the public URL surface at `/admin`.
+- `/protected` remains a legacy alias that immediately redirects to `/admin`.
+- The homepage at `/` is intentionally static and in-repo for now. CMS or loader boundary work for home content belongs to `ST-024`, not the current homepage route.
+
+## Admin auth verification
+
+Use this checklist when validating the current admin auth UX:
+
+- Anonymous visit to `/admin` redirects to `/auth/login?next=/admin`.
+- Password sign-in for a provisioned admin lands on `/admin`.
+- Magic-link sign-in for a provisioned admin lands on `/admin`.
+- `next` redirect targets are preserved for admin routes.
+- Authenticated non-admin users are signed out and returned to `/auth/login` with the access-denied message.
+- Signing out from the admin shell returns to `/auth/login` with a success message.
+- `/protected` still redirects to `/admin`.
+- Public non-admin routes remain accessible without authentication.
+
 ## Quality gates
 
 - Pre-commit runs `lint-staged` through Husky.

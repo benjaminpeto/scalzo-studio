@@ -2,18 +2,29 @@ export interface AdminNavigationItem {
   description: string;
   href: string;
   label: string;
+  matchStrategy?: "exact" | "prefix";
 }
 
 export interface AdminDashboardSection extends AdminNavigationItem {
   id: "content" | "operations" | "audit";
 }
 
+export interface AdminRouteMetadata {
+  breadcrumb: string[];
+  heading: string;
+  navigation: AdminNavigationItem;
+  sectionNavigationLabel: string;
+}
+
+const adminDashboardRoute: AdminNavigationItem = {
+  description: "Overview, session health, and next implementation slices.",
+  href: "/admin",
+  label: "Dashboard",
+  matchStrategy: "exact",
+};
+
 export const adminPrimaryNavigation: AdminNavigationItem[] = [
-  {
-    description: "Overview, session health, and next implementation slices.",
-    href: "/admin",
-    label: "Dashboard",
-  },
+  adminDashboardRoute,
 ];
 
 export const adminDashboardSections: AdminDashboardSection[] = [
@@ -37,5 +48,30 @@ export const adminDashboardSections: AdminDashboardSection[] = [
   },
 ];
 
-export const ADMIN_DASHBOARD_BREADCRUMB = "Admin / Dashboard";
-export const ADMIN_DASHBOARD_HEADING = "Operational dashboard";
+const adminRouteMetadata: AdminRouteMetadata[] = [
+  {
+    breadcrumb: ["Admin", "Dashboard"],
+    heading: "Operational dashboard",
+    navigation: adminDashboardRoute,
+    sectionNavigationLabel: "Dashboard sections",
+  },
+];
+
+export function getAdminRouteMetadata(pathname: string) {
+  return (
+    adminRouteMetadata.find((route) =>
+      isAdminNavigationItemActive(pathname, route.navigation),
+    ) ?? null
+  );
+}
+
+export function isAdminNavigationItemActive(
+  pathname: string,
+  item: AdminNavigationItem,
+) {
+  if (item.matchStrategy === "prefix") {
+    return pathname.startsWith(item.href);
+  }
+
+  return pathname === item.href;
+}
