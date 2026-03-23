@@ -226,7 +226,7 @@ export function FloatingPanel({ children, className }: AnimatedProps) {
   });
 
   return (
-    <motion.div ref={ref} className={className} style={{ y }}>
+    <motion.div ref={ref} className={cn("relative", className)} style={{ y }}>
       {children}
     </motion.div>
   );
@@ -256,14 +256,14 @@ export function ScrollFloat({
 
   if (reduceMotion) {
     return (
-      <div ref={ref} className={className}>
+      <div ref={ref} className={cn("relative", className)}>
         {children}
       </div>
     );
   }
 
   return (
-    <motion.div ref={ref} className={className} style={{ y }}>
+    <motion.div ref={ref} className={cn("relative", className)} style={{ y }}>
       {children}
     </motion.div>
   );
@@ -302,7 +302,7 @@ export function FoldOnScroll({ children, className }: FoldOnScrollProps) {
 
   if (reduceMotion) {
     return (
-      <div ref={ref} className={className}>
+      <div ref={ref} className={cn("relative", className)}>
         {children}
       </div>
     );
@@ -311,7 +311,7 @@ export function FoldOnScroll({ children, className }: FoldOnScrollProps) {
   return (
     <motion.div
       ref={ref}
-      className={cn("origin-top", className)}
+      className={cn("relative origin-top", className)}
       style={{
         scale,
         rotateX,
@@ -353,14 +353,18 @@ export function DeckRevealOnScroll({ children, className }: DeckRevealProps) {
 
   if (reduceMotion) {
     return (
-      <div ref={ref} className={className}>
+      <div ref={ref} className={cn("relative", className)}>
         {children}
       </div>
     );
   }
 
   return (
-    <motion.div ref={ref} className={className} style={{ y, opacity, scale }}>
+    <motion.div
+      ref={ref}
+      className={cn("relative", className)}
+      style={{ y, opacity, scale }}
+    >
       {children}
     </motion.div>
   );

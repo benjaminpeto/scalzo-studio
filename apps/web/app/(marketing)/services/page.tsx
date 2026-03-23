@@ -8,7 +8,6 @@ import {
   ScrollFloat,
 } from "@/components/home/motion";
 import {
-  fallbackServicesIndexEntries,
   getServicesIndexEntries,
   servicePackageOptions,
   servicesFaqItems,
@@ -38,7 +37,30 @@ async function ServicesGridContent() {
 }
 
 function ServicesGridFallback() {
-  return <ServicesGrid services={fallbackServicesIndexEntries} />;
+  return (
+    <div className="grid gap-8 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <article
+          key={index}
+          className="h-full rounded-[1.8rem] bg-white p-6 shadow-[0_16px_44px_rgba(27,28,26,0.05)] ring-1 ring-black/4"
+        >
+          <div className="h-4 w-10 rounded-full bg-black/6" />
+          <div className="mt-5 h-4 w-36 rounded-full bg-black/6" />
+          <div className="mt-3 h-8 w-44 rounded-[0.9rem] bg-black/8" />
+          <div className="mt-5 space-y-3">
+            <div className="h-4 rounded-full bg-black/7" />
+            <div className="h-4 max-w-[84%] rounded-full bg-black/5" />
+          </div>
+          <div className="mt-7 space-y-3">
+            <div className="h-4 rounded-full bg-black/7" />
+            <div className="h-4 max-w-[82%] rounded-full bg-black/5" />
+            <div className="h-4 max-w-[70%] rounded-full bg-black/4" />
+          </div>
+          <div className="mt-6 h-4 w-40 rounded-full bg-black/8" />
+        </article>
+      ))}
+    </div>
+  );
 }
 
 function ServicesGrid({
@@ -73,7 +95,7 @@ function ServicesGrid({
 export default function ServicesPage() {
   return (
     <>
-      <Section spacing="roomy" className="overflow-hidden pb-14 lg:pb-18">
+      <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">
         <Reveal>
           <Grid gap="2xl" className="lg:grid-cols-[0.58fr_0.42fr] lg:items-end">
             <Stack gap="lg">
@@ -138,7 +160,7 @@ export default function ServicesPage() {
         </Reveal>
       </Section>
 
-      <Section spacing="roomy" surface="inverse">
+      <Section spacing="tight" surface="inverse">
         <Reveal>
           <Stack gap="xl">
             <Grid

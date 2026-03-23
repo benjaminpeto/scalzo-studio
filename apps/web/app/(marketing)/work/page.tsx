@@ -8,11 +8,7 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import {
-  fallbackWorkIndexEntries,
-  getWorkIndexEntries,
-  type WorkIndexEntry,
-} from "@/lib/content/work";
+import { getWorkIndexEntries, type WorkIndexEntry } from "@/lib/content/work";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -36,7 +32,24 @@ async function WorkGridContent() {
 }
 
 function WorkGridFallback() {
-  return <WorkGrid entries={fallbackWorkIndexEntries} />;
+  return (
+    <div className="grid gap-5 lg:grid-cols-2">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <article
+          key={index}
+          className="overflow-hidden rounded-[1.7rem] bg-white shadow-[0_8px_26px_rgba(27,28,26,0.04)] ring-1 ring-black/4"
+        >
+          <div className="aspect-[1.08] w-full bg-black/6" />
+          <div className="space-y-3 px-5 py-4 sm:px-6">
+            <div className="h-8 w-52 rounded-[0.9rem] bg-black/8" />
+            <div className="h-4 w-44 rounded-full bg-black/6" />
+            <div className="h-4 max-w-[88%] rounded-full bg-black/5" />
+            <div className="h-4 w-36 rounded-full bg-black/7" />
+          </div>
+        </article>
+      ))}
+    </div>
+  );
 }
 
 function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
@@ -64,7 +77,7 @@ function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
 export default function WorkPage() {
   return (
     <>
-      <Section spacing="roomy" className="overflow-hidden pb-14 lg:pb-18">
+      <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">
         <Reveal>
           <Grid gap="2xl" className="lg:grid-cols-[0.56fr_0.44fr] lg:items-end">
             <Stack gap="lg">
