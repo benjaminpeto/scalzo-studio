@@ -1,5 +1,30 @@
 import type { NextConfig } from "next";
 
+function getSupabaseRemotePatterns(): NonNullable<
+  NextConfig["images"]
+>["remotePatterns"] {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (!supabaseUrl) {
+    return [];
+  }
+
+  try {
+    const url = new URL(supabaseUrl);
+
+    return [
+      {
+        hostname: url.hostname,
+        pathname: "/storage/v1/object/public/**",
+        port: url.port,
+        protocol: url.protocol.replace(":", "") as "http" | "https",
+      },
+    ];
+  } catch {
+    return [];
+  }
+}
+
 const deploymentAssetHeaders = [
   {
     source: "/placeholders/:path*",
@@ -59,6 +84,9 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   experimental: {
     externalDir: true,
+  },
+  images: {
+    remotePatterns: getSupabaseRemotePatterns(),
   },
   async headers() {
     return deploymentAssetHeaders;

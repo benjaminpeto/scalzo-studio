@@ -53,11 +53,7 @@ function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
             }}
             metadata={entry.metadata}
             outcome={entry.metric}
-            footerAccessory={
-              <span className="text-sm uppercase tracking-[0.18em] text-muted-foreground">
-                Detail route lands next
-              </span>
-            }
+            cta={{ href: `/work/${entry.slug}`, label: "Read case study" }}
           />
         </RevealItem>
       ))}

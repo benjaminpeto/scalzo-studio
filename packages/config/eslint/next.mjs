@@ -11,11 +11,13 @@ export function createNextEslintConfig(baseDirectory, options = {}) {
       settings: {
         ...(options.settings ?? {}),
       },
+    },
+    ...compat.extends("next/core-web-vitals", "next/typescript"),
+    {
       rules: {
         "@next/next/no-html-link-for-pages": "off",
         ...(options.rules ?? {}),
       },
     },
-    ...compat.extends("next/core-web-vitals", "next/typescript"),
   ];
 }

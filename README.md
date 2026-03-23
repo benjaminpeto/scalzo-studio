@@ -182,7 +182,12 @@ Practical rule:
 
 - `/work` loads the published case-study grid from Supabase through `apps/web/lib/content/work.ts`.
 - The route falls back to the current in-repo featured-work content when the CMS table is empty or unavailable.
-- Work cards currently show summary, industry/service metadata, and a key metric, while detail-page navigation remains deferred to `ST-029`.
+
+## Work detail boundary
+
+- `/work/[slug]` loads the published case-study row from Supabase through `apps/web/lib/content/work.ts`.
+- Challenge, approach, testimonial, and visual composition fall back to a static case-study layer when the CMS row does not yet provide enough editorial detail on its own.
+- Work detail metadata prefers case-study SEO fields from Supabase and otherwise falls back to the static route copy.
 
 ## Admin auth verification
 
