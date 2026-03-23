@@ -1,6 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
 
-import { journalEntries } from "@/components/home/content";
 import {
   HoverCard,
   Reveal,
@@ -9,10 +8,15 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import type { JournalEntry } from "@/components/home/content";
 import { BlogPostCard } from "@ui/components/marketing/blog-post-card";
 
-export function JournalPreview() {
-  const [featuredEntry, ...supportingEntries] = journalEntries;
+export function JournalPreview({
+  entries,
+}: {
+  entries: ReadonlyArray<JournalEntry>;
+}) {
+  const [featuredEntry, ...supportingEntries] = entries;
 
   return (
     <section

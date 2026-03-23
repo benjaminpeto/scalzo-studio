@@ -1,4 +1,3 @@
-import { serviceGroups } from "@/components/home/content";
 import {
   Reveal,
   RevealGroup,
@@ -6,9 +5,14 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import type { ServiceGroup } from "@/components/home/content";
 import { ServiceCard } from "@ui/components/marketing/service-card";
 
-export function ServicesPreview() {
+export function ServicesPreview({
+  services,
+}: {
+  services: ReadonlyArray<ServiceGroup>;
+}) {
   return (
     <section
       id="services"
@@ -25,7 +29,7 @@ export function ServicesPreview() {
         </ScrollFloat>
 
         <RevealGroup className="mt-12 grid gap-8 lg:grid-cols-3" stagger={0.1}>
-          {serviceGroups.map((service, index) => (
+          {services.map((service, index) => (
             <RevealItem key={service.title}>
               <ServiceCard
                 title={service.title}

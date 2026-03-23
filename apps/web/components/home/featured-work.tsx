@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { featuredProjects } from "@/components/home/content";
 import {
   HoverCard,
   Reveal,
@@ -10,13 +9,18 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import type { FeaturedProject } from "@/components/home/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { CaseStudyCard } from "@ui/components/marketing/case-study-card";
 
-export function FeaturedWork() {
+export function FeaturedWork({
+  projects,
+}: {
+  projects: ReadonlyArray<FeaturedProject>;
+}) {
   return (
     <Section id="projects">
       <Reveal>
@@ -56,7 +60,7 @@ export function FeaturedWork() {
 
           <RevealGroup stagger={0.12}>
             <Grid cols="two" gap="md">
-              {featuredProjects.map((project) => (
+              {projects.map((project) => (
                 <RevealItem key={project.title}>
                   <ScrollFloat offset={18}>
                     <HoverCard>

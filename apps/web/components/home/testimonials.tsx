@@ -1,4 +1,3 @@
-import { testimonials } from "@/components/home/content";
 import {
   Reveal,
   RevealGroup,
@@ -6,13 +5,14 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import type { Testimonial } from "@/components/home/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { TestimonialCard } from "@ui/components/marketing/testimonial-card";
 
-export function Testimonials() {
+export function Testimonials({ items }: { items: ReadonlyArray<Testimonial> }) {
   return (
     <Section id="testimonials">
       <Reveal>
@@ -39,7 +39,7 @@ export function Testimonials() {
             className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
             stagger={0.1}
           >
-            {testimonials.map((testimonial) => (
+            {items.map((testimonial) => (
               <RevealItem key={`${testimonial.name}-${testimonial.company}`}>
                 <ScrollFloat offset={18}>
                   <TestimonialCard

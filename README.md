@@ -161,6 +161,12 @@ Practical rule:
 - `/protected` remains a legacy alias that immediately redirects to `/admin`.
 - The homepage at `/` is intentionally static and in-repo for now. CMS or loader boundary work for home content belongs to `ST-024`, not the current homepage route.
 
+## Homepage content boundary
+
+- The home route loads CMS-backed content for services, featured work, journal previews, and testimonials through `apps/web/lib/content/home.ts`.
+- Hero, navigation/footer links, trust strip, process, studio credibility, FAQ, newsletter shell, and CTA band stay on static config for now.
+- If the CMS tables are empty or unavailable, the loader falls back to the current in-repo home content so the page design and structure remain unchanged.
+
 ## Admin auth verification
 
 Use this checklist when validating the current admin auth UX:
