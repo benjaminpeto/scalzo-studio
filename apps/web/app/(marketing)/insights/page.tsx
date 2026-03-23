@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { NewsletterSignup } from "@/components/home/newsletter-signup";
@@ -78,7 +79,7 @@ function InsightsHero({
           <div className="surface-grain rounded-[1.9rem] border border-border/70 bg-white/80 p-6 shadow-[0_18px_52px_rgba(27,28,26,0.05)] sm:p-8">
             <p className="section-kicker">Browse by topic</p>
             <div className="mt-6 flex flex-wrap gap-2">
-              <a
+              <Link
                 href="/insights"
                 aria-current={selectedTag ? undefined : "page"}
                 className={`rounded-full border px-3 py-2 text-xs uppercase tracking-[0.18em] transition-colors ${
@@ -88,13 +89,13 @@ function InsightsHero({
                 }`}
               >
                 All notes
-              </a>
+              </Link>
               {availableTags.map((tag) => {
                 const isActive =
                   selectedTag?.toLowerCase() === tag.toLowerCase();
 
                 return (
-                  <a
+                  <Link
                     key={tag}
                     href={buildTagHref(tag)}
                     aria-current={isActive ? "page" : undefined}
@@ -105,7 +106,7 @@ function InsightsHero({
                     }`}
                   >
                     {tag}
-                  </a>
+                  </Link>
                 );
               })}
             </div>
@@ -167,6 +168,10 @@ function InsightsIndexLayout({
                   priority: true,
                   src: featuredEntry.image,
                 }}
+                cta={{
+                  href: `/insights/${featuredEntry.slug}`,
+                  label: "Read article",
+                }}
               />
             ) : (
               <div className="rounded-[1.9rem] border border-dashed border-border/70 bg-white/70 p-8">
@@ -214,24 +219,10 @@ function InsightsIndexLayout({
                         alt: `Cover image for ${entry.title}`,
                         src: entry.image,
                       }}
-                      footerAccessory={
-                        <div className="space-y-4">
-                          <div className="flex flex-wrap gap-2">
-                            {entry.tags.map((tag) => (
-                              <a
-                                key={`${entry.slug}-${tag}`}
-                                href={buildTagHref(tag)}
-                                className="rounded-full border border-border/70 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
-                              >
-                                {tag}
-                              </a>
-                            ))}
-                          </div>
-                          <p className="text-sm uppercase tracking-[0.18em] text-muted-foreground">
-                            Full article route lands next
-                          </p>
-                        </div>
-                      }
+                      cta={{
+                        href: `/insights/${entry.slug}`,
+                        label: "Read article",
+                      }}
                     />
                   </RevealItem>
                 ))}

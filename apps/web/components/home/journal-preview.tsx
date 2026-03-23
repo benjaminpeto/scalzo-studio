@@ -50,6 +50,10 @@ export function JournalPreview({
                   metadata={featuredEntry.date}
                   excerpt={featuredEntry.excerpt}
                   image={{ src: featuredEntry.image, alt: "" }}
+                  cta={{
+                    href: `/insights/${featuredEntry.slug}`,
+                    label: "Read article",
+                  }}
                 />
               </HoverCard>
             </ScrollFloat>
@@ -64,12 +68,15 @@ export function JournalPreview({
                     metadata={entry.date}
                     excerpt={entry.excerpt}
                     image={{ src: entry.image, alt: "" }}
-                    footerAccessory={
-                      <span className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-foreground transition-colors group-hover:text-primary">
-                        Read note
-                        <ArrowUpRight className="size-4" aria-hidden="true" />
-                      </span>
-                    }
+                    cta={{
+                      href: `/insights/${entry.slug}`,
+                      label: (
+                        <span className="inline-flex items-center gap-2">
+                          Read article
+                          <ArrowUpRight className="size-4" aria-hidden="true" />
+                        </span>
+                      ),
+                    }}
                   />
                 </HoverCard>
               </ScrollFloat>

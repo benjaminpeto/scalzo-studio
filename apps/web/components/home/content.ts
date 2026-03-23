@@ -33,6 +33,7 @@ export interface JournalEntry {
   date: string;
   excerpt: string;
   image: string;
+  slug: string;
   title: string;
 }
 
@@ -162,6 +163,7 @@ export const journalEntries = [
     excerpt:
       "The first screen should reduce doubt quickly. Case signals, tone, and hierarchy matter before a long paragraph ever gets read.",
     image: "/placeholders/hero-editorial.svg",
+    slug: "why-premium-service-brands-need-proof-before-explanation",
   },
   {
     title: "How to make a small studio site feel more established",
@@ -170,6 +172,7 @@ export const journalEntries = [
     excerpt:
       "A more mature homepage usually comes from restraint: fewer competing actions, stronger spacing, and clearer content bands.",
     image: "/placeholders/case-product.svg",
+    slug: "how-to-make-a-small-studio-site-feel-more-established",
   },
   {
     title: "What founders miss when they treat content like leftovers",
@@ -178,6 +181,7 @@ export const journalEntries = [
     excerpt:
       "Content stops feeling secondary when the visual system gives it structure. That changes how often it gets used and maintained.",
     image: "/placeholders/case-editorial.svg",
+    slug: "what-founders-miss-when-they-treat-content-like-leftovers",
   },
 ] as const;
 

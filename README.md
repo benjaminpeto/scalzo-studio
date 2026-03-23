@@ -193,7 +193,13 @@ Practical rule:
 
 - `/insights` loads the published posts index from Supabase through `apps/web/lib/content/insights.ts`.
 - The route supports a server-rendered `?tag=` filter for the tag UI and falls back to in-repo editorial entries when the `posts` table is empty or unavailable.
-- Featured and supporting cards stay teaser-only for now; the full article route is completed under `ST-031`.
+- Featured and supporting cards now route into the published article detail pages under `/insights/[slug]`.
+
+## Insights detail boundary
+
+- `/insights/[slug]` loads the published post row from Supabase through `apps/web/lib/content/insights.ts`.
+- Article body markdown is rendered safely without raw HTML support, with custom heading, link, and image rendering for the editorial article layout.
+- If the CMS row is missing or incomplete, the route falls back to in-repo article content, image, and metadata helpers for the matching slug.
 
 ## Admin auth verification
 
