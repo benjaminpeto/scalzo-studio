@@ -123,6 +123,43 @@ Hosted project workflow:
 - Include seed data in a remote push only when that is intentional:
   `npx supabase db push --linked --include-seed`.
 
+## Storage bucket strategy
+
+Storage buckets for public marketing content are managed by SQL migration so the setup is reproducible in local and hosted environments.
+
+Buckets:
+
+- `case-study-images`: public bucket for case study cover and gallery images
+- `blog-images`: public bucket for blog cover images and editor-inserted post images
+
+Upload path rules:
+
+- `case-study-images`: `<slug>/cover/<filename>` and `<slug>/gallery/<filename>`
+- `blog-images`: `<slug>/cover/<filename>` and `<slug>/content/<filename>`
+- Slugs must be lowercase kebab-case.
+- File names are normalized to lowercase ASCII-safe names and must end in `.avif`, `.jpg`, `.jpeg`, `.png`, or `.webp`.
+
+Validation and access rules:
+
+- Each bucket allows `image/avif`, `image/jpeg`, `image/png`, and `image/webp`.
+- Each object is limited to `10485760` bytes (`10 MB`).
+- Public reads are allowed only for valid objects inside those two buckets.
+- Inserts, updates, and deletes are restricted to authenticated admins through `storage.objects` policies.
+
+App-side helpers live in [`storage.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/storage.ts) and provide:
+
+- bucket IDs and validation constants
+- object-path builders for case study and blog media
+- upload validation helpers
+- public and signed URL helpers for later editor flows
+
+Verification steps:
+
+1. Run `npm run supabase:db:reset`.
+2. Confirm both bucket rows exist in `storage.buckets`.
+3. Confirm public reads and admin-only writes are present in `pg_policies` for `storage.objects`.
+4. Use the helper module to generate an object path and verify it matches the documented bucket/path contract.
+
 ## Current schema baseline
 
 - Initial schema migration:
