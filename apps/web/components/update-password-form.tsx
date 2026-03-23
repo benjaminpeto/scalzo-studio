@@ -1,7 +1,7 @@
 "use client";
 
+import { updateCurrentUserPassword } from "@/actions/auth/client";
 import { cn } from "@/lib/utils";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { Button } from "@ui/components/ui/button";
 import {
   Card,
@@ -26,14 +26,11 @@ export function UpdatePasswordForm({
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createBrowserSupabaseClient();
     setIsLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.updateUser({ password });
-      if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
+      await updateCurrentUserPassword({ password });
       router.push("/protected");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");

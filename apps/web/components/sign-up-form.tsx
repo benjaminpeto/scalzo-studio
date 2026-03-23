@@ -1,7 +1,7 @@
 "use client";
 
+import { signUpWithEmail } from "@/actions/auth/client";
 import { cn } from "@/lib/utils";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { Button } from "@ui/components/ui/button";
 import {
   Card,
@@ -29,7 +29,6 @@ export function SignUpForm({
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createBrowserSupabaseClient();
     setIsLoading(true);
     setError(null);
 
@@ -40,14 +39,11 @@ export function SignUpForm({
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      await signUpWithEmail({
         email,
+        origin: window.location.origin,
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
-        },
       });
-      if (error) throw error;
       router.push("/auth/sign-up-success");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");

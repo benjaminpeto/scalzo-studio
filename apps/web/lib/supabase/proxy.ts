@@ -1,3 +1,7 @@
+import {
+  ADMIN_AUTH_ACCESS_DENIED_MESSAGE,
+  normalizeAuthRedirectPath,
+} from "@/lib/supabase/auth-flow";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -42,6 +46,10 @@ export async function updateSession(request: NextRequest) {
   // with the Supabase client, your users may be randomly logged out.
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
+  const isProtectedRoute = request.nextUrl.pathname.startsWith("/protected");
+  const loginUrl = request.nextUrl.clone();
+
+  loginUrl.pathname = "/auth/login";
 
   if (
     request.nextUrl.pathname !== "/" &&
@@ -49,10 +57,25 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth")
   ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
+    loginUrl.searchParams.set(
+      "next",
+      normalizeAuthRedirectPath(request.nextUrl.pathname),
+    );
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (user && isProtectedRoute) {
+    const { data: adminRow, error: adminError } = await supabase
+      .from("admins")
+      .select("user_id")
+      .eq("user_id", user.sub)
+      .maybeSingle();
+
+    if (adminError || !adminRow) {
+      await supabase.auth.signOut();
+      loginUrl.searchParams.set("error", ADMIN_AUTH_ACCESS_DENIED_MESSAGE);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

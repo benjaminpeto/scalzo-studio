@@ -1,7 +1,11 @@
 "use client";
 
+import {
+  requestAdminMagicLink,
+  signInAdminWithPassword,
+} from "@/actions/auth/client";
+import { normalizeAuthRedirectPath } from "@/lib/supabase/auth-flow";
 import { cn } from "@/lib/utils";
-import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { Button } from "@ui/components/ui/button";
 import {
   Card,
@@ -13,7 +17,7 @@ import {
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm({
@@ -23,23 +27,33 @@ export function LoginForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMagicLinkLoading, setIsMagicLinkLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = normalizeAuthRedirectPath(searchParams.get("next"));
+  const authError = searchParams.get("error");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createBrowserSupabaseClient();
+
+    if (!email.trim() || !password) {
+      setError("Enter both your email and password.");
+      setSuccessMessage(null);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      await signInAdminWithPassword({
         email,
         password,
       });
-      if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
+      router.replace(next);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -47,13 +61,42 @@ export function LoginForm({
     }
   };
 
+  const handleMagicLinkLogin = async () => {
+    if (!email.trim()) {
+      setError("Enter your email to request a magic link.");
+      setSuccessMessage(null);
+      return;
+    }
+
+    setIsMagicLinkLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      await requestAdminMagicLink({
+        email,
+        next,
+        origin: window.location.origin,
+      });
+
+      setSuccessMessage(
+        "Magic link sent. Use the email link to continue with admin sign-in.",
+      );
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setIsMagicLinkLoading(false);
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Admin login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Sign in with your password or request a magic link for your admin
+            account.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -65,7 +108,6 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -83,24 +125,36 @@ export function LoginForm({
                 <Input
                   id="password"
                   type="password"
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error ? (
+                <p className="text-sm text-red-500">{error}</p>
+              ) : authError ? (
+                <p className="text-sm text-red-500">{authError}</p>
+              ) : null}
+              {successMessage ? (
+                <p className="text-sm text-emerald-700">{successMessage}</p>
+              ) : null}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Logging in..." : "Login"}
+                {isLoading ? "Logging in..." : "Log in with password"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={isMagicLinkLoading}
+                onClick={handleMagicLinkLogin}
+              >
+                {isMagicLinkLoading
+                  ? "Sending magic link..."
+                  : "Send magic link"}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/auth/sign-up"
-                className="underline underline-offset-4"
-              >
-                Sign up
-              </Link>
+              Access is provisioned manually. Contact an existing admin if you
+              need an account.
             </div>
           </form>
         </CardContent>

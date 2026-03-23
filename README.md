@@ -26,6 +26,7 @@ The site runs from [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/we
 .
 |-- apps/
 |   `-- web/              # Next.js App Router application
+|       `-- actions/      # App-level orchestration for route handlers, server actions, and client auth flows
 |-- packages/
 |   |-- config/           # Shared TypeScript, ESLint, and workspace config
 |   `-- ui/               # Shared UI primitives and utilities
@@ -137,6 +138,20 @@ Rules:
 - Never import the service-role helper into client code.
 - Prefer the request-scoped server helper for normal authenticated reads and writes so RLS continues to enforce access.
 - Use the service-role helper only for trusted backend workflows such as privileged ingestion or administrative automation where bypassing RLS is intentional.
+
+## App action convention
+
+App-level orchestration should live in [`apps/web/actions/README.md`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/README.md).
+
+Use these boundaries:
+
+- `apps/web/actions/<domain>/server.ts` for route-handler and server-action orchestration
+- `apps/web/actions/<domain>/client.ts` for browser-side orchestration that client components call
+- `apps/web/lib/*` for low-level clients and side-effect-free helpers
+
+Practical rule:
+
+- Pages, route handlers, and UI components should stay thin and delegate multi-step auth or data-flow logic into action modules instead of importing Supabase clients directly.
 
 ## Quality gates
 

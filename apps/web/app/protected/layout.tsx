@@ -18,7 +18,9 @@ export default function ProtectedLayout({
             <AuthButton />
           </Suspense>
         </nav>
-        <div className="flex-1 py-10">{children}</div>
+        <div className="flex-1 py-10">
+          <Suspense>{children}</Suspense>
+        </div>
       </div>
     </main>
   );
