@@ -4,6 +4,7 @@ export interface AdminNavigationItem {
   icon:
     | "dashboard"
     | "services"
+    | "work"
     | "content"
     | "operations"
     | "audit"
@@ -42,6 +43,14 @@ const adminServicesRoute: AdminNavigationItem = {
   matchStrategy: "prefix",
 };
 
+const adminWorkRoute: AdminNavigationItem = {
+  description: "Filter, publish, and inspect the public work stack.",
+  href: "/admin/work",
+  icon: "work",
+  label: "Work",
+  matchStrategy: "prefix",
+};
+
 const adminServicesSectionNavigation: AdminNavigationItem[] = [
   {
     description: "Search, counts, and route-level admin context.",
@@ -57,9 +66,25 @@ const adminServicesSectionNavigation: AdminNavigationItem[] = [
   },
 ];
 
+const adminWorkSectionNavigation: AdminNavigationItem[] = [
+  {
+    description: "Filter state, counts, and route-level admin context.",
+    href: "/admin/work#overview",
+    icon: "overview",
+    label: "Overview",
+  },
+  {
+    description: "Current case-study list with publish controls.",
+    href: "/admin/work#case-study-list",
+    icon: "list",
+    label: "List view",
+  },
+];
+
 export const adminPrimaryNavigation: AdminNavigationItem[] = [
   adminDashboardRoute,
   adminServicesRoute,
+  adminWorkRoute,
 ];
 
 export const adminDashboardSections: AdminDashboardSection[] = [
@@ -99,6 +124,13 @@ const adminRouteMetadata: AdminRouteMetadata[] = [
     navigation: adminServicesRoute,
     sectionNavigationItems: adminServicesSectionNavigation,
     sectionNavigationLabel: "Service list sections",
+  },
+  {
+    breadcrumb: ["Admin", "Work"],
+    heading: "Case studies management",
+    navigation: adminWorkRoute,
+    sectionNavigationItems: adminWorkSectionNavigation,
+    sectionNavigationLabel: "Work list sections",
   },
 ];
 

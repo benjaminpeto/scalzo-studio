@@ -231,6 +231,8 @@ Use this checklist when validating the current admin auth UX:
 - `/admin/services` is the current services management route for search, publish toggles, and ordering.
 - `/admin/services/new` creates a new service entry through the admin editor.
 - `/admin/services/[slug]` is the live services editor route for title, slug, markdown, deliverables, publish state, and SEO fields.
+- `/admin/work` is the current case-studies management route for published-state filtering, industry filtering, preview access, and publish toggles.
+- `/admin/work/[slug]` is the stable case-study editor destination shell ahead of the full editor ticket.
 
 ## Quality gates
 

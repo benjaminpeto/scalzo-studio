@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  Images,
   Inbox,
   LayoutDashboard,
   Layers3,
@@ -38,6 +39,7 @@ const iconByKey: Record<AdminNavigationItem["icon"], LucideIcon> = {
   operations: Inbox,
   overview: PanelTop,
   services: BriefcaseBusiness,
+  work: Images,
 };
 
 function SidebarPrimaryLink({
