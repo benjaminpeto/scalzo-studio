@@ -1,27 +1,45 @@
 import type { NextConfig } from "next";
 
-function getSupabaseRemotePatterns(): NonNullable<
-  NextConfig["images"]
->["remotePatterns"] {
+function getSupabaseImageConfig(): Pick<
+  NonNullable<NextConfig["images"]>,
+  "dangerouslyAllowLocalIP" | "remotePatterns"
+> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
   if (!supabaseUrl) {
-    return [];
+    return {
+      dangerouslyAllowLocalIP: false,
+      remotePatterns: [],
+    };
   }
 
   try {
     const url = new URL(supabaseUrl);
+    const isLocalSupabaseHost =
+      url.hostname === "127.0.0.1" || url.hostname === "localhost";
+    const hostnames = new Set<string>([url.hostname]);
+
+    if (isLocalSupabaseHost) {
+      hostnames.add("127.0.0.1");
+      hostnames.add("localhost");
+    }
 
     return [
       {
-        hostname: url.hostname,
-        pathname: "/storage/v1/object/public/**",
-        port: url.port,
-        protocol: url.protocol.replace(":", "") as "http" | "https",
+        dangerouslyAllowLocalIP: isLocalSupabaseHost,
+        remotePatterns: Array.from(hostnames).map((hostname) => ({
+          hostname,
+          pathname: "/storage/v1/object/public/**",
+          port: url.port,
+          protocol: url.protocol.replace(":", "") as "http" | "https",
+        })),
       },
-    ];
+    ][0];
   } catch {
-    return [];
+    return {
+      dangerouslyAllowLocalIP: false,
+      remotePatterns: [],
+    };
   }
 }
 
@@ -85,9 +103,7 @@ const nextConfig: NextConfig = {
   experimental: {
     externalDir: true,
   },
-  images: {
-    remotePatterns: getSupabaseRemotePatterns(),
-  },
+  images: getSupabaseImageConfig(),
   async headers() {
     return deploymentAssetHeaders;
   },

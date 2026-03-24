@@ -1,0 +1,141 @@
+import { Children, isValidElement, type ReactNode } from "react";
+
+import Image from "next/image";
+import Link from "next/link";
+import ReactMarkdown, { type Components } from "react-markdown";
+
+import { buildInsightHeadingId } from "@/lib/insights/markdown";
+
+function flattenMarkdownText(children: ReactNode): string {
+  return Children.toArray(children)
+    .map((child) => {
+      if (typeof child === "string" || typeof child === "number") {
+        return String(child);
+      }
+
+      if (
+        isValidElement<{
+          children?: ReactNode;
+        }>(child)
+      ) {
+        return flattenMarkdownText(child.props.children);
+      }
+
+      return "";
+    })
+    .join("");
+}
+
+export const insightMarkdownComponents: Components = {
+  a: ({ children, href }) => {
+    if (!href) {
+      return <>{children}</>;
+    }
+
+    if (href.startsWith("/")) {
+      return (
+        <Link
+          href={href}
+          className="underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
+        >
+          {children}
+        </Link>
+      );
+    }
+
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        className="underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
+      >
+        {children}
+      </a>
+    );
+  },
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-primary pl-5 font-display text-[1.55rem] leading-[1.1] tracking-[-0.035em] text-foreground sm:text-[1.85rem]">
+      {children}
+    </blockquote>
+  ),
+  code: ({ children, className }) =>
+    className ? (
+      <code className={className}>{children}</code>
+    ) : (
+      <code className="rounded bg-[rgba(27,28,26,0.06)] px-1.5 py-1 text-[0.9em] text-foreground">
+        {children}
+      </code>
+    ),
+  h2: ({ children }) => {
+    const text = flattenMarkdownText(children);
+    const id = buildInsightHeadingId(text);
+
+    return (
+      <h2
+        id={id}
+        className="scroll-mt-28 font-display text-[2.3rem] leading-[0.96] tracking-[-0.05em] text-foreground sm:text-[3rem]"
+      >
+        {children}
+      </h2>
+    );
+  },
+  h3: ({ children }) => {
+    const text = flattenMarkdownText(children);
+    const id = buildInsightHeadingId(text);
+
+    return (
+      <h3
+        id={id}
+        className="scroll-mt-28 font-display text-[1.8rem] leading-none tracking-[-0.04em] text-foreground sm:text-[2.15rem]"
+      >
+        {children}
+      </h3>
+    );
+  },
+  img: ({ alt = "", src = "" }) =>
+    typeof src === "string" && src ? (
+      <span className="block overflow-hidden rounded-[1.8rem] bg-[rgba(27,28,26,0.04)]">
+        <Image
+          src={src}
+          alt={alt}
+          width={1600}
+          height={1000}
+          sizes="(min-width: 1024px) 70vw, 100vw"
+          className="aspect-[1.28] w-full object-cover"
+        />
+      </span>
+    ) : null,
+  li: ({ children }) => (
+    <li className="pl-2 text-base leading-8 text-muted-foreground sm:text-lg">
+      {children}
+    </li>
+  ),
+  ol: ({ children }) => (
+    <ol className="space-y-3 pl-6 marker:text-foreground">{children}</ol>
+  ),
+  p: ({ children }) => (
+    <p className="text-base leading-8 text-muted-foreground sm:text-lg">
+      {children}
+    </p>
+  ),
+  pre: ({ children }) => (
+    <pre className="overflow-x-auto rounded-[1.5rem] bg-[rgba(17,19,17,0.96)] p-5 text-sm leading-7 text-white">
+      {children}
+    </pre>
+  ),
+  strong: ({ children }) => (
+    <strong className="font-semibold text-foreground">{children}</strong>
+  ),
+  ul: ({ children }) => (
+    <ul className="space-y-3 pl-6 marker:text-foreground">{children}</ul>
+  ),
+};
+
+export function InsightMarkdown({ content }: { content: string }) {
+  return (
+    <ReactMarkdown skipHtml components={insightMarkdownComponents}>
+      {content}
+    </ReactMarkdown>
+  );
+}

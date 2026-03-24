@@ -106,6 +106,13 @@ export function AdminWorkList({
                   <Link href="/admin/work">Clear</Link>
                 </Button>
               ) : null}
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-full px-6"
+              >
+                <Link href="/admin/work/new">New case study</Link>
+              </Button>
             </div>
           </form>
           {statusMessage ? (
@@ -267,6 +274,9 @@ export function AdminWorkList({
               </p>
               <Button asChild variant="outline" className="mt-5">
                 <Link href="/admin/work">Clear filters</Link>
+              </Button>
+              <Button asChild className="mt-3">
+                <Link href="/admin/work/new">New case study</Link>
               </Button>
             </div>
           </div>

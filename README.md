@@ -234,9 +234,11 @@ Use this checklist when validating the current admin auth UX:
 - `/admin/services/new` creates a new service entry through the admin editor.
 - `/admin/services/[slug]` is the live services editor route for title, slug, markdown, deliverables, publish state, and SEO fields.
 - `/admin/work` is the current case-studies management route for published-state filtering, industry filtering, preview access, and publish toggles.
+- `/admin/work/new` creates a new case study entry through the admin editor.
 - `/admin/work/[slug]` is the live case-study editor route for text content, metrics rows, publish state, and case-study image uploads.
 - `/admin/insights` is the current posts management route for published-state filtering, tag filtering, preview access, and publish toggles.
-- `/admin/insights/[slug]` is the current placeholder insight editor route ahead of the full markdown editor ticket.
+- `/admin/insights/new` creates a new insight entry through the admin editor.
+- `/admin/insights/[slug]` is the live insight editor route for markdown body editing, cover-image updates, content-image uploads, tag management, publish state, and SEO fields.
 - Admin case-study preview mode is entered through `/api/preview/work?slug=<slug>` and exited through `/api/preview/disable`, both guarded by the current admin session.
 
 ## Quality gates

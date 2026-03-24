@@ -27,6 +27,7 @@ import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 
 const statusMessageByCode = {
+  created: "The case study has been created and is ready for editing.",
   saved: "The latest case-study changes have been saved.",
 } as const;
 
@@ -152,7 +153,7 @@ function PublishField({ defaultChecked }: { defaultChecked: boolean }) {
   );
 }
 
-function SubmitButton() {
+function SubmitButton({ mode }: { mode: "create" | "edit" }) {
   const { pending } = useFormStatus();
 
   return (
@@ -161,7 +162,13 @@ function SubmitButton() {
       className="min-w-32 rounded-full px-6"
       disabled={pending}
     >
-      {pending ? "Saving..." : "Save changes"}
+      {pending
+        ? mode === "create"
+          ? "Creating..."
+          : "Saving..."
+        : mode === "create"
+          ? "Create case study"
+          : "Save changes"}
     </Button>
   );
 }
@@ -180,6 +187,7 @@ function buildDescribedBy(input: {
 
 export function AdminWorkEditor({
   action,
+  mode,
   caseStudy,
   status,
 }: {
@@ -187,7 +195,8 @@ export function AdminWorkEditor({
     state: AdminCaseStudyEditorState,
     payload: FormData,
   ) => Promise<AdminCaseStudyEditorState>;
-  caseStudy: AdminCaseStudyEditorRecord;
+  mode: "create" | "edit";
+  caseStudy?: AdminCaseStudyEditorRecord;
   status?: string;
 }) {
   const router = useRouter();
@@ -196,7 +205,7 @@ export function AdminWorkEditor({
     initialAdminCaseStudyEditorState,
   );
   const [metricRows, setMetricRows] = useState<MetricRowState[]>(() =>
-    caseStudy.metrics.length
+    caseStudy?.metrics.length
       ? caseStudy.metrics.map((row, index) => createMetricRowState(row, index))
       : [createMetricRowState({}, 0)],
   );
@@ -218,22 +227,28 @@ export function AdminWorkEditor({
       ? statusMessageByCode[status as keyof typeof statusMessageByCode]
       : null;
   const errors: AdminCaseStudyEditorFieldErrors = serverState.fieldErrors;
-  const previewPath = `/api/preview/work?slug=${caseStudy.slug}`;
-  const currentPath = `/admin/work/${caseStudy.slug}`;
+  const previewPath =
+    mode === "edit" && caseStudy
+      ? `/api/preview/work?slug=${caseStudy.slug}`
+      : null;
+  const currentPath =
+    mode === "create"
+      ? "/admin/work/new"
+      : `/admin/work/${caseStudy?.slug ?? ""}`;
   const keepAllGalleryImages = useMemo(
-    () => caseStudy.galleryUrls.length === 0,
-    [caseStudy.galleryUrls.length],
+    () => (caseStudy?.galleryUrls.length ?? 0) === 0,
+    [caseStudy?.galleryUrls.length],
   );
 
   useEffect(() => {
     setMetricRows(
-      caseStudy.metrics.length
+      caseStudy?.metrics.length
         ? caseStudy.metrics.map((row, index) =>
             createMetricRowState(row, index),
           )
         : [createMetricRowState({}, 0)],
     );
-  }, [caseStudy.id, caseStudy.metrics]);
+  }, [caseStudy?.id, caseStudy?.metrics]);
 
   useEffect(() => {
     if (serverState.status !== "success" || !serverState.redirectTo) {
@@ -284,10 +299,12 @@ export function AdminWorkEditor({
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_22rem]">
         <div className="rounded-[1.65rem] border border-border/70 bg-[linear-gradient(160deg,rgba(252,205,3,0.15),rgba(255,255,255,0.96)_42%,rgba(241,239,234,0.9))] p-5 md:p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-            Case-study editor
+            {mode === "create" ? "New case study" : "Case-study editor"}
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-foreground md:text-4xl">
-            {caseStudy.title}
+            {mode === "create"
+              ? "Create a new case-study route."
+              : (caseStudy?.title ?? "Edit case-study content.")}
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
             Manage the work page narrative, outcome metrics, and supporting
@@ -297,11 +314,13 @@ export function AdminWorkEditor({
             <Button asChild variant="outline" className="rounded-full">
               <Link href="/admin/work">Back to work</Link>
             </Button>
-            <Button asChild variant="ghost" className="rounded-full">
-              <Link href={previewPath} prefetch={false}>
-                Preview latest
-              </Link>
-            </Button>
+            {previewPath ? (
+              <Button asChild variant="ghost" className="rounded-full">
+                <Link href={previewPath} prefetch={false}>
+                  Preview latest
+                </Link>
+              </Button>
+            ) : null}
           </div>
         </div>
 
@@ -311,7 +330,11 @@ export function AdminWorkEditor({
               Status
             </p>
             <p className="mt-3 text-xl font-semibold tracking-[-0.03em] text-foreground">
-              {caseStudy.published ? "Published" : "Draft"}
+              {caseStudy
+                ? caseStudy.published
+                  ? "Published"
+                  : "Draft"
+                : "Draft by default"}
             </p>
           </article>
           <article className="rounded-[1.5rem] border border-border/70 bg-surface-container-lowest/82 p-5">
@@ -319,7 +342,9 @@ export function AdminWorkEditor({
               Route
             </p>
             <p className="mt-3 truncate text-sm font-semibold text-foreground">
-              /work/{caseStudy.slug}
+              {mode === "create"
+                ? "/work/{slug}"
+                : `/work/${caseStudy?.slug ?? ""}`}
             </p>
           </article>
           <article className="rounded-[1.5rem] border border-border/70 bg-surface-container-lowest/82 p-5">
@@ -327,7 +352,9 @@ export function AdminWorkEditor({
               Last updated
             </p>
             <p className="mt-3 text-sm font-semibold text-foreground">
-              {formatUpdatedAt(caseStudy.updatedAt)}
+              {caseStudy
+                ? formatUpdatedAt(caseStudy.updatedAt)
+                : "Will be set on save"}
             </p>
           </article>
         </div>
@@ -337,8 +364,20 @@ export function AdminWorkEditor({
         action={formAction}
         className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]"
       >
-        <input type="hidden" name="caseStudyId" value={caseStudy.id} />
-        <input type="hidden" name="currentSlug" value={caseStudy.slug} />
+        {mode === "edit" ? (
+          <>
+            <input
+              type="hidden"
+              name="caseStudyId"
+              value={caseStudy?.id ?? ""}
+            />
+            <input
+              type="hidden"
+              name="currentSlug"
+              value={caseStudy?.slug ?? ""}
+            />
+          </>
+        ) : null}
 
         <div className="space-y-4">
           {serverState.message ? (
@@ -375,7 +414,7 @@ export function AdminWorkEditor({
                 <Input
                   id={titleId}
                   name="title"
-                  defaultValue={caseStudy.title}
+                  defaultValue={caseStudy?.title ?? ""}
                   aria-invalid={Boolean(errors.title)}
                   aria-describedby={buildDescribedBy({
                     error: errors.title,
@@ -396,7 +435,7 @@ export function AdminWorkEditor({
                 <Input
                   id={slugId}
                   name="slug"
-                  defaultValue={caseStudy.slug}
+                  defaultValue={caseStudy?.slug ?? ""}
                   aria-invalid={Boolean(errors.slug)}
                   aria-describedby={buildDescribedBy({
                     error: errors.slug,
@@ -420,7 +459,7 @@ export function AdminWorkEditor({
                 <Input
                   id={clientNameId}
                   name="clientName"
-                  defaultValue={caseStudy.clientName}
+                  defaultValue={caseStudy?.clientName ?? ""}
                   aria-invalid={Boolean(errors.clientName)}
                   aria-describedby={buildDescribedBy({
                     error: errors.clientName,
@@ -441,7 +480,7 @@ export function AdminWorkEditor({
                 <Input
                   id={industryId}
                   name="industry"
-                  defaultValue={caseStudy.industry}
+                  defaultValue={caseStudy?.industry ?? ""}
                   aria-invalid={Boolean(errors.industry)}
                   aria-describedby={buildDescribedBy({
                     error: errors.industry,
@@ -464,7 +503,7 @@ export function AdminWorkEditor({
                 <Textarea
                   id={servicesId}
                   name="services"
-                  defaultValue={caseStudy.services.join("\n")}
+                  defaultValue={caseStudy?.services.join("\n") ?? ""}
                   aria-invalid={Boolean(errors.services)}
                   aria-describedby={buildDescribedBy({
                     error: errors.services,
@@ -492,7 +531,7 @@ export function AdminWorkEditor({
                 <Textarea
                   id={challengeId}
                   name="challenge"
-                  defaultValue={caseStudy.challenge}
+                  defaultValue={caseStudy?.challenge ?? ""}
                   aria-invalid={Boolean(errors.challenge)}
                   aria-describedby={buildDescribedBy({
                     error: errors.challenge,
@@ -514,7 +553,7 @@ export function AdminWorkEditor({
                 <Textarea
                   id={approachId}
                   name="approach"
-                  defaultValue={caseStudy.approach}
+                  defaultValue={caseStudy?.approach ?? ""}
                   aria-invalid={Boolean(errors.approach)}
                   aria-describedby={buildDescribedBy({
                     error: errors.approach,
@@ -536,7 +575,7 @@ export function AdminWorkEditor({
                 <Textarea
                   id={outcomesId}
                   name="outcomes"
-                  defaultValue={caseStudy.outcomes}
+                  defaultValue={caseStudy?.outcomes ?? ""}
                   aria-invalid={Boolean(errors.outcomes)}
                   aria-describedby={buildDescribedBy({
                     error: errors.outcomes,
@@ -615,7 +654,7 @@ export function AdminWorkEditor({
                 optionalLabel="Optional"
               >
                 <div className="space-y-4">
-                  {caseStudy.coverImageUrl ? (
+                  {caseStudy?.coverImageUrl ? (
                     <div className="overflow-hidden rounded-[1.35rem] border border-border/70 bg-white/70">
                       <Image
                         src={caseStudy.coverImageUrl}
@@ -627,7 +666,7 @@ export function AdminWorkEditor({
                     </div>
                   ) : null}
 
-                  {caseStudy.coverImageUrl ? (
+                  {caseStudy?.coverImageUrl ? (
                     <label className="flex items-start gap-3 rounded-[1.15rem] border border-border/70 bg-white/70 px-4 py-3">
                       <input
                         type="checkbox"
@@ -660,7 +699,7 @@ export function AdminWorkEditor({
                 optionalLabel="Optional"
               >
                 <div className="space-y-4">
-                  {caseStudy.galleryUrls.length ? (
+                  {caseStudy?.galleryUrls.length ? (
                     <div className="grid gap-4 md:grid-cols-2">
                       {caseStudy.galleryUrls.map((url, index) => (
                         <label
@@ -727,7 +766,7 @@ export function AdminWorkEditor({
                 <Input
                   id={seoTitleId}
                   name="seoTitle"
-                  defaultValue={caseStudy.seoTitle}
+                  defaultValue={caseStudy?.seoTitle ?? ""}
                   aria-invalid={Boolean(errors.seoTitle)}
                   aria-describedby={buildDescribedBy({
                     error: errors.seoTitle,
@@ -748,7 +787,7 @@ export function AdminWorkEditor({
                 <Textarea
                   id={seoDescriptionId}
                   name="seoDescription"
-                  defaultValue={caseStudy.seoDescription}
+                  defaultValue={caseStudy?.seoDescription ?? ""}
                   aria-invalid={Boolean(errors.seoDescription)}
                   aria-describedby={buildDescribedBy({
                     error: errors.seoDescription,
@@ -769,7 +808,7 @@ export function AdminWorkEditor({
               Publishing
             </p>
             <div className="mt-4">
-              <PublishField defaultChecked={caseStudy.published} />
+              <PublishField defaultChecked={caseStudy?.published ?? false} />
             </div>
             <p className="mt-4 text-sm leading-6 text-muted-foreground">
               Saving from the editor keeps `published` and `published_at`
@@ -788,14 +827,20 @@ export function AdminWorkEditor({
               </div>
               <div>
                 <dt className="font-semibold text-foreground">Public route</dt>
-                <dd className="break-all">/work/{caseStudy.slug}</dd>
+                <dd className="break-all">
+                  {mode === "create"
+                    ? "Assigned after slug validation and save"
+                    : `/work/${caseStudy?.slug ?? ""}`}
+                </dd>
               </div>
               <div>
                 <dt className="font-semibold text-foreground">Published at</dt>
                 <dd>
-                  {caseStudy.publishedAt
+                  {caseStudy?.publishedAt
                     ? formatUpdatedAt(caseStudy.publishedAt)
-                    : "Not published"}
+                    : mode === "create"
+                      ? "Will be set when published"
+                      : "Not published"}
                 </dd>
               </div>
             </dl>
@@ -807,10 +852,12 @@ export function AdminWorkEditor({
             </p>
             <div className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
               <p>
-                Cover image: {caseStudy.coverImageUrl ? "Present" : "Missing"}
+                Cover image: {caseStudy?.coverImageUrl ? "Present" : "Missing"}
               </p>
-              <p>Gallery items: {caseStudy.galleryUrls.length}</p>
-              <p>Metrics rows: {caseStudy.metrics.length}</p>
+              <p>Gallery items: {caseStudy?.galleryUrls.length ?? 0}</p>
+              <p>
+                Metrics rows: {caseStudy?.metrics.length ?? metricRows.length}
+              </p>
             </div>
           </section>
 
@@ -823,7 +870,7 @@ export function AdminWorkEditor({
               route, and the admin work listing.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <SubmitButton />
+              <SubmitButton mode={mode} />
               <Button asChild variant="outline" className="rounded-full">
                 <Link href="/admin/work">Cancel</Link>
               </Button>

@@ -61,21 +61,18 @@ const optionalCaseStudyString = (maxLength: number) =>
     z.string().trim().max(maxLength).optional(),
   );
 
-const caseStudyEditorSchema = z.object({
+const caseStudyBaseSchema = z.object({
   approach: optionalCaseStudyString(CASE_STUDY_TEXT_MAX_LENGTH),
   challenge: optionalCaseStudyString(CASE_STUDY_TEXT_MAX_LENGTH),
   clientName: optionalCaseStudyString(CASE_STUDY_CLIENT_MAX_LENGTH),
-  currentSlug: z.string().trim().min(1).max(CASE_STUDY_SLUG_MAX_LENGTH),
   industry: optionalCaseStudyString(CASE_STUDY_INDUSTRY_MAX_LENGTH),
   outcomes: optionalCaseStudyString(CASE_STUDY_OUTCOMES_MAX_LENGTH),
   published: z.boolean(),
-  removeCoverImage: z.boolean(),
   seoDescription: optionalCaseStudyString(SEO_DESCRIPTION_MAX_LENGTH),
   seoTitle: optionalCaseStudyString(SEO_TITLE_MAX_LENGTH),
   serviceLines: optionalCaseStudyString(
     CASE_STUDY_SERVICES_LIMIT * (CASE_STUDY_SERVICE_MAX_LENGTH + 1),
   ),
-  caseStudyId: z.string().uuid(),
   slug: optionalCaseStudyString(CASE_STUDY_SLUG_MAX_LENGTH),
   title: z
     .string()
@@ -87,7 +84,16 @@ const caseStudyEditorSchema = z.object({
     ),
 });
 
-type CaseStudyEditorInput = z.infer<typeof caseStudyEditorSchema>;
+const caseStudyCreateSchema = caseStudyBaseSchema;
+
+const caseStudyUpdateSchema = caseStudyBaseSchema.extend({
+  caseStudyId: z.string().uuid(),
+  currentSlug: z.string().trim().min(1).max(CASE_STUDY_SLUG_MAX_LENGTH),
+  removeCoverImage: z.boolean(),
+});
+
+type CaseStudyCreateInput = z.infer<typeof caseStudyCreateSchema>;
+type CaseStudyUpdateInput = z.infer<typeof caseStudyUpdateSchema>;
 
 export interface AdminCaseStudyListItem {
   clientName: string | null;
@@ -165,6 +171,7 @@ function revalidateWorkRoutes(slug: string) {
   revalidatePath("/work");
   revalidatePath(`/work/${slug}`);
   revalidatePath("/admin/work");
+  revalidatePath("/admin/work/new");
   revalidatePath(`/admin/work/${slug}`);
 }
 
@@ -297,7 +304,7 @@ function normalizeMetricsRows(input: {
 }
 
 function buildCaseStudyEditorFieldErrors(
-  error: z.ZodError<CaseStudyEditorInput>,
+  error: z.ZodError<CaseStudyCreateInput | CaseStudyUpdateInput>,
 ): AdminCaseStudyEditorFieldErrors {
   const fieldErrors: AdminCaseStudyEditorFieldErrors = {};
 
@@ -366,17 +373,17 @@ function buildUniqueStorageFileName(fileName: string) {
 }
 
 async function ensureUniqueCaseStudySlug(input: {
-  caseStudyId: string;
+  caseStudyId?: string;
   slug: string;
 }) {
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from("case_studies")
-    .select("id")
-    .eq("slug", input.slug)
-    .neq("id", input.caseStudyId)
-    .limit(1)
-    .maybeSingle();
+  let query = supabase.from("case_studies").select("id").eq("slug", input.slug);
+
+  if (input.caseStudyId) {
+    query = query.neq("id", input.caseStudyId);
+  }
+
+  const { data, error } = await query.limit(1).maybeSingle();
 
   if (error) {
     throw new Error("Could not validate the case study slug.");
@@ -486,6 +493,87 @@ function buildPublishedAtValue(input: {
   }
 
   return input.currentPublishedAt ?? new Date().toISOString();
+}
+
+function buildNormalizedCaseStudyPayload(
+  input: CaseStudyCreateInput | CaseStudyUpdateInput,
+  metricsResult: ReturnType<typeof normalizeMetricsRows>,
+) {
+  const servicesResult = normalizeLines({
+    itemLimit: CASE_STUDY_SERVICES_LIMIT,
+    itemMaxLength: CASE_STUDY_SERVICE_MAX_LENGTH,
+    value: input.serviceLines,
+  });
+
+  if (servicesResult.error) {
+    return {
+      errorState: createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          services: servicesResult.error,
+        },
+      ),
+      payload: null,
+    };
+  }
+
+  if (metricsResult.error) {
+    return {
+      errorState: createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          metrics: metricsResult.error,
+        },
+      ),
+      payload: null,
+    };
+  }
+
+  const normalizedSlug = normalizeCaseStudySlug(
+    input.slug?.trim() || input.title,
+  );
+
+  if (!normalizedSlug) {
+    return {
+      errorState: createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          slug: "Enter a slug or title that can be converted into a route segment.",
+        },
+      ),
+      payload: null,
+    };
+  }
+
+  if (reservedCaseStudySlugs.has(normalizedSlug)) {
+    return {
+      errorState: createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          slug: "This slug is reserved for an internal admin route.",
+        },
+      ),
+      payload: null,
+    };
+  }
+
+  return {
+    errorState: null,
+    payload: {
+      approach: normalizeOptionalText(input.approach),
+      challenge: normalizeOptionalText(input.challenge),
+      clientName: normalizeOptionalText(input.clientName),
+      industry: normalizeOptionalText(input.industry),
+      metrics: metricsResult.metrics,
+      outcomes: normalizeOptionalText(input.outcomes),
+      published: input.published,
+      seoDescription: normalizeOptionalText(input.seoDescription),
+      seoTitle: normalizeOptionalText(input.seoTitle),
+      services: servicesResult.items,
+      slug: normalizedSlug,
+      title: input.title.trim(),
+    },
+  };
 }
 
 export async function getAdminCaseStudiesListData(input?: {
@@ -604,6 +692,180 @@ export async function getAdminCaseStudyBySlug(
   };
 }
 
+export async function createAdminCaseStudy(
+  _prevState: AdminCaseStudyEditorState,
+  formData: FormData,
+): Promise<AdminCaseStudyEditorState> {
+  "use server";
+
+  await requireCurrentAdminAccess("/admin/work/new");
+
+  const rawInput = readCaseStudyEditorFormData(formData);
+  const parsedInput = caseStudyCreateSchema.safeParse({
+    approach: normalizeStringEntry(rawInput.approach),
+    challenge: normalizeStringEntry(rawInput.challenge),
+    clientName: normalizeStringEntry(rawInput.clientName),
+    industry: normalizeStringEntry(rawInput.industry),
+    outcomes: normalizeStringEntry(rawInput.outcomes),
+    published: rawInput.published,
+    seoDescription: normalizeStringEntry(rawInput.seoDescription),
+    seoTitle: normalizeStringEntry(rawInput.seoTitle),
+    serviceLines: normalizeStringEntry(rawInput.serviceLines),
+    slug: normalizeStringEntry(rawInput.slug),
+    title: normalizeStringEntry(rawInput.title),
+  });
+
+  if (!parsedInput.success) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      buildCaseStudyEditorFieldErrors(parsedInput.error),
+    );
+  }
+
+  const metricsResult = normalizeMetricsRows({
+    labels: rawInput.metricLabels,
+    values: rawInput.metricValues,
+  });
+  const normalizedInput = buildNormalizedCaseStudyPayload(
+    parsedInput.data,
+    metricsResult,
+  );
+
+  if (normalizedInput.errorState || !normalizedInput.payload) {
+    return normalizedInput.errorState as AdminCaseStudyEditorState;
+  }
+
+  const coverImageFile = isFileEntry(rawInput.coverImage)
+    ? rawInput.coverImage
+    : null;
+  const galleryImageFiles = rawInput.galleryImages.filter(isFileEntry);
+  const uploadedObjectPaths: string[] = [];
+
+  try {
+    const slugExists = await ensureUniqueCaseStudySlug({
+      slug: normalizedInput.payload.slug,
+    });
+
+    if (slugExists) {
+      return createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          slug: "That slug is already in use by another case study.",
+        },
+      );
+    }
+
+    let coverImageUrl: string | null = null;
+
+    if (coverImageFile) {
+      const uploadResult = await uploadCaseStudyImage({
+        file: coverImageFile,
+        kind: "cover",
+        slug: normalizedInput.payload.slug,
+      });
+
+      uploadedObjectPaths.push(uploadResult.objectPath);
+      coverImageUrl = uploadResult.publicUrl;
+    }
+
+    const uploadedGalleryUrls: string[] = [];
+
+    for (const file of galleryImageFiles) {
+      const uploadResult = await uploadCaseStudyImage({
+        file,
+        kind: "gallery",
+        slug: normalizedInput.payload.slug,
+      });
+
+      uploadedObjectPaths.push(uploadResult.objectPath);
+      uploadedGalleryUrls.push(uploadResult.publicUrl);
+    }
+
+    const insertPayload: Database["public"]["Tables"]["case_studies"]["Insert"] =
+      {
+        approach: normalizedInput.payload.approach,
+        challenge: normalizedInput.payload.challenge,
+        client_name: normalizedInput.payload.clientName,
+        cover_image_url: coverImageUrl,
+        gallery_urls: uploadedGalleryUrls,
+        industry: normalizedInput.payload.industry,
+        outcomes: normalizedInput.payload.outcomes,
+        outcomes_metrics: normalizedInput.payload.metrics,
+        published: normalizedInput.payload.published,
+        published_at: buildPublishedAtValue({
+          currentPublishedAt: null,
+          nextPublished: normalizedInput.payload.published,
+        }),
+        seo_description: normalizedInput.payload.seoDescription,
+        seo_title: normalizedInput.payload.seoTitle,
+        services: normalizedInput.payload.services,
+        slug: normalizedInput.payload.slug,
+        title: normalizedInput.payload.title,
+      };
+    const supabase = await createServerSupabaseClient();
+    const { error } = await supabase.from("case_studies").insert(insertPayload);
+
+    if (error) {
+      await deleteManagedCaseStudyObjects(uploadedObjectPaths).catch(
+        (cleanupError) => {
+          console.error(
+            "Admin case study upload cleanup failed after create error",
+            cleanupError,
+          );
+        },
+      );
+
+      console.error("Admin case study create failed", {
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        message: error.message,
+        slug: normalizedInput.payload.slug,
+      });
+
+      return createActionErrorState(
+        "The case study could not be created right now. Try again.",
+      );
+    }
+
+    revalidateWorkRoutes(normalizedInput.payload.slug);
+
+    return createActionSuccessState({
+      message: "Case study created. Redirecting to the editor.",
+      redirectTo: `/admin/work/${normalizedInput.payload.slug}?status=created`,
+    });
+  } catch (error) {
+    await deleteManagedCaseStudyObjects(uploadedObjectPaths).catch(
+      (cleanupError) => {
+        console.error(
+          "Admin case study upload cleanup failed after create exception",
+          cleanupError,
+        );
+      },
+    );
+
+    const message =
+      error instanceof Error
+        ? error.message
+        : "The case study could not be created right now. Try again.";
+    const fieldErrors: AdminCaseStudyEditorFieldErrors = {};
+
+    if (message.includes("image")) {
+      fieldErrors.coverImage = message;
+      fieldErrors.galleryImages = message;
+    }
+
+    console.error("Admin case study create threw an unexpected error", error);
+
+    return createActionErrorState(
+      message === "Invalid image upload."
+        ? "Check the highlighted fields and try again."
+        : message,
+      fieldErrors,
+    );
+  }
+}
+
 export async function updateAdminCaseStudy(
   _prevState: AdminCaseStudyEditorState,
   formData: FormData,
@@ -617,7 +879,7 @@ export async function updateAdminCaseStudy(
     currentSlug ? `/admin/work/${currentSlug}` : "/admin/work",
   );
 
-  const parsedInput = caseStudyEditorSchema.safeParse({
+  const parsedInput = caseStudyUpdateSchema.safeParse({
     approach: normalizeStringEntry(rawInput.approach),
     caseStudyId: normalizeStringEntry(rawInput.caseStudyId),
     challenge: normalizeStringEntry(rawInput.challenge),
@@ -641,61 +903,23 @@ export async function updateAdminCaseStudy(
     );
   }
 
-  const servicesResult = normalizeLines({
-    itemLimit: CASE_STUDY_SERVICES_LIMIT,
-    itemMaxLength: CASE_STUDY_SERVICE_MAX_LENGTH,
-    value: parsedInput.data.serviceLines,
-  });
-
-  if (servicesResult.error) {
-    return createActionErrorState(
-      "Check the highlighted fields and try again.",
-      {
-        services: servicesResult.error,
-      },
-    );
-  }
-
   const metricsResult = normalizeMetricsRows({
     labels: rawInput.metricLabels,
     values: rawInput.metricValues,
   });
-
-  if (metricsResult.error) {
-    return createActionErrorState(
-      "Check the highlighted fields and try again.",
-      {
-        metrics: metricsResult.error,
-      },
-    );
-  }
-
-  const normalizedSlug = normalizeCaseStudySlug(
-    parsedInput.data.slug?.trim() || parsedInput.data.title,
+  const normalizedInput = buildNormalizedCaseStudyPayload(
+    parsedInput.data,
+    metricsResult,
   );
 
-  if (!normalizedSlug) {
-    return createActionErrorState(
-      "Check the highlighted fields and try again.",
-      {
-        slug: "Enter a slug or title that can be converted into a route segment.",
-      },
-    );
-  }
-
-  if (reservedCaseStudySlugs.has(normalizedSlug)) {
-    return createActionErrorState(
-      "Check the highlighted fields and try again.",
-      {
-        slug: "This slug is reserved for an internal admin route.",
-      },
-    );
+  if (normalizedInput.errorState || !normalizedInput.payload) {
+    return normalizedInput.errorState as AdminCaseStudyEditorState;
   }
 
   try {
     const slugExists = await ensureUniqueCaseStudySlug({
       caseStudyId: parsedInput.data.caseStudyId,
-      slug: normalizedSlug,
+      slug: normalizedInput.payload.slug,
     });
 
     if (slugExists) {
@@ -744,7 +968,7 @@ export async function updateAdminCaseStudy(
       const uploadResult = await uploadCaseStudyImage({
         file: coverImageFile,
         kind: "cover",
-        slug: normalizedSlug,
+        slug: normalizedInput.payload.slug,
       });
 
       uploadedObjectPaths.push(uploadResult.objectPath);
@@ -757,7 +981,7 @@ export async function updateAdminCaseStudy(
       const uploadResult = await uploadCaseStudyImage({
         file,
         kind: "gallery",
-        slug: normalizedSlug,
+        slug: normalizedInput.payload.slug,
       });
 
       uploadedObjectPaths.push(uploadResult.objectPath);
@@ -770,26 +994,28 @@ export async function updateAdminCaseStudy(
     ];
     const nextPublishedAt = buildPublishedAtValue({
       currentPublishedAt: existingCaseStudy.publishedAt,
-      nextPublished: parsedInput.data.published,
+      nextPublished: normalizedInput.payload.published,
     });
     const updatePayload: Database["public"]["Tables"]["case_studies"]["Update"] =
       {
-        approach: normalizeOptionalText(parsedInput.data.approach),
-        challenge: normalizeOptionalText(parsedInput.data.challenge),
-        client_name: normalizeOptionalText(parsedInput.data.clientName),
+        approach: normalizedInput.payload.approach,
+        challenge: normalizedInput.payload.challenge,
+        client_name: normalizedInput.payload.clientName,
         cover_image_url: nextCoverImageUrl,
         gallery_urls: nextGalleryUrls,
-        industry: normalizeOptionalText(parsedInput.data.industry),
-        outcomes: normalizeOptionalText(parsedInput.data.outcomes),
+        industry: normalizedInput.payload.industry,
+        outcomes: normalizedInput.payload.outcomes,
         outcomes_metrics:
-          metricsResult.rows.length > 0 ? (metricsResult.metrics as Json) : {},
-        published: parsedInput.data.published,
+          metricsResult.rows.length > 0
+            ? (normalizedInput.payload.metrics as Json)
+            : {},
+        published: normalizedInput.payload.published,
         published_at: nextPublishedAt,
-        seo_description: normalizeOptionalText(parsedInput.data.seoDescription),
-        seo_title: normalizeOptionalText(parsedInput.data.seoTitle),
-        services: servicesResult.items,
-        slug: normalizedSlug,
-        title: parsedInput.data.title.trim(),
+        seo_description: normalizedInput.payload.seoDescription,
+        seo_title: normalizedInput.payload.seoTitle,
+        services: normalizedInput.payload.services,
+        slug: normalizedInput.payload.slug,
+        title: normalizedInput.payload.title,
       };
     const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase
@@ -815,7 +1041,7 @@ export async function updateAdminCaseStudy(
         hint: error?.hint,
         message: error?.message,
         caseStudyId: parsedInput.data.caseStudyId,
-        slug: normalizedSlug,
+        slug: normalizedInput.payload.slug,
       });
 
       return createActionErrorState(
@@ -852,13 +1078,13 @@ export async function updateAdminCaseStudy(
 
     revalidateWorkRoutes(currentSlug);
 
-    if (normalizedSlug !== currentSlug) {
-      revalidateWorkRoutes(normalizedSlug);
+    if (normalizedInput.payload.slug !== currentSlug) {
+      revalidateWorkRoutes(normalizedInput.payload.slug);
     }
 
     return createActionSuccessState({
       message: "Case study changes saved. Refreshing the editor.",
-      redirectTo: `/admin/work/${normalizedSlug}?status=saved`,
+      redirectTo: `/admin/work/${normalizedInput.payload.slug}?status=saved`,
     });
   } catch (error) {
     await deleteManagedCaseStudyObjects(uploadedObjectPaths).catch(

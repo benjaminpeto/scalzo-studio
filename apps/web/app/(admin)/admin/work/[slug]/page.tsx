@@ -31,6 +31,7 @@ export default async function AdminWorkEditorPage({
   return (
     <AdminWorkEditor
       action={updateAdminCaseStudy}
+      mode="edit"
       caseStudy={caseStudy}
       status={status}
     />

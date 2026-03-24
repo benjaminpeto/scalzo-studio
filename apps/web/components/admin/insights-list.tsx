@@ -56,8 +56,8 @@ export function AdminInsightsList({
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
             This route controls which posts are visible on the public insights
-            index and article pages. The editor route will handle markdown,
-            excerpts, tags, SEO fields, and media helpers in the next ticket.
+            index and article pages. Use the editor route to manage markdown,
+            excerpts, tags, SEO fields, cover images, and content-media uploads.
           </p>
           <form
             action="/admin/insights"
@@ -109,6 +109,13 @@ export function AdminInsightsList({
                   <Link href="/admin/insights">Clear</Link>
                 </Button>
               ) : null}
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-full px-6"
+              >
+                <Link href="/admin/insights/new">New insight</Link>
+              </Button>
             </div>
           </form>
           {statusMessage ? (
@@ -277,6 +284,9 @@ export function AdminInsightsList({
               </p>
               <Button asChild variant="outline" className="mt-5">
                 <Link href="/admin/insights">Clear filters</Link>
+              </Button>
+              <Button asChild className="mt-3">
+                <Link href="/admin/insights/new">New insight</Link>
               </Button>
             </div>
           </div>
