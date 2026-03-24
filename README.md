@@ -226,6 +226,11 @@ Use this checklist when validating the current admin auth UX:
 - `/protected` still redirects to `/admin`.
 - Public non-admin routes remain accessible without authentication.
 
+## Admin content routes
+
+- `/admin/services` is the current services management route for search, publish toggles, and ordering.
+- `/admin/services/[slug]` now exists as the stable editor destination shell; the full edit form lands in the next services admin ticket.
+
 ## Quality gates
 
 - Pre-commit runs `lint-staged` through Husky.

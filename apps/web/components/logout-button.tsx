@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { signOutCurrentUser } from "@/actions/auth/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@ui/components/ui/button";
@@ -7,7 +9,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface LogoutButtonProps {
+  ariaLabel?: string;
   className?: string;
+  hideLabel?: boolean;
+  icon?: ReactNode;
   label?: string;
   message?: string;
   redirectPath?: string;
@@ -16,7 +21,10 @@ interface LogoutButtonProps {
 }
 
 export function LogoutButton({
+  ariaLabel,
   className,
+  hideLabel = false,
+  icon,
   label = "Logout",
   message = "You have been signed out.",
   redirectPath = "/auth/login",
@@ -39,13 +47,15 @@ export function LogoutButton({
 
   return (
     <Button
+      aria-label={ariaLabel ?? label}
       className={cn(className)}
       disabled={isLoading}
       onClick={logout}
       size={size}
       variant={variant}
     >
-      {isLoading ? "Signing out..." : label}
+      {icon ? <span aria-hidden="true">{icon}</span> : null}
+      {hideLabel ? null : isLoading ? "Signing out..." : label}
     </Button>
   );
 }
