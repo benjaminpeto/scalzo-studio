@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import {
   Reveal,
   RevealGroup,
@@ -31,7 +33,12 @@ export async function generateMetadata({
   params,
 }: WorkDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const detailPageData = getFallbackWorkDetailPageData(slug);
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
+  const detailPageData =
+    (await getWorkDetailPageData(slug, { includeDraft: isPreview })) ??
+    getFallbackWorkDetailPageData(slug);
 
   return {
     alternates: {
@@ -41,31 +48,85 @@ export async function generateMetadata({
       detailPageData.seoDescription ??
       detailPageData.description ??
       detailPageData.outcomes,
+    robots: isPreview ? { follow: false, index: false } : undefined,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Work | Scalzo Studio`,
   };
 }
 
-async function WorkDetailContent({ slug }: { slug: string }) {
-  const detailPageData = await getWorkDetailPageData(slug);
+async function WorkDetailContent({
+  isPreview,
+  slug,
+}: {
+  isPreview: boolean;
+  slug: string;
+}) {
+  const detailPageData = await getWorkDetailPageData(slug, {
+    includeDraft: isPreview,
+  });
 
   if (!detailPageData) {
     notFound();
   }
 
-  return <WorkDetailLayout detailPageData={detailPageData} />;
+  return (
+    <WorkDetailLayout
+      detailPageData={detailPageData}
+      isPreview={isPreview}
+      previewExitHref={
+        isPreview
+          ? `/api/preview/disable?next=${encodeURIComponent(
+              detailPageData.published
+                ? `/work/${detailPageData.slug}`
+                : "/admin/work",
+            )}`
+          : null
+      }
+    />
+  );
 }
 
 function WorkDetailLayout({
   detailPageData,
+  isPreview,
+  previewExitHref,
 }: {
   detailPageData: Awaited<ReturnType<typeof getFallbackWorkDetailPageData>>;
+  isPreview: boolean;
+  previewExitHref: string | null;
 }) {
   const [leadVisual, ...secondaryVisuals] = detailPageData.visuals;
 
   return (
     <>
+      {isPreview ? (
+        <Section spacing="tight" className="pb-0">
+          <div className="rounded-[1.35rem] border border-[#735c00]/20 bg-[linear-gradient(135deg,rgba(252,205,3,0.18),rgba(255,255,255,0.94))] px-5 py-4 shadow-[0_12px_30px_rgba(115,92,0,0.08)]">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#735c00]">
+                  Admin preview mode
+                </p>
+                <p className="mt-1 text-sm leading-6 text-foreground">
+                  Viewing the latest saved case-study state for this route. This
+                  preview is only visible to admins with preview mode enabled.
+                </p>
+              </div>
+              {previewExitHref ? (
+                <Link
+                  href={previewExitHref}
+                  prefetch={false}
+                  className="inline-flex items-center justify-center rounded-full border border-border/70 bg-white px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/40 hover:bg-card"
+                >
+                  Exit preview
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        </Section>
+      ) : null}
+
       <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">
         <Reveal>
           <Grid gap="2xl" className="lg:grid-cols-[0.58fr_0.42fr] lg:items-end">
@@ -461,10 +522,13 @@ function WorkDetailFallback({ slug }: { slug: string }) {
 
 async function ResolvedWorkDetailPage({ params }: WorkDetailPageProps) {
   const { slug } = await params;
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
 
   return (
     <Suspense fallback={<WorkDetailFallback slug={slug} />}>
-      <WorkDetailContent slug={slug} />
+      <WorkDetailContent isPreview={isPreview} slug={slug} />
     </Suspense>
   );
 }

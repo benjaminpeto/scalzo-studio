@@ -52,8 +52,8 @@ export function AdminWorkList({
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
             This route controls which case studies are visible on the public
-            work index and detail pages. Use the placeholder edit route to
-            confirm record context before the full editor lands.
+            work index and detail pages. Use the editor route to update the
+            narrative, outcomes, SEO fields, and gallery assets.
           </p>
           <form
             action="/admin/work"
@@ -159,8 +159,8 @@ export function AdminWorkList({
             </h2>
           </div>
           <p className="max-w-xl text-sm leading-6 text-muted-foreground">
-            Preview links only appear for published entries because the public
-            work routes load published case studies only.
+            Preview links open the latest saved case-study state inside an
+            admin-only preview session, even when the entry is still a draft.
           </p>
         </div>
 
@@ -197,15 +197,14 @@ export function AdminWorkList({
                       <Button asChild variant="outline" size="sm">
                         <Link href={`/admin/work/${caseStudy.slug}`}>Edit</Link>
                       </Button>
-                      {caseStudy.published ? (
-                        <Button asChild variant="ghost" size="sm">
-                          <Link href={`/work/${caseStudy.slug}`}>Preview</Link>
-                        </Button>
-                      ) : (
-                        <span className="inline-flex h-9 items-center rounded-sm px-3 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                          Public route hidden
-                        </span>
-                      )}
+                      <Button asChild variant="ghost" size="sm">
+                        <Link
+                          href={`/api/preview/work?slug=${caseStudy.slug}`}
+                          prefetch={false}
+                        >
+                          Open preview
+                        </Link>
+                      </Button>
                     </div>
                   </div>
 

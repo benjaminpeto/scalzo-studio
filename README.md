@@ -188,6 +188,7 @@ Practical rule:
 - `/work/[slug]` loads the published case-study row from Supabase through `apps/web/lib/content/work.ts`.
 - Challenge, approach, testimonial, and visual composition fall back to a static case-study layer when the CMS row does not yet provide enough editorial detail on its own.
 - Work detail metadata prefers case-study SEO fields from Supabase and otherwise falls back to the static route copy.
+- When an admin explicitly enables preview mode, the same route can load the latest saved draft state for a case study without exposing a public shareable preview URL.
 
 ## Insights index boundary
 
@@ -232,7 +233,8 @@ Use this checklist when validating the current admin auth UX:
 - `/admin/services/new` creates a new service entry through the admin editor.
 - `/admin/services/[slug]` is the live services editor route for title, slug, markdown, deliverables, publish state, and SEO fields.
 - `/admin/work` is the current case-studies management route for published-state filtering, industry filtering, preview access, and publish toggles.
-- `/admin/work/[slug]` is the stable case-study editor destination shell ahead of the full editor ticket.
+- `/admin/work/[slug]` is the live case-study editor route for text content, metrics rows, publish state, and case-study image uploads.
+- Admin case-study preview mode is entered through `/api/preview/work?slug=<slug>` and exited through `/api/preview/disable`, both guarded by the current admin session.
 
 ## Quality gates
 

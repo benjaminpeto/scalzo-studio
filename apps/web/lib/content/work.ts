@@ -40,6 +40,7 @@ export interface WorkDetailPageData extends WorkIndexEntry {
   industry: string | null;
   outcomes: string;
   metrics: readonly WorkOutcomeMetric[];
+  published: boolean;
   seoDescription: string | null;
   seoTitle: string | null;
   services: readonly string[];
@@ -320,6 +321,7 @@ function buildGenericWorkDetailData({
     outcomes:
       description ||
       "The final direction made the page easier to trust, easier to scan, and more commercially useful once live.",
+    published: true,
     seoDescription: null,
     seoTitle: null,
     services: ["Positioning", "Design direction", "Commercial clarity"],
@@ -370,16 +372,23 @@ export async function getWorkIndexEntries() {
 
 export async function getWorkDetailPageData(
   slug: string,
+  options?: {
+    includeDraft?: boolean;
+  },
 ): Promise<WorkDetailPageData | null> {
   const supabase = await createServerSupabaseClient();
-  const { data: caseStudy, error } = await supabase
+  let query = supabase
     .from("case_studies")
     .select(
-      "approach, challenge, client_name, cover_image_url, gallery_urls, industry, outcomes, outcomes_metrics, seo_description, seo_title, services, slug, title",
+      "approach, challenge, client_name, cover_image_url, gallery_urls, industry, outcomes, outcomes_metrics, published, seo_description, seo_title, services, slug, title",
     )
-    .eq("published", true)
-    .eq("slug", slug)
-    .maybeSingle();
+    .eq("slug", slug);
+
+  if (!options?.includeDraft) {
+    query = query.eq("published", true);
+  }
+
+  const { data: caseStudy, error } = await query.maybeSingle();
 
   const fallbackDetail = fallbackWorkDetailBySlug[slug];
   const fallbackIndexEntry =
@@ -444,6 +453,7 @@ export async function getWorkDetailPageData(
       caseStudy?.outcomes ??
       fallbackDetail?.outcomes ??
       genericFallback.outcomes,
+    published: caseStudy?.published ?? genericFallback.published,
     seoDescription: caseStudy?.seo_description ?? null,
     seoTitle: caseStudy?.seo_title ?? null,
     services: resolvedServices,
@@ -490,6 +500,7 @@ export function getFallbackWorkDetailPageData(
     metric: fallbackIndexEntry.metric,
     metrics: [{ label: "Key outcome", value: fallbackIndexEntry.metric }],
     outcomes: fallbackDetail?.outcomes ?? genericFallback.outcomes,
+    published: true,
     seoDescription: null,
     seoTitle: null,
     services: fallbackDetail?.services ?? genericFallback.services,
