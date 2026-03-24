@@ -59,8 +59,8 @@ export function AdminServicesList({
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
             This route controls the order used by the public services index and
-            related sections across the marketing site. Use the editor link when
-            you need content changes in the next ticket.
+            related sections across the marketing site. Use the editor routes
+            when you need content or SEO changes.
           </p>
           <form
             action="/admin/services"
@@ -85,6 +85,13 @@ export function AdminServicesList({
                 <Link href="/admin/services">Clear</Link>
               </Button>
             ) : null}
+            <Button
+              asChild
+              variant="outline"
+              className="h-12 rounded-full px-6"
+            >
+              <Link href="/admin/services/new">New service</Link>
+            </Button>
           </form>
           {statusMessage ? (
             <div className="mt-5 rounded-[1.25rem] border border-border/70 bg-white/78 p-4 text-sm leading-6 text-foreground">
@@ -206,7 +213,7 @@ export function AdminServicesList({
 
                     <p className="text-sm leading-7 text-muted-foreground">
                       {service.summary ||
-                        "No summary yet. Use the editor route to add the public summary in the next ticket."}
+                        "No summary yet. Use the editor route to add the public summary."}
                     </p>
 
                     <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
@@ -305,7 +312,13 @@ export function AdminServicesList({
                 <Button asChild variant="outline" className="mt-5">
                   <Link href="/admin/services">Clear search</Link>
                 </Button>
-              ) : null}
+              ) : (
+                <Button asChild variant="outline" className="mt-5">
+                  <Link href="/admin/services/new">
+                    Create the first new service
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         )}
