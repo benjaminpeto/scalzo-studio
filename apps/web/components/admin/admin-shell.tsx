@@ -96,7 +96,7 @@ function SidebarSectionLink({
           : "gap-3 px-3.5 py-2.5"
       }`}
     >
-      <Icon className="size-[1rem] shrink-0 text-muted-foreground" />
+      <Icon className="size-4 shrink-0 text-muted-foreground" />
       <span className={cn("truncate font-medium", collapsed && "lg:hidden")}>
         {item.label}
       </span>

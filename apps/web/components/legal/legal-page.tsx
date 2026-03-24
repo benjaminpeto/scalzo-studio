@@ -89,7 +89,7 @@ export function LegalSection({
 }) {
   return (
     <section id={id} className="scroll-mt-32">
-      <div className="rounded-[2rem] border border-border/70 bg-white/84 p-6 shadow-[0_18px_52px_rgba(27,28,26,0.05)] sm:p-8">
+      <div className="rounded-4xl border border-border/70 bg-white/84 p-6 shadow-[0_18px_52px_rgba(27,28,26,0.05)] sm:p-8">
         <div className="max-w-3xl">
           <h2 className="font-display text-[2.3rem] leading-[0.95] tracking-[-0.05em] text-foreground sm:text-[3rem]">
             {title}

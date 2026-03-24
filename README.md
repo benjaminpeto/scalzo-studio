@@ -201,6 +201,7 @@ Practical rule:
 - `/insights/[slug]` loads the published post row from Supabase through `apps/web/lib/content/insights.ts`.
 - Article body markdown is rendered safely without raw HTML support, with custom heading, link, and image rendering for the editorial article layout.
 - If the CMS row is missing or incomplete, the route falls back to in-repo article content, image, and metadata helpers for the matching slug.
+- When an admin explicitly enables preview mode, the same route can load the latest saved draft state for a post without exposing a public shareable preview URL.
 
 ## About page boundary
 
@@ -234,6 +235,8 @@ Use this checklist when validating the current admin auth UX:
 - `/admin/services/[slug]` is the live services editor route for title, slug, markdown, deliverables, publish state, and SEO fields.
 - `/admin/work` is the current case-studies management route for published-state filtering, industry filtering, preview access, and publish toggles.
 - `/admin/work/[slug]` is the live case-study editor route for text content, metrics rows, publish state, and case-study image uploads.
+- `/admin/insights` is the current posts management route for published-state filtering, tag filtering, preview access, and publish toggles.
+- `/admin/insights/[slug]` is the current placeholder insight editor route ahead of the full markdown editor ticket.
 - Admin case-study preview mode is entered through `/api/preview/work?slug=<slug>` and exited through `/api/preview/disable`, both guarded by the current admin session.
 
 ## Quality gates

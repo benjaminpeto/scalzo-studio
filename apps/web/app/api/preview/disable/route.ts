@@ -8,11 +8,15 @@ function getSafeExitPath(input: string | null) {
     return "/admin/work";
   }
 
-  if (input === "/admin/work") {
+  if (input === "/admin/work" || input === "/admin/insights") {
     return input;
   }
 
   if (/^\/work\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(input)) {
+    return input;
+  }
+
+  if (/^\/insights\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(input)) {
     return input;
   }
 

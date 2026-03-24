@@ -22,9 +22,13 @@ export interface InsightHeading {
 export interface InsightDetailPageData extends InsightIndexEntry {
   content: string;
   headings: readonly InsightHeading[];
+  published: boolean;
 }
 
-type FallbackInsightArticle = Omit<InsightDetailPageData, "headings">;
+type FallbackInsightArticle = Omit<
+  InsightDetailPageData,
+  "headings" | "published"
+>;
 
 const fallbackInsightArticles = [
   {
@@ -311,6 +315,7 @@ export function getFallbackInsightDetailPageData(
     return {
       ...fallbackEntry,
       headings: extractInsightHeadings(fallbackEntry.content),
+      published: true,
       tags: [...fallbackEntry.tags],
     };
   }
@@ -325,6 +330,7 @@ export function getFallbackInsightDetailPageData(
       "A published note on how sharper positioning, stronger proof, and calmer page structure improve the first impression.",
     headings: extractInsightHeadings(content),
     image: fallbackInsightImage,
+    published: true,
     seoDescription: null,
     seoTitle: null,
     slug,
@@ -377,16 +383,23 @@ export async function getInsightIndexEntries(
 
 export async function getInsightDetailPageData(
   slug: string,
+  options?: {
+    includeDraft?: boolean;
+  },
 ): Promise<InsightDetailPageData | null> {
   const supabase = await createServerSupabaseClient();
-  const { data: post, error } = await supabase
+  let query = supabase
     .from("posts")
     .select(
-      "content_md, cover_image_url, created_at, excerpt, published_at, seo_description, seo_title, slug, tags, title",
+      "content_md, cover_image_url, created_at, excerpt, published, published_at, seo_description, seo_title, slug, tags, title",
     )
-    .eq("published", true)
-    .eq("slug", slug)
-    .maybeSingle();
+    .eq("slug", slug);
+
+  if (!options?.includeDraft) {
+    query = query.eq("published", true);
+  }
+
+  const { data: post, error } = await query.maybeSingle();
 
   const fallbackEntry = fallbackInsightArticles.find(
     (entry) => entry.slug === slug,
@@ -417,6 +430,7 @@ export async function getInsightDetailPageData(
       "Editorial note on how positioning, content structure, and visual signals shape the quality of the first impression.",
     headings: extractInsightHeadings(resolvedContent),
     image: resolvedImage,
+    published: post?.published ?? true,
     seoDescription:
       post?.seo_description ?? fallbackEntry?.seoDescription ?? null,
     seoTitle: post?.seo_title ?? fallbackEntry?.seoTitle ?? null,

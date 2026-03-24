@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,6 +13,7 @@ import {
   getInsightDetailPageData,
 } from "@/lib/content/insights";
 import { publicEnv } from "@/lib/env/public";
+import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -27,7 +29,12 @@ export async function generateMetadata({
   params,
 }: InsightDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const detailPageData = getFallbackInsightDetailPageData(slug);
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
+  const detailPageData =
+    (await getInsightDetailPageData(slug, { includeDraft: isPreview })) ??
+    getFallbackInsightDetailPageData(slug);
 
   return {
     alternates: {
@@ -37,6 +44,7 @@ export async function generateMetadata({
       detailPageData.seoDescription ??
       detailPageData.excerpt ??
       detailPageData.content,
+    robots: isPreview ? { follow: false, index: false } : undefined,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Insights | Scalzo Studio`,
@@ -225,26 +233,79 @@ function InlineArticleCta({ title }: { title: string }) {
   );
 }
 
-async function InsightDetailContent({ slug }: { slug: string }) {
-  const detailPageData = await getInsightDetailPageData(slug);
+async function InsightDetailContent({
+  isPreview,
+  slug,
+}: {
+  isPreview: boolean;
+  slug: string;
+}) {
+  const detailPageData = await getInsightDetailPageData(slug, {
+    includeDraft: isPreview,
+  });
 
   if (!detailPageData) {
     notFound();
   }
 
-  return <InsightDetailLayout detailPageData={detailPageData} />;
+  return (
+    <InsightDetailLayout
+      detailPageData={detailPageData}
+      isPreview={isPreview}
+      previewExitHref={
+        isPreview
+          ? `/api/preview/disable?next=${encodeURIComponent(
+              detailPageData.published
+                ? `/insights/${detailPageData.slug}`
+                : "/admin/insights",
+            )}`
+          : null
+      }
+    />
+  );
 }
 
 function InsightDetailLayout({
   detailPageData,
+  isPreview,
+  previewExitHref,
 }: {
   detailPageData: Awaited<ReturnType<typeof getFallbackInsightDetailPageData>>;
+  isPreview: boolean;
+  previewExitHref: string | null;
 }) {
   const articleUrl = buildArticleUrl(detailPageData.slug);
   const shareLinks = buildShareLinks(detailPageData.title, articleUrl);
 
   return (
     <>
+      {isPreview ? (
+        <Section spacing="tight" className="pb-0">
+          <div className="rounded-[1.35rem] border border-[#735c00]/20 bg-[linear-gradient(135deg,rgba(252,205,3,0.18),rgba(255,255,255,0.94))] px-5 py-4 shadow-[0_12px_30px_rgba(115,92,0,0.08)]">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#735c00]">
+                  Admin preview mode
+                </p>
+                <p className="mt-1 text-sm leading-6 text-foreground">
+                  Viewing the latest saved article state for this route. This
+                  preview is only visible to admins with preview mode enabled.
+                </p>
+              </div>
+              {previewExitHref ? (
+                <Link
+                  href={previewExitHref}
+                  prefetch={false}
+                  className="inline-flex items-center justify-center rounded-full border border-border/70 bg-white px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary/40 hover:bg-card"
+                >
+                  Exit preview
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        </Section>
+      ) : null}
+
       <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">
         <Reveal>
           <Grid gap="2xl" className="lg:grid-cols-[0.55fr_0.45fr] lg:items-end">
@@ -452,10 +513,13 @@ function InsightDetailFallback({ slug }: { slug: string }) {
 
 async function ResolvedInsightDetailPage({ params }: InsightDetailPageProps) {
   const { slug } = await params;
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
 
   return (
     <Suspense fallback={<InsightDetailFallback slug={slug} />}>
-      <InsightDetailContent slug={slug} />
+      <InsightDetailContent isPreview={isPreview} slug={slug} />
     </Suspense>
   );
 }

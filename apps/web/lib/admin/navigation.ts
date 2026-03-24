@@ -51,6 +51,14 @@ const adminWorkRoute: AdminNavigationItem = {
   matchStrategy: "prefix",
 };
 
+const adminInsightsRoute: AdminNavigationItem = {
+  description: "Filter, publish, and preview the public insights stack.",
+  href: "/admin/insights",
+  icon: "content",
+  label: "Insights",
+  matchStrategy: "prefix",
+};
+
 const adminServicesSectionNavigation: AdminNavigationItem[] = [
   {
     description: "Search, counts, and route-level admin context.",
@@ -81,10 +89,26 @@ const adminWorkSectionNavigation: AdminNavigationItem[] = [
   },
 ];
 
+const adminInsightsSectionNavigation: AdminNavigationItem[] = [
+  {
+    description: "Filter state, counts, and route-level admin context.",
+    href: "/admin/insights#overview",
+    icon: "overview",
+    label: "Overview",
+  },
+  {
+    description: "Current posts list with publish controls.",
+    href: "/admin/insights#post-list",
+    icon: "list",
+    label: "List view",
+  },
+];
+
 export const adminPrimaryNavigation: AdminNavigationItem[] = [
   adminDashboardRoute,
   adminServicesRoute,
   adminWorkRoute,
+  adminInsightsRoute,
 ];
 
 export const adminDashboardSections: AdminDashboardSection[] = [
@@ -131,6 +155,13 @@ const adminRouteMetadata: AdminRouteMetadata[] = [
     navigation: adminWorkRoute,
     sectionNavigationItems: adminWorkSectionNavigation,
     sectionNavigationLabel: "Work list sections",
+  },
+  {
+    breadcrumb: ["Admin", "Insights"],
+    heading: "Insights management",
+    navigation: adminInsightsRoute,
+    sectionNavigationItems: adminInsightsSectionNavigation,
+    sectionNavigationLabel: "Insights list sections",
   },
 ];
 
