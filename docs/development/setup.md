@@ -66,6 +66,12 @@ Environment validation is strict by design.
 - Optional server-only integrations are allowed to stay unset until those features are implemented.
 - GitHub Actions injects safe placeholder public envs so CI can validate production builds without real secrets.
 
+## Legal content notes
+
+- The `/privacy` and `/cookies` pages describe the current live site plus clearly labelled near-term services that are not yet active.
+- PostHog must not be enabled in production until a separate consent and cookie-preferences implementation exists.
+- Policy copy currently assumes hCaptcha as the future anti-spam provider. If production uses a different provider, update the legal content before launch.
+
 ## Pre-commit hooks
 
 Husky is enabled for this repository.

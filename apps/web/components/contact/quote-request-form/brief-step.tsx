@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Label } from "@ui/components/ui/label";
 
 import { FieldError } from "./field-error";
@@ -36,17 +38,27 @@ export function BriefStep({
         <FieldError message={stepErrors.message} />
       </div>
 
-      <label className="flex items-start gap-3 rounded-[1.2rem] border border-border/70 bg-white/72 p-4">
-        <input
-          type="checkbox"
-          checked={values.consent}
-          onChange={(event) => updateField("consent", event.target.checked)}
-          className="mt-1 size-4"
-        />
-        <span className="text-sm leading-6 text-foreground">
-          I agree to be contacted about this request.
-        </span>
-      </label>
+      <div className="rounded-[1.2rem] border border-border/70 bg-white/72 p-4">
+        <label className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            checked={values.consent}
+            onChange={(event) => updateField("consent", event.target.checked)}
+            className="mt-1 size-4"
+          />
+          <span className="text-sm leading-6 text-foreground">
+            I agree to be contacted about this request and understand that my
+            details will be handled according to the{" "}
+            <Link
+              href="/privacy"
+              className="font-medium text-foreground underline decoration-editorial-underline underline-offset-4"
+            >
+              Privacy notice
+            </Link>
+            .
+          </span>
+        </label>
+      </div>
       <FieldError message={stepErrors.consent} />
     </fieldset>
   );
