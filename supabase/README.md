@@ -151,12 +151,15 @@ Buckets:
 
 - `case-study-images`: public bucket for case study cover and gallery images
 - `blog-images`: public bucket for blog cover images and editor-inserted post images
+- `testimonial-avatars`: public bucket for admin-managed testimonial avatar images
 
 Upload path rules:
 
 - `case-study-images`: `<slug>/cover/<filename>` and `<slug>/gallery/<filename>`
 - `blog-images`: `<slug>/cover/<filename>` and `<slug>/content/<filename>`
+- `testimonial-avatars`: `<testimonial-id>/avatar/<filename>`
 - Slugs must be lowercase kebab-case.
+- Testimonial IDs must be lowercase UUID values.
 - File names are normalized to lowercase ASCII-safe names and must end in `.avif`, `.jpg`, `.jpeg`, `.png`, or `.webp`.
 
 Validation and access rules:
@@ -169,14 +172,14 @@ Validation and access rules:
 App-side helpers live in [`storage.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/storage.ts) and provide:
 
 - bucket IDs and validation constants
-- object-path builders for case study and blog media
+- object-path builders for case study, blog, and testimonial avatar media
 - upload validation helpers
 - public and signed URL helpers for later editor flows
 
 Verification steps:
 
 1. Run `npm run supabase:db:reset`.
-2. Confirm both bucket rows exist in `storage.buckets`.
+2. Confirm all three bucket rows exist in `storage.buckets`.
 3. Confirm public reads and admin-only writes are present in `pg_policies` for `storage.objects`.
 4. Use the helper module to generate an object path and verify it matches the documented bucket/path contract.
 

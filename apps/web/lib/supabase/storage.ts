@@ -15,6 +15,8 @@ const STORAGE_FILE_EXTENSION_PATTERN = /\.(avif|jpe?g|png|webp)$/;
 const STORAGE_FILE_NAME_PATTERN =
   /^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?\.(?:avif|jpe?g|png|webp)$/;
 const STORAGE_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const STORAGE_UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 export const storageBuckets = {
   caseStudies: {
@@ -29,12 +31,19 @@ export const storageBuckets = {
       /^[a-z0-9]+(?:-[a-z0-9]+)*\/(cover|content)\/[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?\.(?:avif|jpe?g|png|webp)$/,
     visibility: "public",
   },
+  testimonialAvatars: {
+    id: "testimonial-avatars",
+    pathPattern:
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/avatar\/[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?\.(?:avif|jpe?g|png|webp)$/,
+    visibility: "public",
+  },
 } as const;
 
 export type StorageBucketId =
   (typeof storageBuckets)[keyof typeof storageBuckets]["id"];
 export type CaseStudyImageKind = "cover" | "gallery";
 export type BlogImageKind = "cover" | "content";
+export type TestimonialAvatarKind = "avatar";
 
 type StorageVisibility =
   (typeof storageBuckets)[keyof typeof storageBuckets]["visibility"];
@@ -57,6 +66,12 @@ type StorageTarget =
       fileName: string;
       kind: BlogImageKind;
       slug: string;
+    }
+  | {
+      bucketId: typeof storageBuckets.testimonialAvatars.id;
+      fileName: string;
+      kind: TestimonialAvatarKind;
+      testimonialId: string;
     };
 
 export interface StorageUploadValidationInput {
@@ -92,6 +107,18 @@ function normalizeSlug(slug: string) {
   return normalizedSlug;
 }
 
+function normalizeUuid(value: string) {
+  const normalized = value.trim().toLowerCase();
+
+  if (!STORAGE_UUID_PATTERN.test(normalized)) {
+    throw new Error(
+      `Invalid storage identifier "${value}". Expected a lowercase UUID.`,
+    );
+  }
+
+  return normalized;
+}
+
 function normalizeFileName(fileName: string) {
   const trimmedFileName = fileName.trim();
   const fileNameWithoutPath = trimmedFileName.split(/[\\/]/).pop() ?? "";
@@ -119,10 +146,17 @@ function normalizeFileName(fileName: string) {
 }
 
 export function buildStorageObjectPath(target: StorageTarget) {
-  const slug = normalizeSlug(target.slug);
   const fileName = normalizeFileName(target.fileName);
 
-  return `${slug}/${target.kind}/${fileName}`;
+  if ("slug" in target) {
+    const slug = normalizeSlug(target.slug);
+
+    return `${slug}/${target.kind}/${fileName}`;
+  }
+
+  const testimonialId = normalizeUuid(target.testimonialId);
+
+  return `${testimonialId}/${target.kind}/${fileName}`;
 }
 
 export function isValidStorageObjectPath(

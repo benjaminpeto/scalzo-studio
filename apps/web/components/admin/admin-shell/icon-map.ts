@@ -5,6 +5,7 @@ import {
   Inbox,
   LayoutDashboard,
   Layers3,
+  MessageSquareQuote,
   PanelTop,
   ShieldCheck,
   type LucideIcon,
@@ -23,5 +24,6 @@ export const adminShellIconMap: Record<
   operations: Inbox,
   overview: PanelTop,
   services: BriefcaseBusiness,
+  testimonials: MessageSquareQuote,
   work: Images,
 };

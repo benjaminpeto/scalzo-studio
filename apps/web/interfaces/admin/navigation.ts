@@ -5,6 +5,7 @@ export interface AdminNavigationItem {
     | "dashboard"
     | "services"
     | "work"
+    | "testimonials"
     | "content"
     | "operations"
     | "audit"

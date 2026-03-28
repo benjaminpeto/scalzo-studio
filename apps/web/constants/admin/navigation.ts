@@ -37,6 +37,15 @@ const adminInsightsRoute: AdminNavigationItem = {
   matchStrategy: "prefix",
 };
 
+const adminTestimonialsRoute: AdminNavigationItem = {
+  description:
+    "Search, publish, feature, and edit the public testimonials stack.",
+  href: "/admin/testimonials",
+  icon: "testimonials",
+  label: "Testimonials",
+  matchStrategy: "prefix",
+};
+
 const adminServicesSectionNavigation: AdminNavigationItem[] = [
   {
     description: "Search, counts, and route-level admin context.",
@@ -82,11 +91,27 @@ const adminInsightsSectionNavigation: AdminNavigationItem[] = [
   },
 ];
 
+const adminTestimonialsSectionNavigation: AdminNavigationItem[] = [
+  {
+    description: "Filter state, counts, and route-level admin context.",
+    href: "/admin/testimonials#overview",
+    icon: "overview",
+    label: "Overview",
+  },
+  {
+    description: "Current testimonial list with publish and feature controls.",
+    href: "/admin/testimonials#testimonial-list",
+    icon: "list",
+    label: "List view",
+  },
+];
+
 export const adminPrimaryNavigation: AdminNavigationItem[] = [
   adminDashboardRoute,
   adminServicesRoute,
   adminWorkRoute,
   adminInsightsRoute,
+  adminTestimonialsRoute,
 ];
 
 export const adminDashboardSections: AdminDashboardSection[] = [
@@ -140,5 +165,12 @@ export const adminRouteMetadata: AdminRouteMetadata[] = [
     navigation: adminInsightsRoute,
     sectionNavigationItems: adminInsightsSectionNavigation,
     sectionNavigationLabel: "Insights list sections",
+  },
+  {
+    breadcrumb: ["Admin", "Testimonials"],
+    heading: "Testimonials management",
+    navigation: adminTestimonialsRoute,
+    sectionNavigationItems: adminTestimonialsSectionNavigation,
+    sectionNavigationLabel: "Testimonials list sections",
   },
 ];

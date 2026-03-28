@@ -7,7 +7,7 @@ const focusAreaBodyById = {
   audit:
     "Auth events, admin checks, and session diagnostics stay visible while the shell evolves.",
   content:
-    "Services, case studies, and insights editing should land here first once CRUD work starts.",
+    "Services, case studies, insights, and testimonials editing should land here first once CRUD work starts.",
   operations:
     "Lead review, qualification, and response handoff will share the same admin shell.",
 } as const;

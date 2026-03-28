@@ -15,6 +15,12 @@ import type {
   AdminServiceEditorState,
 } from "@/interfaces/admin/service-editor";
 import type {
+  AdminTestimonialEditorFieldErrors,
+  AdminTestimonialEditorRecord,
+  AdminTestimonialsListData,
+  AdminTestimonialEditorState,
+} from "@/interfaces/admin/testimonial-editor";
+import type {
   AdminCaseStudyEditorFieldErrors,
   AdminCaseStudyEditorRecord,
   AdminCaseStudiesListData,
@@ -247,5 +253,47 @@ export interface AdminInsightEditorProps {
 
 export interface AdminInsightsListProps {
   data: AdminInsightsListData;
+  status?: string;
+}
+
+export interface TestimonialEditorOverviewProps {
+  mode: "create" | "edit";
+  testimonial?: AdminTestimonialEditorRecord;
+}
+
+export interface TestimonialEditorFormSectionsProps {
+  avatarId: string;
+  errors: AdminTestimonialEditorFieldErrors;
+  nameId: string;
+  quoteId: string;
+  roleId: string;
+  companyId: string;
+  testimonial?: AdminTestimonialEditorRecord;
+}
+
+export interface TestimonialEditorSidebarProps {
+  currentPath: string;
+  mode: "create" | "edit";
+  testimonial?: AdminTestimonialEditorRecord;
+}
+
+export interface TestimonialEditorDeletePanelProps {
+  action: (payload: FormData) => Promise<void>;
+  testimonial: AdminTestimonialEditorRecord;
+}
+
+export interface AdminTestimonialEditorProps {
+  action: (
+    state: AdminTestimonialEditorState,
+    payload: FormData,
+  ) => Promise<AdminTestimonialEditorState>;
+  deleteAction: ((payload: FormData) => Promise<void>) | null;
+  mode: "create" | "edit";
+  status?: string;
+  testimonial?: AdminTestimonialEditorRecord;
+}
+
+export interface AdminTestimonialsListProps {
+  data: AdminTestimonialsListData;
   status?: string;
 }
