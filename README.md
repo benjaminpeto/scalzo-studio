@@ -109,6 +109,7 @@ NEXT_PUBLIC_ANALYTICS_PROVIDER=
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 RESEND_API_KEY=
+RESEND_NEWSLETTER_TOPIC_ID=
 CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
 TURNSTILE_SECRET_KEY=
@@ -127,7 +128,8 @@ Notes:
 
 - Public Supabase auth supports either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
-- Resend notifications require `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.
+- Contact notifications require `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.
+- Newsletter signup requires `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and `RESEND_NEWSLETTER_TOPIC_ID`.
 - CI uses safe placeholder public envs for build-only validation.
 
 ## Supabase client helpers
@@ -175,7 +177,7 @@ Practical rule:
 ## Homepage content boundary
 
 - The home route loads CMS-backed content for services, featured work, journal previews, and testimonials through `apps/web/actions/home/*`.
-- Hero, navigation/footer links, trust strip, process, studio credibility, FAQ, newsletter shell, and CTA band stay on static config for now.
+- Hero, navigation/footer links, trust strip, process, studio credibility, FAQ, and CTA band stay on static config for now.
 - If the CMS tables are empty or unavailable, the loader falls back to the current in-repo home content so the page design and structure remain unchanged.
 
 ## Services index boundary
@@ -214,6 +216,13 @@ Practical rule:
 - If the CMS row is missing or incomplete, the route falls back to in-repo article content, image, and metadata helpers for the matching slug.
 - When an admin explicitly enables preview mode, the same route can load the latest saved draft state for a post without exposing a public shareable preview URL.
 
+## Newsletter boundary
+
+- Newsletter signup runs through `apps/web/actions/newsletter/*` and is available from the homepage, insights index, insights detail pages, and the footer.
+- The submit action stores a pending subscriber row through the Supabase service-role client, rotates a hashed confirmation token, and sends a Resend double opt-in email.
+- `/newsletter/confirm` is the confirmation boundary. It validates the token, syncs the contact to the configured Resend topic, and marks the local subscriber row as confirmed only after provider sync succeeds.
+- `/newsletter/confirmed` is a static in-repo route that renders the final confirmation, expired-link, invalid-link, or provider-error state.
+
 ## About page boundary
 
 - `/about` is a static in-repo marketing route composed through `apps/web/constants/about/content.ts`.
@@ -229,6 +238,17 @@ Practical rule:
 - Stored lead metadata includes `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` values such as `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, plus the fixed `submitted_via` marker.
 - When Resend is configured, the same server action also sends an internal notification email plus a confirmation email to the lead. Lead persistence remains the primary success condition, so email delivery is best-effort and failures are logged without blocking the submission.
 - The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
+
+## Newsletter verification
+
+Use this checklist when validating the newsletter flow in local or preview:
+
+- Confirm the environment includes `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and `RESEND_NEWSLETTER_TOPIC_ID`.
+- Submit the newsletter form from the homepage, insights index, insights detail, and footer, and verify each returns the check-your-inbox success state.
+- Inspect the created `newsletter_subscribers` row and confirm it is stored as `pending` with the expected `placement`, `page_path`, token hash, and expiry values.
+- Confirm the email link lands on `/newsletter/confirmed?status=confirmed` and the local subscriber row is updated to `confirmed`.
+- Verify the confirmed contact appears in Resend under the configured newsletter topic.
+- Confirm invalid or expired tokens land on the matching `/newsletter/confirmed` error states without exposing provider details.
 
 ## Contact form verification
 

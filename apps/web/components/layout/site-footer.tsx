@@ -1,11 +1,12 @@
 import Link from "next/link";
 
+import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 import { footerLinks } from "@/components/home/content";
 
 export function SiteFooter() {
   return (
     <footer className="pb-0 pt-14">
-      <div className="section-shell grid gap-12 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
+      <div className="section-shell grid gap-12 lg:grid-cols-[1fr_1fr_0.7fr_0.7fr_0.9fr]">
         <div className="max-w-md">
           <p className="section-kicker">Scalzo Studio</p>
           <p className="mt-5 font-display text-[4.5rem] leading-[0.88] tracking-[-0.08em] text-foreground sm:text-[5.4rem]">
@@ -80,6 +81,8 @@ export function SiteFooter() {
             </ul>
           </div>
         </div>
+
+        <NewsletterSignup placement="footer" />
       </div>
       <div className="mt-14 bg-[#0d0f0c] py-4">
         <div className="section-shell flex flex-col gap-3 text-xs uppercase tracking-[0.18em] text-white/52 sm:flex-row sm:items-center sm:justify-between">

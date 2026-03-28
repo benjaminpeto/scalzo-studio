@@ -36,6 +36,7 @@ const serverEnvSchema = z
   .object({
     SUPABASE_SERVICE_ROLE_KEY: optionalString(),
     RESEND_API_KEY: optionalString(),
+    RESEND_NEWSLETTER_TOPIC_ID: optionalString(),
     CONTACT_TO_EMAIL: optionalEmail(),
     CONTACT_EMAIL: optionalEmail(),
     CONTACT_FROM_EMAIL: optionalMailbox(),
@@ -61,6 +62,15 @@ const serverEnvSchema = z
         code: z.ZodIssueCode.custom,
         message: "Set CONTACT_FROM_EMAIL when RESEND_API_KEY is configured.",
         path: ["CONTACT_FROM_EMAIL"],
+      });
+    }
+
+    if (value.RESEND_NEWSLETTER_TOPIC_ID && !value.RESEND_API_KEY) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Set RESEND_API_KEY when RESEND_NEWSLETTER_TOPIC_ID is configured.",
+        path: ["RESEND_NEWSLETTER_TOPIC_ID"],
       });
     }
 
@@ -93,6 +103,7 @@ function parseServerEnv() {
   const result = serverEnvSchema.safeParse({
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_NEWSLETTER_TOPIC_ID: process.env.RESEND_NEWSLETTER_TOPIC_ID,
     CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL,
     CONTACT_EMAIL: process.env.CONTACT_EMAIL,
     CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL,
@@ -113,6 +124,7 @@ export const serverEnv = {
   ...publicEnv,
   supabaseServiceRoleKey: rawServerEnv.SUPABASE_SERVICE_ROLE_KEY,
   resendApiKey: rawServerEnv.RESEND_API_KEY,
+  resendNewsletterTopicId: rawServerEnv.RESEND_NEWSLETTER_TOPIC_ID,
   contactToEmail: rawServerEnv.CONTACT_TO_EMAIL ?? rawServerEnv.CONTACT_EMAIL,
   contactFromEmail: rawServerEnv.CONTACT_FROM_EMAIL,
   turnstileSecretKey: rawServerEnv.TURNSTILE_SECRET_KEY,
@@ -126,6 +138,12 @@ export const serverFeatureFlags = {
     serverEnv.resendApiKey &&
     serverEnv.contactToEmail &&
     serverEnv.contactFromEmail,
+  ),
+  newsletterSignupEnabled: Boolean(
+    serverEnv.supabaseServiceRoleKey &&
+    serverEnv.resendApiKey &&
+    serverEnv.contactFromEmail &&
+    serverEnv.resendNewsletterTopicId,
   ),
   serviceRoleEnabled: Boolean(serverEnv.supabaseServiceRoleKey),
   turnstileEnabled: Boolean(

@@ -55,7 +55,7 @@ export const privacyPageContent = {
       title: "What this notice covers",
       paragraphs: [
         "This notice applies to personal data processed through the Scalzo Studio website, especially quote requests, admin authentication and session handling, and related operational follow-up.",
-        "It is written to match the current implementation plus clearly labelled near-term services that may be enabled later, such as PostHog analytics, hCaptcha anti-spam checks, a booking provider, or a newsletter backend.",
+        "It is written to match the current implementation plus clearly labelled near-term services that may be enabled later, such as PostHog analytics, hCaptcha anti-spam checks, or a booking provider.",
       ],
       note: "If a new processor or new purpose is added, this notice should be updated before the feature is launched in production.",
     },
@@ -159,16 +159,19 @@ export const privacyPageContent = {
     },
     {
       title: "Newsletter signup",
-      status: "Conditional",
-      lawfulBasis:
-        "Consent, once a real signup backend or provider is connected.",
+      status: "Live",
+      lawfulBasis: "Consent.",
       purpose:
-        "To send editorial or studio updates to users who actively subscribe.",
-      dataCategories: ["Email address and basic signup metadata"],
-      recipients: ["Future newsletter provider"],
+        "To send editorial or studio updates to users who actively subscribe and confirm their email address through a double opt-in flow.",
+      dataCategories: [
+        "Email address",
+        "Signup placement and page path",
+        "Confirmation token metadata, confirmation timestamps, and subscription status",
+      ],
+      recipients: ["Supabase", "Resend"],
       retention:
         "Until you unsubscribe, request deletion, or the newsletter channel is retired.",
-      note: "The current newsletter component is a frontend-only shell and does not yet submit personal data to a live provider.",
+      note: "Signup requests are stored in Supabase as pending until the email confirmation link is used. Resend is only updated after confirmation succeeds.",
     },
     {
       title: "Booking requests",
@@ -220,11 +223,11 @@ export const privacyPageContent = {
       note: undefined,
     },
     {
-      name: "Newsletter provider",
-      status: "Conditional",
+      name: "Resend",
+      status: "Live",
       role: "Email marketing or editorial distribution processor",
       detail:
-        "Will only be added once the newsletter form is connected to a real backend or delivery platform.",
+        "Used to send newsletter confirmation emails and store confirmed newsletter contacts against the configured newsletter topic.",
       note: undefined,
     },
   ] as const satisfies readonly LegalProcessorDisclosure[],

@@ -6,7 +6,7 @@ import { FaqList } from "@/components/home/faq-list";
 import { Hero } from "@/components/home/hero";
 import { HomeCmsSections } from "@/components/home/home-cms-sections";
 import { HomeCmsSectionsFallback } from "@/components/home/home-cms-sections-fallback";
-import { NewsletterSignup } from "@/components/home/newsletter-signup";
+import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 import { ProcessMethod } from "@/components/home/process-method";
 import { StudioCredibility } from "@/components/home/studio-credibility";
 import { TrustStrip } from "@/components/home/trust-strip";
@@ -31,7 +31,7 @@ export default function Home() {
       <ProcessMethod />
       <StudioCredibility />
       <FaqList />
-      <NewsletterSignup />
+      <NewsletterSignup placement="home" />
       <CtaBand />
     </>
   );

@@ -174,6 +174,57 @@ export type Database = {
         };
         Relationships: [];
       };
+      newsletter_subscribers: {
+        Row: {
+          confirmation_expires_at: string | null;
+          confirmation_sent_at: string | null;
+          confirmation_token_hash: string | null;
+          confirmed_at: string | null;
+          created_at: string;
+          email: string;
+          id: string;
+          page_path: string;
+          placement: string;
+          provider: string;
+          provider_contact_id: string | null;
+          status: string;
+          unsubscribed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          confirmation_expires_at?: string | null;
+          confirmation_sent_at?: string | null;
+          confirmation_token_hash?: string | null;
+          confirmed_at?: string | null;
+          created_at?: string;
+          email: string;
+          id?: string;
+          page_path?: string;
+          placement: string;
+          provider?: string;
+          provider_contact_id?: string | null;
+          status?: string;
+          unsubscribed_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          confirmation_expires_at?: string | null;
+          confirmation_sent_at?: string | null;
+          confirmation_token_hash?: string | null;
+          confirmed_at?: string | null;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          page_path?: string;
+          placement?: string;
+          provider?: string;
+          provider_contact_id?: string | null;
+          status?: string;
+          unsubscribed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       posts: {
         Row: {
           content_md: string;

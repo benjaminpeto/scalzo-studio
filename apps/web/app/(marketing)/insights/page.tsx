@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 import { getInsightIndexEntries } from "@/actions/insights/get-insight-index-entries";
 import { getInsightTags } from "@/actions/insights/get-insight-tags";
-import { NewsletterSignup } from "@/components/home/newsletter-signup";
+import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 import {
   Reveal,
   RevealGroup,
@@ -236,7 +236,7 @@ function InsightsIndexLayout({
         </Reveal>
       </Section>
 
-      <NewsletterSignup />
+      <NewsletterSignup placement="insights-index" />
     </>
   );
 }
@@ -353,7 +353,7 @@ function InsightsPageFallback({ selectedTag }: { selectedTag: string | null }) {
         </Stack>
       </Section>
 
-      <NewsletterSignup />
+      <NewsletterSignup placement="insights-index" />
     </>
   );
 }
