@@ -222,6 +222,8 @@ Practical rule:
 
 - `/contact` is a static in-repo marketing route composed through `apps/web/constants/contact/content.ts`.
 - Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
+- The server action is the canonical lead-ingestion boundary for the quote form; no public client-side secret handling or direct browser database writes are part of the flow.
+- Stored lead metadata includes `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` values such as `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, plus the fixed `submitted_via` marker.
 - The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
 
 ## Contact form verification
@@ -231,6 +233,7 @@ Use this checklist when validating the current quote-request flow in local or pr
 - Confirm the environment includes a valid Supabase service-role key and the leads table is available for writes.
 - Open `/contact` and verify the quote form renders as a four-step flow with Need, Context, Budget, and Brief steps.
 - Happy path: complete all required fields, submit the form, and verify the success state replaces the form after the request is saved.
+- Stored lead record: inspect the created `leads` row and confirm `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` were persisted from the submission.
 - Client validation: attempt to continue or submit with required fields missing and verify the active step blocks progression and shows the relevant field errors.
 - Server validation: submit an invalid payload through the server action path and verify the form returns the generic validation message plus field-level errors.
 - Temporary outage: disable service-role access, submit a valid request, and verify the temporary-unavailable message is shown without exposing secrets or stack details.

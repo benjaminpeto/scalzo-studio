@@ -46,6 +46,60 @@ function buildValidFormData() {
   return formData;
 }
 
+function expectLeadInsertPayload(
+  payload: unknown,
+  overrides?: Partial<{
+    budget_band: string | null;
+    company: string | null;
+    email: string | null;
+    message: string | null;
+    name: string | null;
+    page_path: string | null;
+    services_interest: string[] | null;
+    source_utm: {
+      referrer: string | null;
+      submitted_via: string;
+      utm_campaign: string | null;
+      utm_content: string | null;
+      utm_medium: string | null;
+      utm_source: string | null;
+      utm_term: string | null;
+    };
+    timeline_band: string | null;
+    website: string | null;
+  }>,
+) {
+  expect(payload).toEqual({
+    budget_band: "1000-3000",
+    company: "Scalzo",
+    email: "hello@example.com",
+    message: [
+      "Primary goal: Improve conversion clarity",
+      "Project type: homepage",
+      "Location: uk-europe",
+      "Website / profile: https://example.com",
+      "",
+      "Brief:",
+      "We need a clearer commercial story and a stronger conversion path.",
+    ].join("\n"),
+    name: "Ben",
+    page_path: "/contact",
+    services_interest: ["strategic-framing"],
+    source_utm: {
+      referrer: "https://google.com",
+      submitted_via: "contact-page",
+      utm_campaign: null,
+      utm_content: null,
+      utm_medium: null,
+      utm_source: null,
+      utm_term: null,
+    },
+    timeline_band: "2-4-weeks",
+    website: "https://example.com",
+    ...overrides,
+  });
+}
+
 describe("submitQuoteRequest", () => {
   beforeEach(() => {
     mocks.fromMock.mockReset();
@@ -226,7 +280,52 @@ describe("submitQuoteRequest", () => {
 
     expect(mocks.fromMock).toHaveBeenCalledWith("leads");
     expect(mocks.insertMock).toHaveBeenCalledTimes(1);
+    expectLeadInsertPayload(mocks.insertMock.mock.calls[0]?.[0]);
     expect(result.status).toBe("success");
     expect(consoleErrorSpy).not.toHaveBeenCalled();
+  });
+
+  it("persists lead metadata and fallback defaults for optional fields", async () => {
+    mocks.insertMock.mockResolvedValueOnce({ error: null });
+
+    const formData = buildValidFormData();
+    formData.delete("company");
+    formData.delete("location");
+    formData.delete("pagePath");
+    formData.delete("projectType");
+    formData.delete("referrer");
+    formData.delete("website");
+    formData.set("utmCampaign", "spring-launch");
+    formData.set("utmContent", "cta-footer");
+    formData.set("utmMedium", "email");
+    formData.set("utmSource", "newsletter");
+    formData.set("utmTerm", "brand-strategy");
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      formData,
+    );
+
+    expect(result.status).toBe("success");
+    expectLeadInsertPayload(mocks.insertMock.mock.calls[0]?.[0], {
+      company: undefined,
+      message: [
+        "Primary goal: Improve conversion clarity",
+        "",
+        "Brief:",
+        "We need a clearer commercial story and a stronger conversion path.",
+      ].join("\n"),
+      page_path: "/contact",
+      source_utm: {
+        referrer: null,
+        submitted_via: "contact-page",
+        utm_campaign: "spring-launch",
+        utm_content: "cta-footer",
+        utm_medium: "email",
+        utm_source: "newsletter",
+        utm_term: "brand-strategy",
+      },
+      website: undefined,
+    });
   });
 });
