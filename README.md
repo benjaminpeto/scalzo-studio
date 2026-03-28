@@ -224,6 +224,19 @@ Practical rule:
 - Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
 - The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
 
+## Contact form verification
+
+Use this checklist when validating the current quote-request flow in local or preview:
+
+- Confirm the environment includes a valid Supabase service-role key and the leads table is available for writes.
+- Open `/contact` and verify the quote form renders as a four-step flow with Need, Context, Budget, and Brief steps.
+- Happy path: complete all required fields, submit the form, and verify the success state replaces the form after the request is saved.
+- Client validation: attempt to continue or submit with required fields missing and verify the active step blocks progression and shows the relevant field errors.
+- Server validation: submit an invalid payload through the server action path and verify the form returns the generic validation message plus field-level errors.
+- Temporary outage: disable service-role access, submit a valid request, and verify the temporary-unavailable message is shown without exposing secrets or stack details.
+- Failure observability: inspect the server logs for structured `console.error` entries on validation failures, disabled service-role mode, insert failures, and unexpected submission errors.
+- Log hygiene: verify the error metadata includes only operational context such as page path, project type, budget/timeline bands, service selections, and boolean source flags, with no name, email, company, website, message, raw referrer, or raw UTM values.
+
 ## Admin auth verification
 
 Use this checklist when validating the current admin auth UX:

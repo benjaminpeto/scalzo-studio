@@ -42,6 +42,57 @@ export function normalizeString(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value : "";
 }
 
+function normalizeOptionalString(value: string | null | undefined) {
+  const normalizedValue = value?.trim();
+
+  return normalizedValue ? normalizedValue : null;
+}
+
+export function buildQuoteRequestLogContext(input: {
+  budgetBand?: string | null;
+  pagePath?: string | null;
+  projectType?: string | null;
+  referrer?: string | null;
+  servicesInterest?: string[];
+  timelineBand?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+  utmMedium?: string | null;
+  utmSource?: string | null;
+  utmTerm?: string | null;
+  website?: string | null;
+}) {
+  return {
+    budgetBand: normalizeOptionalString(input.budgetBand),
+    hasReferrer: Boolean(normalizeOptionalString(input.referrer)),
+    hasUtm: Boolean(
+      normalizeOptionalString(input.utmCampaign) ||
+      normalizeOptionalString(input.utmContent) ||
+      normalizeOptionalString(input.utmMedium) ||
+      normalizeOptionalString(input.utmSource) ||
+      normalizeOptionalString(input.utmTerm),
+    ),
+    hasWebsite: Boolean(normalizeOptionalString(input.website)),
+    pagePath: normalizeOptionalString(input.pagePath) ?? "/contact",
+    projectType: normalizeOptionalString(input.projectType),
+    servicesInterest: (input.servicesInterest ?? []).filter(Boolean),
+    timelineBand: normalizeOptionalString(input.timelineBand),
+  };
+}
+
+export function serializeErrorForLog(error: unknown) {
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      name: error.name,
+    };
+  }
+
+  return {
+    value: String(error),
+  };
+}
+
 export function readLeadFormData(formData: FormData) {
   return {
     budgetBand: formData.get("budgetBand"),
