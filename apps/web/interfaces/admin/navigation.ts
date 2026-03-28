@@ -6,6 +6,7 @@ export interface AdminNavigationItem {
     | "services"
     | "work"
     | "testimonials"
+    | "redirects"
     | "content"
     | "operations"
     | "audit"

@@ -7,6 +7,7 @@ import {
   Layers3,
   MessageSquareQuote,
   PanelTop,
+  Route,
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
@@ -23,6 +24,7 @@ export const adminShellIconMap: Record<
   list: ClipboardList,
   operations: Inbox,
   overview: PanelTop,
+  redirects: Route,
   services: BriefcaseBusiness,
   testimonials: MessageSquareQuote,
   work: Images,

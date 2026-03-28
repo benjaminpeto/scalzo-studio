@@ -17,3 +17,8 @@ export const adminTestimonialEditorStatusMessageByCode = {
   created: "The testimonial has been created and is ready for editing.",
   saved: "The latest testimonial changes have been saved.",
 } as const;
+
+export const adminRedirectEditorStatusMessageByCode = {
+  created: "The redirect has been created and is ready for editing.",
+  saved: "The latest redirect changes have been saved.",
+} as const;

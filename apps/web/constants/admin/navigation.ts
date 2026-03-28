@@ -46,6 +46,15 @@ const adminTestimonialsRoute: AdminNavigationItem = {
   matchStrategy: "prefix",
 };
 
+const adminRedirectsRoute: AdminNavigationItem = {
+  description:
+    "Search, validate, and maintain internal redirect records for future runtime use.",
+  href: "/admin/redirects",
+  icon: "redirects",
+  label: "Redirects",
+  matchStrategy: "prefix",
+};
+
 const adminServicesSectionNavigation: AdminNavigationItem[] = [
   {
     description: "Search, counts, and route-level admin context.",
@@ -106,12 +115,28 @@ const adminTestimonialsSectionNavigation: AdminNavigationItem[] = [
   },
 ];
 
+const adminRedirectsSectionNavigation: AdminNavigationItem[] = [
+  {
+    description: "Filter state, counts, and route-level admin context.",
+    href: "/admin/redirects#overview",
+    icon: "overview",
+    label: "Overview",
+  },
+  {
+    description: "Current redirect list with validation-backed edit links.",
+    href: "/admin/redirects#redirect-list",
+    icon: "list",
+    label: "List view",
+  },
+];
+
 export const adminPrimaryNavigation: AdminNavigationItem[] = [
   adminDashboardRoute,
   adminServicesRoute,
   adminWorkRoute,
   adminInsightsRoute,
   adminTestimonialsRoute,
+  adminRedirectsRoute,
 ];
 
 export const adminDashboardSections: AdminDashboardSection[] = [
@@ -172,5 +197,12 @@ export const adminRouteMetadata: AdminRouteMetadata[] = [
     navigation: adminTestimonialsRoute,
     sectionNavigationItems: adminTestimonialsSectionNavigation,
     sectionNavigationLabel: "Testimonials list sections",
+  },
+  {
+    breadcrumb: ["Admin", "Redirects"],
+    heading: "Redirects management",
+    navigation: adminRedirectsRoute,
+    sectionNavigationItems: adminRedirectsSectionNavigation,
+    sectionNavigationLabel: "Redirects list sections",
   },
 ];

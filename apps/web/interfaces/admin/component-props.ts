@@ -15,6 +15,12 @@ import type {
   AdminServiceEditorState,
 } from "@/interfaces/admin/service-editor";
 import type {
+  AdminRedirectEditorFieldErrors,
+  AdminRedirectEditorRecord,
+  AdminRedirectsListData,
+  AdminRedirectEditorState,
+} from "@/interfaces/admin/redirect-editor";
+import type {
   AdminTestimonialEditorFieldErrors,
   AdminTestimonialEditorRecord,
   AdminTestimonialsListData,
@@ -118,6 +124,46 @@ export interface AdminServiceEditorProps {
 
 export interface AdminServicesListProps {
   data: AdminServicesListData;
+  status?: string;
+}
+
+export interface RedirectEditorOverviewProps {
+  mode: "create" | "edit";
+  redirectRecord?: AdminRedirectEditorRecord;
+}
+
+export interface RedirectEditorFormSectionsProps {
+  errors: AdminRedirectEditorFieldErrors;
+  fromPathId: string;
+  redirectRecord?: AdminRedirectEditorRecord;
+  statusCodeId: string;
+  toPathId: string;
+}
+
+export interface RedirectEditorSidebarProps {
+  currentPath: string;
+  mode: "create" | "edit";
+  redirectRecord?: AdminRedirectEditorRecord;
+}
+
+export interface RedirectEditorDeletePanelProps {
+  action: (payload: FormData) => Promise<void>;
+  redirectRecord: AdminRedirectEditorRecord;
+}
+
+export interface AdminRedirectEditorProps {
+  action: (
+    state: AdminRedirectEditorState,
+    payload: FormData,
+  ) => Promise<AdminRedirectEditorState>;
+  deleteAction: ((payload: FormData) => Promise<void>) | null;
+  mode: "create" | "edit";
+  redirectRecord?: AdminRedirectEditorRecord;
+  status?: string;
+}
+
+export interface AdminRedirectsListProps {
+  data: AdminRedirectsListData;
   status?: string;
 }
 
