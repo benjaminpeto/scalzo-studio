@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { contactPageContent } from "@/constants/contact/content";
 import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
 import { Label } from "@ui/components/ui/label";
 
@@ -28,6 +29,22 @@ export function BriefStep({
           className="input-shell mt-3 min-h-40 w-full rounded-[1rem] px-4 py-3 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden"
         />
         <FieldError message={stepErrors.message} />
+      </div>
+
+      <div className="rounded-[1.2rem] border border-border/70 bg-white/72 p-4">
+        <label className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            checked={values.newsletterOptIn}
+            onChange={(event) =>
+              updateField("newsletterOptIn", event.target.checked)
+            }
+            className="mt-1 size-4"
+          />
+          <span className="text-sm leading-6 text-foreground">
+            {contactPageContent.form.newsletterOptInLabel}
+          </span>
+        </label>
       </div>
 
       <div className="rounded-[1.2rem] border border-border/70 bg-white/72 p-4">

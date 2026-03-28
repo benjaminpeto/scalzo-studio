@@ -52,6 +52,7 @@ describe("QuoteRequestForm", () => {
         location: "",
         message: "",
         name: "",
+        newsletterOptIn: true,
         primaryGoal: "",
         projectType: "",
         servicesInterest: [],

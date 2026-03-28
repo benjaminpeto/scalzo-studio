@@ -136,8 +136,6 @@ export async function updateResendContactTopics(
 
 export async function createOrUpdateResendContactWithTopic(input: {
   email: string;
-  pagePath: string;
-  placement: string;
   topicId: string;
 }) {
   const existingContact = await getResendContactByEmail(input.email);
@@ -145,10 +143,6 @@ export async function createOrUpdateResendContactWithTopic(input: {
   if (!existingContact) {
     const createdContact = await createResendContact({
       email: input.email,
-      properties: {
-        latest_page_path: input.pagePath,
-        latest_placement: input.placement,
-      },
       topics: [
         {
           id: input.topicId,
@@ -163,10 +157,6 @@ export async function createOrUpdateResendContactWithTopic(input: {
 
   await updateResendContact({
     email: input.email,
-    properties: {
-      latest_page_path: input.pagePath,
-      latest_placement: input.placement,
-    },
     unsubscribed: false,
   });
   const updatedTopics = await updateResendContactTopics({

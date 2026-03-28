@@ -13,6 +13,7 @@ export type QuoteFormValues = {
   timelineBand: string;
   message: string;
   consent: boolean;
+  newsletterOptIn: boolean;
   honeypot: string;
 };
 

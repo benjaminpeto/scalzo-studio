@@ -89,8 +89,6 @@ describe("handleNewsletterConfirmRequest", () => {
     expect(mocks.createOrUpdateResendContactWithTopicMock).toHaveBeenCalledWith(
       {
         email: "reader@example.com",
-        pagePath: "/insights/clarity",
-        placement: "insights-detail",
         topicId: "topic_123",
       },
     );

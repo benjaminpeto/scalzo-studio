@@ -96,6 +96,11 @@ export function QuoteRequestHiddenFields({
         name="consent"
         value={values.consent ? "true" : ""}
       />
+      <input
+        type="hidden"
+        name="newsletterOptIn"
+        value={values.newsletterOptIn ? "true" : ""}
+      />
       {values.servicesInterest.map((value) => (
         <input
           key={value}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { newsletterSignupContent } from "@/constants/newsletter/content";
 import { Grid } from "@ui/components/layout/grid";
@@ -46,14 +47,11 @@ export const metadata: Metadata = {
   title: "Newsletter confirmation | Scalzo Studio",
 };
 
-export default async function NewsletterConfirmedPage({
-  searchParams,
-}: NewsletterConfirmedPageProps) {
-  const resolvedSearchParams = await searchParams;
-  const status =
-    resolvedSearchParams.status && resolvedSearchParams.status in statusContent
-      ? (resolvedSearchParams.status as keyof typeof statusContent)
-      : "invalid";
+function NewsletterConfirmedContent({
+  status,
+}: {
+  status: keyof typeof statusContent;
+}) {
   const content = statusContent[status];
 
   return (
@@ -93,5 +91,27 @@ export default async function NewsletterConfirmedPage({
         </div>
       </Grid>
     </Section>
+  );
+}
+
+async function ResolvedNewsletterConfirmedPage({
+  searchParams,
+}: NewsletterConfirmedPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const status =
+    resolvedSearchParams.status && resolvedSearchParams.status in statusContent
+      ? (resolvedSearchParams.status as keyof typeof statusContent)
+      : "invalid";
+
+  return <NewsletterConfirmedContent status={status} />;
+}
+
+export default function NewsletterConfirmedPage(
+  props: NewsletterConfirmedPageProps,
+) {
+  return (
+    <Suspense fallback={<NewsletterConfirmedContent status="invalid" />}>
+      <ResolvedNewsletterConfirmedPage {...props} />
+    </Suspense>
   );
 }

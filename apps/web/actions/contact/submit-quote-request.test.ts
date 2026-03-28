@@ -5,12 +5,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { submitQuoteRequest } from "./submit-quote-request";
 
 const mocks = vi.hoisted(() => ({
+  createOrRefreshPendingNewsletterSignupMock: vi.fn(),
   buildQuoteRequestEmailLogContextMock: vi.fn(),
   buildQuoteRequestEmailPayloadMock: vi.fn(),
   fromMock: vi.fn(),
   insertMock: vi.fn(),
   selectMock: vi.fn(),
   sendQuoteRequestEmailsMock: vi.fn(),
+  serializeNewsletterErrorForLogMock: vi.fn(),
   serializeQuoteRequestEmailErrorForLogMock: vi.fn(),
   serverFeatureFlags: {
     contactNotificationsEnabled: false,
@@ -27,6 +29,32 @@ vi.mock("@/lib/supabase/service-role", () => ({
   createServiceRoleSupabaseClient: () => ({
     from: mocks.fromMock,
   }),
+}));
+
+vi.mock(
+  "@/actions/newsletter/create-or-refresh-pending-newsletter-signup",
+  () => ({
+    createOrRefreshPendingNewsletterSignup:
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+  }),
+);
+
+vi.mock("@/actions/newsletter/helpers", () => ({
+  buildNewsletterSignupLogContext: ({
+    email,
+    pagePath,
+    placement,
+  }: {
+    email?: string | null;
+    pagePath?: string | null;
+    placement?: string | null;
+  }) => ({
+    emailDomain:
+      email && email.includes("@") ? (email.split("@")[1] ?? null) : null,
+    pagePath: pagePath ?? "/",
+    placement: placement ?? null,
+  }),
+  serializeNewsletterErrorForLog: mocks.serializeNewsletterErrorForLogMock,
 }));
 
 vi.mock("./quote-request-emails", () => ({
@@ -50,6 +78,7 @@ function buildValidFormData() {
     "We need a clearer commercial story and a stronger conversion path.",
   );
   formData.set("name", "Ben");
+  formData.set("newsletterOptIn", "true");
   formData.set("pagePath", "/contact");
   formData.set("primaryGoal", "Improve conversion clarity");
   formData.set("projectType", "homepage");
@@ -119,10 +148,12 @@ describe("submitQuoteRequest", () => {
   beforeEach(() => {
     mocks.buildQuoteRequestEmailLogContextMock.mockReset();
     mocks.buildQuoteRequestEmailPayloadMock.mockReset();
+    mocks.createOrRefreshPendingNewsletterSignupMock.mockReset();
     mocks.fromMock.mockReset();
     mocks.insertMock.mockReset();
     mocks.selectMock.mockReset();
     mocks.sendQuoteRequestEmailsMock.mockReset();
+    mocks.serializeNewsletterErrorForLogMock.mockReset();
     mocks.serializeQuoteRequestEmailErrorForLogMock.mockReset();
     mocks.singleMock.mockReset();
     mocks.fromMock.mockReturnValue({
@@ -136,6 +167,9 @@ describe("submitQuoteRequest", () => {
     });
     mocks.serverFeatureFlags.contactNotificationsEnabled = false;
     mocks.serverFeatureFlags.serviceRoleEnabled = true;
+    mocks.createOrRefreshPendingNewsletterSignupMock.mockResolvedValue(
+      "pending",
+    );
     mocks.buildQuoteRequestEmailPayloadMock.mockReturnValue({
       leadId: "lead_123",
       pagePath: "/contact",
@@ -158,6 +192,14 @@ describe("submitQuoteRequest", () => {
         name: error instanceof Error ? error.name : "UnknownError",
       }),
     );
+    mocks.serializeNewsletterErrorForLogMock.mockImplementation((error) => ({
+      code: null,
+      details: null,
+      hint: null,
+      message: error instanceof Error ? error.message : String(error),
+      name: error instanceof Error ? error.name : "UnknownError",
+      statusCode: null,
+    }));
   });
 
   it("short-circuits honeypot submissions without touching the database", async () => {
@@ -172,6 +214,9 @@ describe("submitQuoteRequest", () => {
     expect(result.status).toBe("success");
     expect(mocks.fromMock).not.toHaveBeenCalled();
     expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
+    expect(
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+    ).not.toHaveBeenCalled();
   });
 
   it("logs sanitized validation failures and returns field errors for invalid submissions", async () => {
@@ -246,6 +291,9 @@ describe("submitQuoteRequest", () => {
     );
     expect(mocks.fromMock).not.toHaveBeenCalled();
     expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
+    expect(
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+    ).not.toHaveBeenCalled();
   });
 
   it("logs insert failures and returns the generic save error", async () => {
@@ -287,6 +335,9 @@ describe("submitQuoteRequest", () => {
       }),
     );
     expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
+    expect(
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+    ).not.toHaveBeenCalled();
   });
 
   it("logs unexpected insert errors and returns the generic save error", async () => {
@@ -320,6 +371,9 @@ describe("submitQuoteRequest", () => {
       }),
     );
     expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
+    expect(
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+    ).not.toHaveBeenCalled();
   });
 
   it("inserts valid leads and skips email sends when notifications are disabled", async () => {
@@ -343,8 +397,37 @@ describe("submitQuoteRequest", () => {
     expect(mocks.insertMock).toHaveBeenCalledTimes(1);
     expectLeadInsertPayload(mocks.insertMock.mock.calls[0]?.[0]);
     expect(result.status).toBe("success");
+    expect(
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+    ).toHaveBeenCalledWith({
+      email: "hello@example.com",
+      pagePath: "/contact",
+      placement: "contact",
+    });
     expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
     expect(consoleErrorSpy).not.toHaveBeenCalled();
+  });
+
+  it("skips newsletter signup when the opt-in checkbox is unchecked", async () => {
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
+    const formData = buildValidFormData();
+    formData.set("newsletterOptIn", "");
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      formData,
+    );
+
+    expect(result.status).toBe("success");
+    expect(
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+    ).not.toHaveBeenCalled();
   });
 
   it("sends both emails after a successful lead insert when notifications are enabled", async () => {
@@ -383,6 +466,13 @@ describe("submitQuoteRequest", () => {
     expect(mocks.sendQuoteRequestEmailsMock).toHaveBeenCalledWith(
       mocks.buildQuoteRequestEmailPayloadMock.mock.results[0]?.value,
     );
+    expect(
+      mocks.createOrRefreshPendingNewsletterSignupMock,
+    ).toHaveBeenCalledWith({
+      email: "hello@example.com",
+      pagePath: "/contact",
+      placement: "contact",
+    });
   });
 
   it("returns success and logs a sanitized error when one email send fails", async () => {
@@ -482,6 +572,76 @@ describe("submitQuoteRequest", () => {
       expect.objectContaining({
         emailKind: "internal",
       }),
+    );
+  });
+
+  it("returns success and logs a sanitized error when newsletter signup fails after the lead is saved", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
+    mocks.createOrRefreshPendingNewsletterSignupMock.mockRejectedValueOnce(
+      new Error("newsletter down"),
+    );
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("success");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Quote request newsletter signup failed",
+      {
+        emailDomain: "example.com",
+        error: {
+          code: null,
+          details: null,
+          hint: null,
+          message: "newsletter down",
+          name: "Error",
+          statusCode: null,
+        },
+        pagePath: "/contact",
+        placement: "contact",
+      },
+    );
+  });
+
+  it("returns success and logs a skip message when newsletter opt-in is checked but the integration is disabled", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
+    mocks.createOrRefreshPendingNewsletterSignupMock.mockResolvedValueOnce(
+      "disabled",
+    );
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("success");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Quote request newsletter signup skipped because the integration is disabled",
+      {
+        emailDomain: "example.com",
+        pagePath: "/contact",
+        placement: "contact",
+      },
     );
   });
 

@@ -50,6 +50,7 @@ function normalizeOptionalString(value: string | null | undefined) {
 
 export function buildQuoteRequestLogContext(input: {
   budgetBand?: string | null;
+  newsletterOptIn?: boolean;
   pagePath?: string | null;
   projectType?: string | null;
   referrer?: string | null;
@@ -73,6 +74,7 @@ export function buildQuoteRequestLogContext(input: {
       normalizeOptionalString(input.utmTerm),
     ),
     hasWebsite: Boolean(normalizeOptionalString(input.website)),
+    newsletterOptIn: Boolean(input.newsletterOptIn),
     pagePath: normalizeOptionalString(input.pagePath) ?? "/contact",
     projectType: normalizeOptionalString(input.projectType),
     servicesInterest: (input.servicesInterest ?? []).filter(Boolean),
@@ -103,6 +105,7 @@ export function readLeadFormData(formData: FormData) {
     location: formData.get("location"),
     message: formData.get("message"),
     name: formData.get("name"),
+    newsletterOptIn: formData.get("newsletterOptIn"),
     pagePath: formData.get("pagePath"),
     primaryGoal: formData.get("primaryGoal"),
     projectType: formData.get("projectType"),

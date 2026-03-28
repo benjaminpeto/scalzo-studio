@@ -8,6 +8,7 @@ import {
   buildNewsletterSignupLogContext,
   hashNewsletterToken,
 } from "./helpers";
+import type { NewsletterSignupInput } from "./schemas";
 
 function buildNewsletterConfirmedPath(
   status: "confirmed" | "error" | "expired" | "invalid",
@@ -31,7 +32,7 @@ type SubscriberRow = {
   email: string;
   id: string;
   page_path: string;
-  placement: "home" | "insights-index" | "insights-detail" | "footer";
+  placement: NewsletterSignupInput["placement"];
   provider_contact_id: string | null;
   status: "pending" | "confirmed" | "unsubscribed";
 };
@@ -108,8 +109,6 @@ export async function handleNewsletterConfirmRequest(input: {
   try {
     const providerContactId = await createOrUpdateResendContactWithTopic({
       email: subscriber.email,
-      pagePath: subscriber.page_path,
-      placement: subscriber.placement,
       topicId: serverEnv.resendNewsletterTopicId!,
     });
 

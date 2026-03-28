@@ -5,6 +5,7 @@ const newsletterPlacementValues = [
   "insights-index",
   "insights-detail",
   "footer",
+  "contact",
 ] as const;
 
 export const newsletterSignupSchema = z.object({

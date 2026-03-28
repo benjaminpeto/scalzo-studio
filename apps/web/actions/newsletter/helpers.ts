@@ -44,8 +44,20 @@ export function buildNewsletterSignupLogContext(input: {
 export function serializeNewsletterErrorForLog(error: unknown) {
   if (error instanceof Error) {
     return {
+      code:
+        "code" in error && typeof error.code === "string" ? error.code : null,
+      details:
+        "details" in error && typeof error.details === "string"
+          ? error.details
+          : null,
+      hint:
+        "hint" in error && typeof error.hint === "string" ? error.hint : null,
       message: error.message,
       name: error.name,
+      statusCode:
+        "statusCode" in error && typeof error.statusCode === "number"
+          ? error.statusCode
+          : null,
     };
   }
 

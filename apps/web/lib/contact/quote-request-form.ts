@@ -17,6 +17,7 @@ export const initialQuoteFormValues: QuoteFormValues = {
   location: "",
   message: "",
   name: "",
+  newsletterOptIn: true,
   primaryGoal: "",
   projectType: "",
   servicesInterest: [],

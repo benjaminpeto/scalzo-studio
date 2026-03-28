@@ -120,6 +120,8 @@ export const contactPageContent = {
       "The form is split into a few short steps so the essentials arrive clearly: the type of work, the business context, the budget or timing, and the actual brief.",
     responseNote:
       "Quote requests are reviewed manually. Expect a reply within two business days.",
+    newsletterOptInLabel:
+      "Sign me up for occasional editorial notes and studio updates by email. You can unsubscribe at any time.",
   },
   booking: {
     kicker: "Booking option",

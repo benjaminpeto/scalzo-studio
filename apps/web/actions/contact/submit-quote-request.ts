@@ -4,6 +4,11 @@ import { serverFeatureFlags } from "@/lib/env/server";
 import type { Database } from "@/lib/supabase/database.types";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import type { SubmitQuoteRequestState } from "@/interfaces/contact/form";
+import { createOrRefreshPendingNewsletterSignup } from "@/actions/newsletter/create-or-refresh-pending-newsletter-signup";
+import {
+  buildNewsletterSignupLogContext,
+  serializeNewsletterErrorForLog,
+} from "@/actions/newsletter/helpers";
 
 import {
   buildQuoteRequestLogContext,
@@ -28,6 +33,7 @@ export async function submitQuoteRequest(
   const rawInput = readLeadFormData(formData);
   const logContext = buildQuoteRequestLogContext({
     budgetBand: normalizeString(rawInput.budgetBand),
+    newsletterOptIn: normalizeString(rawInput.newsletterOptIn) === "true",
     pagePath: normalizeString(rawInput.pagePath) || "/contact",
     projectType: normalizeString(rawInput.projectType),
     referrer: normalizeString(rawInput.referrer),
@@ -106,6 +112,8 @@ export async function submitQuoteRequest(
 
   try {
     const input = parsedInput.data;
+    const newsletterOptIn =
+      normalizeString(rawInput.newsletterOptIn) === "true";
     const supabase = createServiceRoleSupabaseClient();
     const leadInsert: Database["public"]["Tables"]["leads"]["Insert"] = {
       budget_band: input.budgetBand,
@@ -168,6 +176,34 @@ export async function submitQuoteRequest(
           ...emailLogContext,
           emailKind,
           error: serializeQuoteRequestEmailErrorForLog(result.reason),
+        });
+      }
+    }
+
+    if (newsletterOptIn) {
+      const newsletterLogContext = buildNewsletterSignupLogContext({
+        email: input.email,
+        pagePath: input.pagePath,
+        placement: "contact",
+      });
+
+      try {
+        const newsletterResult = await createOrRefreshPendingNewsletterSignup({
+          email: input.email,
+          pagePath: input.pagePath,
+          placement: "contact",
+        });
+
+        if (newsletterResult === "disabled") {
+          console.error(
+            "Quote request newsletter signup skipped because the integration is disabled",
+            newsletterLogContext,
+          );
+        }
+      } catch (error) {
+        console.error("Quote request newsletter signup failed", {
+          ...newsletterLogContext,
+          error: serializeNewsletterErrorForLog(error),
         });
       }
     }

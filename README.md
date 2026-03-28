@@ -130,6 +130,7 @@ Notes:
 - Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
 - Contact notifications require `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.
 - Newsletter signup requires `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and `RESEND_NEWSLETTER_TOPIC_ID`.
+- Because the app currently uses one `RESEND_API_KEY` for both email sends and newsletter contact/topic sync, that Resend key must have `Full access`, not `Sending access`.
 - CI uses safe placeholder public envs for build-only validation.
 
 ## Supabase client helpers
@@ -235,8 +236,10 @@ Practical rule:
 - `/contact/thank-you` is a static in-repo confirmation route that reuses the contact success and booking components for the post-submit handoff.
 - Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
 - The server action is the canonical lead-ingestion boundary for the quote form; no public client-side secret handling or direct browser database writes are part of the flow.
+- The final quote-form step includes a newsletter opt-in checkbox that is checked by default but can be turned off before submit.
 - Stored lead metadata includes `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` values such as `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, plus the fixed `submitted_via` marker.
 - When Resend is configured, the same server action also sends an internal notification email plus a confirmation email to the lead. Lead persistence remains the primary success condition, so email delivery is best-effort and failures are logged without blocking the submission.
+- When the quote-form newsletter checkbox stays enabled, the same server action also creates or refreshes a pending newsletter subscriber record and sends the normal double opt-in confirmation email. This newsletter sidecar remains best-effort and does not block lead success.
 - The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
 
 ## Newsletter verification
@@ -245,6 +248,7 @@ Use this checklist when validating the newsletter flow in local or preview:
 
 - Confirm the environment includes `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and `RESEND_NEWSLETTER_TOPIC_ID`.
 - Submit the newsletter form from the homepage, insights index, insights detail, and footer, and verify each returns the check-your-inbox success state.
+- Submit the quote form with the newsletter checkbox left on and verify it also creates a pending newsletter signup using the `contact` placement.
 - Inspect the created `newsletter_subscribers` row and confirm it is stored as `pending` with the expected `placement`, `page_path`, token hash, and expiry values.
 - Confirm the email link lands on `/newsletter/confirmed?status=confirmed` and the local subscriber row is updated to `confirmed`.
 - Verify the confirmed contact appears in Resend under the configured newsletter topic.

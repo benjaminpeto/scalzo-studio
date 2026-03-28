@@ -74,8 +74,12 @@ describe("newsletter email helpers", () => {
     });
 
     expect(serializeNewsletterErrorForLog(error)).toEqual({
+      code: "restricted_api_key",
+      details: null,
+      hint: null,
       message: "provider rejected request",
       name: "ResendSendError",
+      statusCode: 403,
     });
     expect(getNewsletterConfirmationMessage()).toContain("Check your inbox");
   });
