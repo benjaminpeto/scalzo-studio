@@ -6,7 +6,7 @@ import {
   LegalPage,
   LegalSection,
 } from "@/components/legal/legal-page";
-import { cookiesPageContent } from "@/lib/content/legal";
+import { cookiesPageContent } from "@/constants/legal/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 

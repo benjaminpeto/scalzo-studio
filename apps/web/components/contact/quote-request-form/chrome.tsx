@@ -1,11 +1,22 @@
-import { ArrowRight, Check, ChevronLeft } from "lucide-react";
+import { ArrowRight, ChevronLeft } from "lucide-react";
 
-import { contactFormSteps, contactPageContent } from "@/lib/content/contact";
+import {
+  contactFormSteps,
+  contactPageContent,
+} from "@/constants/contact/content";
+import type {
+  QuoteRequestFooterProps,
+  QuoteRequestHiddenFieldsProps,
+  QuoteRequestHoneypotProps,
+  QuoteRequestServerMessageProps,
+  QuoteRequestStepTabsProps,
+} from "@/interfaces/contact/component-props";
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 
-import type { QuoteFormValues, UTMValues } from "../quote-request-form.types";
+import { QuoteRequestStepButton } from "./step-button";
+import { QuoteRequestSubmitButton } from "./submit-button";
 
 export function QuoteRequestSuccessState() {
   return (
@@ -39,14 +50,11 @@ export function QuoteRequestSuccessState() {
 export function QuoteRequestStepTabs({
   activeStep,
   onStepClick,
-}: {
-  activeStep: number;
-  onStepClick: (stepIndex: number) => void;
-}) {
+}: QuoteRequestStepTabsProps) {
   return (
     <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {contactFormSteps.map((step, index) => (
-        <StepButton
+        <QuoteRequestStepButton
           key={step.step}
           isActive={index === activeStep}
           isComplete={index < activeStep}
@@ -59,61 +67,11 @@ export function QuoteRequestStepTabs({
   );
 }
 
-function StepButton({
-  isActive,
-  isComplete,
-  onClick,
-  step,
-  title,
-}: {
-  isActive: boolean;
-  isComplete: boolean;
-  onClick: () => void;
-  step: string;
-  title: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex min-w-0 items-center gap-3 rounded-[1.2rem] border px-3 py-3 text-left transition-colors sm:px-4 ${
-        isActive
-          ? "border-foreground bg-white"
-          : isComplete
-            ? "border-border/70 bg-white/85"
-            : "border-transparent bg-[rgba(27,28,26,0.04)]"
-      }`}
-    >
-      <span
-        className={`inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold uppercase tracking-[0.14em] ${
-          isActive || isComplete
-            ? "bg-primary text-primary-foreground"
-            : "bg-white text-muted-foreground"
-        }`}
-      >
-        {isComplete ? <Check className="size-4" aria-hidden="true" /> : step}
-      </span>
-      <span className="min-w-0">
-        <span className="block text-xs uppercase tracking-[0.14em] text-muted-foreground">
-          Step
-        </span>
-        <span className="mt-1 block truncate text-sm font-semibold text-foreground">
-          {title}
-        </span>
-      </span>
-    </button>
-  );
-}
-
 export function QuoteRequestHiddenFields({
   referrer,
   utmValues,
   values,
-}: {
-  referrer: string;
-  utmValues: UTMValues;
-  values: QuoteFormValues;
-}) {
+}: QuoteRequestHiddenFieldsProps) {
   return (
     <>
       <input type="hidden" name="pagePath" value="/contact" />
@@ -153,10 +111,7 @@ export function QuoteRequestHiddenFields({
 export function QuoteRequestHoneypot({
   value,
   onChange,
-}: {
-  value: string;
-  onChange: (nextValue: string) => void;
-}) {
+}: QuoteRequestHoneypotProps) {
   return (
     <div className="sr-only" aria-hidden="true">
       <Label htmlFor="companyWebsite">Company website</Label>
@@ -174,9 +129,7 @@ export function QuoteRequestHoneypot({
 
 export function QuoteRequestServerMessage({
   message,
-}: {
-  message: string | null;
-}) {
+}: QuoteRequestServerMessageProps) {
   if (!message) {
     return null;
   }
@@ -194,13 +147,7 @@ export function QuoteRequestFooter({
   onNext,
   onPrevious,
   totalSteps,
-}: {
-  activeStep: number;
-  isPending: boolean;
-  onNext: () => void;
-  onPrevious: () => void;
-  totalSteps: number;
-}) {
+}: QuoteRequestFooterProps) {
   const isLastStep = activeStep === totalSteps - 1;
 
   return (
@@ -232,7 +179,7 @@ export function QuoteRequestFooter({
         ) : null}
       </div>
 
-      {isLastStep ? <SubmitButton disabled={isPending} /> : null}
+      {isLastStep ? <QuoteRequestSubmitButton disabled={isPending} /> : null}
 
       {isPending ? (
         <p className="w-full text-sm text-muted-foreground sm:w-auto">
@@ -240,18 +187,5 @@ export function QuoteRequestFooter({
         </p>
       ) : null}
     </div>
-  );
-}
-
-function SubmitButton({ disabled }: { disabled: boolean }) {
-  return (
-    <Button
-      type="submit"
-      disabled={disabled}
-      className="h-12 rounded-full bg-foreground px-6 text-[0.78rem] uppercase tracking-[0.2em] text-background hover:bg-primary"
-    >
-      Submit request
-      <ArrowRight aria-hidden="true" className="size-4" />
-    </Button>
   );
 }

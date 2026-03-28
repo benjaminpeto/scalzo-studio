@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import type { AdminCaseStudiesListData } from "@/actions/admin/work/server";
-import { toggleAdminCaseStudyPublished } from "@/actions/admin/work/server";
+import { toggleAdminCaseStudyPublished } from "@/actions/admin/work/toggle-admin-case-study-published";
+import type { AdminWorkListProps } from "@/interfaces/admin/component-props";
+import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 
 const statusMessageByCode = {
@@ -11,27 +12,7 @@ const statusMessageByCode = {
   "update-error": "The change could not be saved right now. Try again.",
 } as const;
 
-function formatUpdatedAt(value: string) {
-  const parsedDate = new Date(value);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return "Unknown";
-  }
-
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(parsedDate);
-}
-
-export function AdminWorkList({
-  data,
-  status,
-}: {
-  data: AdminCaseStudiesListData;
-  status?: string;
-}) {
+export function AdminWorkList({ data, status }: AdminWorkListProps) {
   const statusMessage =
     status && status in statusMessageByCode
       ? statusMessageByCode[status as keyof typeof statusMessageByCode]

@@ -1,7 +1,7 @@
 import { Children } from "react";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
-import { adminDashboardSections } from "@/lib/admin/navigation";
+import { adminDashboardSections } from "@/constants/admin/navigation";
 
 const focusAreaBodyById = {
   audit:

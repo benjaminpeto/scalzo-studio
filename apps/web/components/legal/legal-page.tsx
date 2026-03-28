@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
+import type { LegalStatus, LegalSummaryItem } from "@/interfaces/legal/content";
 import { cn } from "@/lib/utils";
-import type { LegalStatus, LegalSummaryItem } from "@/lib/content/legal";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

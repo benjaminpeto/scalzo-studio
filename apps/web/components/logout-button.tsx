@@ -1,24 +1,11 @@
 "use client";
 
-import type { ReactNode } from "react";
-
 import { signOutCurrentUser } from "@/actions/auth/client";
+import type { LogoutButtonProps } from "@/interfaces/auth/logout-button";
 import { cn } from "@/lib/utils";
 import { Button } from "@ui/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-interface LogoutButtonProps {
-  ariaLabel?: string;
-  className?: string;
-  hideLabel?: boolean;
-  icon?: ReactNode;
-  label?: string;
-  message?: string;
-  redirectPath?: string;
-  size?: React.ComponentProps<typeof Button>["size"];
-  variant?: React.ComponentProps<typeof Button>["variant"];
-}
 
 export function LogoutButton({
   ariaLabel,

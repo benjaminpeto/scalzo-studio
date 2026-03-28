@@ -1,26 +1,17 @@
-import { contactFormSteps } from "@/lib/content/contact";
+import { contactFormSteps } from "@/constants/contact/content";
+import type { QuoteRequestActiveStepProps } from "@/interfaces/contact/component-props";
 
 import { BriefStep } from "./brief-step";
 import { BudgetStep } from "./budget-step";
 import { ContextStep } from "./context-step";
 import { NeedStep } from "./need-step";
-import type {
-  QuoteFormValues,
-  QuoteRequestFieldErrors,
-  UpdateQuoteFormField,
-} from "../quote-request-form.types";
 
 export function QuoteRequestActiveStep({
   activeStep,
   stepErrors,
   updateField,
   values,
-}: {
-  activeStep: number;
-  stepErrors: QuoteRequestFieldErrors;
-  updateField: UpdateQuoteFormField;
-  values: QuoteFormValues;
-}) {
+}: QuoteRequestActiveStepProps) {
   const step = contactFormSteps[activeStep];
 
   return (

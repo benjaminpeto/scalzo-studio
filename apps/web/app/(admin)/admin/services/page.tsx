@@ -1,7 +1,7 @@
 import { connection } from "next/server";
 
+import { getAdminServicesListData } from "@/actions/admin/services/get-admin-services-list-data";
 import { AdminServicesList } from "@/components/admin/services-list";
-import { getAdminServicesListData } from "@/actions/admin/services/server";
 
 export default async function AdminServicesPage({
   searchParams,

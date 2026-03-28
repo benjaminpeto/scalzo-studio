@@ -26,7 +26,11 @@ The site runs from [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/we
 .
 |-- apps/
 |   `-- web/              # Next.js App Router application
-|       `-- actions/      # App-level orchestration for route handlers, server actions, and client auth flows
+|       |-- actions/      # App-level orchestration, server actions, server-side queries, and domain helpers
+|       |-- constants/    # Static copy, options, navigation config, and fallback content datasets
+|       |-- interfaces/   # Shared exported contracts and state types
+|       |-- hooks/        # Client-side orchestration for UI features
+|       `-- lib/          # Low-level clients and side-effect-free shared helpers only
 |-- packages/
 |   |-- config/           # Shared TypeScript, ESLint, and workspace config
 |   `-- ui/               # Shared UI primitives and utilities
@@ -147,12 +151,17 @@ Use these boundaries:
 
 - `apps/web/actions/<domain>/server.ts` for route-handler and server-action orchestration
 - `apps/web/actions/<domain>/client.ts` for browser-side orchestration that client components call
-- `apps/web/lib/*` for low-level clients and side-effect-free helpers
+- `apps/web/actions/<domain>/<name>.ts` for individual exported queries and mutations
+- `apps/web/constants/<domain>/*` for static content, options, labels, and fallback datasets
+- `apps/web/interfaces/<domain>/*` for shared exported contracts
+- `apps/web/lib/*` for low-level clients and side-effect-free shared helpers only
 
 Practical rule:
 
 - Pages, route handlers, and UI components should stay thin and delegate multi-step auth or data-flow logic into action modules instead of importing Supabase clients directly.
 - Apply the same rule to proxy/session and admin-route orchestration: keep `apps/web/proxy.ts` and `/admin` route files as integration shells that delegate into domain action modules.
+- Database reads and writes for app domains should not live in `apps/web/lib/*`.
+- Do not keep facade modules that only re-export from `actions`, `constants`, or `interfaces`. Import from the canonical module directly.
 
 ## Route boundaries
 
@@ -163,55 +172,55 @@ Practical rule:
 
 ## Homepage content boundary
 
-- The home route loads CMS-backed content for services, featured work, journal previews, and testimonials through `apps/web/lib/content/home.ts`.
+- The home route loads CMS-backed content for services, featured work, journal previews, and testimonials through `apps/web/actions/home/*`.
 - Hero, navigation/footer links, trust strip, process, studio credibility, FAQ, newsletter shell, and CTA band stay on static config for now.
 - If the CMS tables are empty or unavailable, the loader falls back to the current in-repo home content so the page design and structure remain unchanged.
 
 ## Services index boundary
 
-- `/services` loads the published services list from Supabase through `apps/web/lib/content/services.ts`.
+- `/services` loads the published services list from Supabase through `apps/web/actions/services/*`.
 - The packages section, services FAQ, and CTA band are static for now.
 
 ## Service detail boundary
 
-- `/services/[slug]` loads the published service row from Supabase through `apps/web/lib/content/services.ts`.
+- `/services/[slug]` loads the published service row from Supabase through `apps/web/actions/services/*`.
 - Problem framing, process/timeline, FAQ, and fallback related-work composition are completed with a static content layer when the CMS row does not yet provide everything needed.
 - Service detail metadata prefers service-specific SEO fields from Supabase and falls back to the shared summary/problem framing.
 
 ## Work index boundary
 
-- `/work` loads the published case-study grid from Supabase through `apps/web/lib/content/work.ts`.
+- `/work` loads the published case-study grid from Supabase through `apps/web/actions/work/*`.
 - The route falls back to the current in-repo featured-work content when the CMS table is empty or unavailable.
 
 ## Work detail boundary
 
-- `/work/[slug]` loads the published case-study row from Supabase through `apps/web/lib/content/work.ts`.
+- `/work/[slug]` loads the published case-study row from Supabase through `apps/web/actions/work/*`.
 - Challenge, approach, testimonial, and visual composition fall back to a static case-study layer when the CMS row does not yet provide enough editorial detail on its own.
 - Work detail metadata prefers case-study SEO fields from Supabase and otherwise falls back to the static route copy.
 - When an admin explicitly enables preview mode, the same route can load the latest saved draft state for a case study without exposing a public shareable preview URL.
 
 ## Insights index boundary
 
-- `/insights` loads the published posts index from Supabase through `apps/web/lib/content/insights.ts`.
+- `/insights` loads the published posts index from Supabase through `apps/web/actions/insights/*`.
 - The route supports a server-rendered `?tag=` filter for the tag UI and falls back to in-repo editorial entries when the `posts` table is empty or unavailable.
 - Featured and supporting cards now route into the published article detail pages under `/insights/[slug]`.
 
 ## Insights detail boundary
 
-- `/insights/[slug]` loads the published post row from Supabase through `apps/web/lib/content/insights.ts`.
+- `/insights/[slug]` loads the published post row from Supabase through `apps/web/actions/insights/*`.
 - Article body markdown is rendered safely without raw HTML support, with custom heading, link, and image rendering for the editorial article layout.
 - If the CMS row is missing or incomplete, the route falls back to in-repo article content, image, and metadata helpers for the matching slug.
 - When an admin explicitly enables preview mode, the same route can load the latest saved draft state for a post without exposing a public shareable preview URL.
 
 ## About page boundary
 
-- `/about` is a static in-repo marketing route composed through `apps/web/lib/content/about.ts`.
-- The capabilities section reuses the published services index loader from `apps/web/lib/content/services.ts` and falls back to the in-repo service dataset when needed.
-- The proof section reuses the published testimonials loader from `apps/web/lib/content/home.ts` and falls back to the in-repo testimonial and trust-mark content when needed.
+- `/about` is a static in-repo marketing route composed through `apps/web/constants/about/content.ts`.
+- The capabilities section reuses the published services index loader from `apps/web/actions/services/*` and falls back to the in-repo service dataset when needed.
+- The proof section reuses the published testimonials loader from `apps/web/actions/home/*` and falls back to the in-repo testimonial and trust-mark content when needed.
 
 ## Contact page boundary
 
-- `/contact` is a static in-repo marketing route composed through `apps/web/lib/content/contact.ts`.
+- `/contact` is a static in-repo marketing route composed through `apps/web/constants/contact/content.ts`.
 - Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
 - The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
 

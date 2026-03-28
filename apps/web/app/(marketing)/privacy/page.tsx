@@ -11,7 +11,7 @@ import {
   complaintAuthority,
   legalControllerDetails,
   privacyPageContent,
-} from "@/lib/content/legal";
+} from "@/constants/legal/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 

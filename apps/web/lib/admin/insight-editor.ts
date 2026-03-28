@@ -1,42 +1,7 @@
-export interface AdminInsightEditorFieldErrors {
-  contentMd?: string;
-  coverImage?: string;
-  excerpt?: string;
-  seoDescription?: string;
-  seoTitle?: string;
-  slug?: string;
-  tags?: string;
-  title?: string;
-}
-
-export interface AdminInsightEditorState {
-  fieldErrors: AdminInsightEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
-
-export interface AdminInsightMediaState {
-  message: string | null;
-  snippet: string | null;
-  uploadedUrl: string | null;
-  status: "idle" | "success" | "error";
-}
-
-export interface AdminInsightEditorRecord {
-  contentMd: string;
-  coverImageUrl: string | null;
-  excerpt: string;
-  id: string;
-  published: boolean;
-  publishedAt: string | null;
-  seoDescription: string;
-  seoTitle: string;
-  slug: string;
-  tags: string[];
-  title: string;
-  updatedAt: string;
-}
+import type {
+  AdminInsightEditorState,
+  AdminInsightMediaState,
+} from "@/interfaces/admin/insight-editor";
 
 export const initialAdminInsightEditorState: AdminInsightEditorState = {
   fieldErrors: {},
@@ -51,3 +16,26 @@ export const initialAdminInsightMediaState: AdminInsightMediaState = {
   uploadedUrl: null,
   status: "idle",
 };
+
+interface InsertInsightSnippetInput {
+  content: string;
+  selectionEnd?: number;
+  selectionStart?: number;
+  snippet: string;
+}
+
+export function insertInsightSnippet({
+  content,
+  selectionEnd = content.length,
+  selectionStart = content.length,
+  snippet,
+}: InsertInsightSnippetInput) {
+  const prefix = content.slice(0, selectionStart);
+  const suffix = content.slice(selectionEnd);
+  const needsLeadingBreak = prefix.length > 0 && !prefix.endsWith("\n\n");
+  const leading = needsLeadingBreak ? "\n\n" : "";
+  const needsTrailingBreak =
+    suffix.length > 0 && !suffix.startsWith("\n\n") ? "\n\n" : "";
+
+  return `${prefix}${leading}${snippet}${needsTrailingBreak}${suffix}`;
+}

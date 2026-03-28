@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 
-import { getAdminInsightsListData } from "@/actions/admin/insights/server";
+import { getAdminInsightsListData } from "@/actions/admin/insights/get-admin-insights-list-data";
 import { AdminInsightsList } from "@/components/admin/insights-list";
 
 export default async function AdminInsightsPage({

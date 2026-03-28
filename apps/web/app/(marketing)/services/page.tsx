@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { getServicesIndexEntries } from "@/actions/services/get-services-index-entries";
 import {
   Reveal,
   RevealGroup,
@@ -8,11 +9,10 @@ import {
   ScrollFloat,
 } from "@/components/home/motion";
 import {
-  getServicesIndexEntries,
   servicePackageOptions,
   servicesFaqItems,
-  type ServicesIndexEntry,
-} from "@/lib/content/services";
+} from "@/constants/services/content";
+import type { ServicesIndexEntry } from "@/interfaces/services/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

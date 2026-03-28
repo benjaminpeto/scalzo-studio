@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
-import {
-  getAdminInsightBySlug,
-  updateAdminInsight,
-  uploadAdminInsightContentImage,
-} from "@/actions/admin/insights/server";
+import { getAdminInsightBySlug } from "@/actions/admin/insights/get-admin-insight-by-slug";
+import { updateAdminInsight } from "@/actions/admin/insights/update-admin-insight";
+import { uploadAdminInsightContentImage } from "@/actions/admin/insights/upload-admin-insight-content-image";
 import { AdminInsightEditor } from "@/components/admin/insight-editor";
 
 export default async function AdminInsightEditorPage({

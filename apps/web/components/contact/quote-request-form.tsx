@@ -1,6 +1,9 @@
 "use client";
 
-import { contactFormSteps, contactPageContent } from "@/lib/content/contact";
+import {
+  contactFormSteps,
+  contactPageContent,
+} from "@/constants/contact/content";
 
 import {
   QuoteRequestFooter,
@@ -11,7 +14,7 @@ import {
   QuoteRequestSuccessState,
 } from "./quote-request-form/chrome";
 import { QuoteRequestActiveStep } from "./quote-request-form/active-step";
-import { useQuoteRequestForm } from "./use-quote-request-form";
+import { useQuoteRequestForm } from "@/hooks/contact/use-quote-request-form";
 
 export function QuoteRequestForm() {
   const {

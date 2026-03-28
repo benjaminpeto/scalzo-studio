@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Reveal, ScrollFloat } from "@/components/home/motion";
 import { BookingPanel } from "@/components/contact/booking-panel";
 import { QuoteRequestForm } from "@/components/contact/quote-request-form";
-import { contactPageContent } from "@/lib/content/contact";
+import { contactPageContent } from "@/constants/contact/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

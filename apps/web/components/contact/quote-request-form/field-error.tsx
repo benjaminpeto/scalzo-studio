@@ -1,4 +1,6 @@
-export function FieldError({ message }: { message?: string }) {
+import type { FieldErrorProps } from "@/interfaces/contact/component-props";
+
+export function FieldError({ message }: FieldErrorProps) {
   if (!message) {
     return null;
   }

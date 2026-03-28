@@ -1,33 +1,4 @@
-export interface AdminServiceEditorFieldErrors {
-  contentMd?: string;
-  deliverables?: string;
-  seoDescription?: string;
-  seoTitle?: string;
-  slug?: string;
-  summary?: string;
-  title?: string;
-}
-
-export interface AdminServiceEditorState {
-  fieldErrors: AdminServiceEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
-
-export interface AdminServiceEditorRecord {
-  contentMd: string;
-  deliverables: string[];
-  id: string;
-  orderIndex: number;
-  published: boolean;
-  seoDescription: string;
-  seoTitle: string;
-  slug: string;
-  summary: string;
-  title: string;
-  updatedAt: string;
-}
+import type { AdminServiceEditorState } from "@/interfaces/admin/service-editor";
 
 export const initialAdminServiceEditorState: AdminServiceEditorState = {
   fieldErrors: {},

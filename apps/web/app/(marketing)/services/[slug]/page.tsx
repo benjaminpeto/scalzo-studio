@@ -4,16 +4,16 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import {
+  getFallbackServiceDetailPageData,
+  getServiceDetailBodyCopy,
+} from "@/actions/services/helpers";
+import { getServiceDetailPageData } from "@/actions/services/get-service-detail-page-data";
+import {
   Reveal,
   RevealGroup,
   RevealItem,
   ScrollFloat,
 } from "@/components/home/motion";
-import {
-  getFallbackServiceDetailPageData,
-  getServiceDetailBodyCopy,
-  getServiceDetailPageData,
-} from "@/lib/content/services";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

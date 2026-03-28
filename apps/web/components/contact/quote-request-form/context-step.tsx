@@ -1,23 +1,15 @@
-import { contactLocationOptions } from "@/lib/content/contact";
+import { contactLocationOptions } from "@/constants/contact/content";
+import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 
 import { FieldError } from "./field-error";
-import type {
-  QuoteFormValues,
-  QuoteRequestFieldErrors,
-  UpdateQuoteFormField,
-} from "../quote-request-form.types";
 
 export function ContextStep({
   stepErrors,
   updateField,
   values,
-}: {
-  stepErrors: QuoteRequestFieldErrors;
-  updateField: UpdateQuoteFormField;
-  values: QuoteFormValues;
-}) {
+}: QuoteRequestStepProps) {
   return (
     <fieldset className="mt-6 grid gap-5 sm:grid-cols-2">
       <legend className="sr-only">Context</legend>

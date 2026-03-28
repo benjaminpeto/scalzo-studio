@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 
-import { getAdminCaseStudiesListData } from "@/actions/admin/work/server";
+import { getAdminCaseStudiesListData } from "@/actions/admin/work/get-admin-case-studies-list-data";
 import { AdminWorkList } from "@/components/admin/work-list";
 
 export default async function AdminWorkPage({

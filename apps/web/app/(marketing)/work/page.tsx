@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { getWorkIndexEntries } from "@/actions/work/get-work-index-entries";
 import {
   Reveal,
   RevealGroup,
@@ -8,7 +9,7 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import { getWorkIndexEntries, type WorkIndexEntry } from "@/lib/content/work";
+import type { WorkIndexEntry } from "@/interfaces/work/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

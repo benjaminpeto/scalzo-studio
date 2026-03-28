@@ -5,12 +5,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { getFallbackInsightDetailPageData } from "@/actions/insights/helpers";
+import { getInsightDetailPageData } from "@/actions/insights/get-insight-detail-page-data";
 import { Reveal, ScrollFloat, TextReveal } from "@/components/home/motion";
 import { InsightMarkdown } from "@/components/insights/insight-markdown";
-import {
-  getFallbackInsightDetailPageData,
-  getInsightDetailPageData,
-} from "@/lib/content/insights";
 import { publicEnv } from "@/lib/env/public";
 import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import { Grid } from "@ui/components/layout/grid";

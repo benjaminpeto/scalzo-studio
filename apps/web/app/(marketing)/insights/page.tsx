@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { getInsightIndexEntries } from "@/actions/insights/get-insight-index-entries";
+import { getInsightTags } from "@/actions/insights/get-insight-tags";
 import { NewsletterSignup } from "@/components/home/newsletter-signup";
 import {
   Reveal,
@@ -10,11 +12,7 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import {
-  getInsightIndexEntries,
-  getInsightTags,
-  type InsightIndexEntry,
-} from "@/lib/content/insights";
+import type { InsightIndexEntry } from "@/interfaces/insights/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

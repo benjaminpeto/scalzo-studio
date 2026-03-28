@@ -1,24 +1,16 @@
 import {
   contactBudgetOptions,
   contactTimelineOptions,
-} from "@/lib/content/contact";
+} from "@/constants/contact/content";
+import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
 
 import { FieldError } from "./field-error";
-import type {
-  QuoteFormValues,
-  QuoteRequestFieldErrors,
-  UpdateQuoteFormField,
-} from "../quote-request-form.types";
 
 export function BudgetStep({
   stepErrors,
   updateField,
   values,
-}: {
-  stepErrors: QuoteRequestFieldErrors;
-  updateField: UpdateQuoteFormField;
-  values: QuoteFormValues;
-}) {
+}: QuoteRequestStepProps) {
   return (
     <fieldset className="mt-6 grid gap-6 lg:grid-cols-2">
       <legend className="sr-only">Budget and timeline</legend>

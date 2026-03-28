@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
-import {
-  getAdminServiceBySlug,
-  updateAdminService,
-} from "@/actions/admin/services/server";
+import { getAdminServiceBySlug } from "@/actions/admin/services/get-admin-service-by-slug";
+import { updateAdminService } from "@/actions/admin/services/update-admin-service";
 import { AdminServiceEditor } from "@/components/admin/service-editor";
 
 export default async function AdminServiceEditorPage({

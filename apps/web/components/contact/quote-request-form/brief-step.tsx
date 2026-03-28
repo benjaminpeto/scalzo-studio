@@ -1,23 +1,15 @@
 import Link from "next/link";
 
+import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
 import { Label } from "@ui/components/ui/label";
 
 import { FieldError } from "./field-error";
-import type {
-  QuoteFormValues,
-  QuoteRequestFieldErrors,
-  UpdateQuoteFormField,
-} from "../quote-request-form.types";
 
 export function BriefStep({
   stepErrors,
   updateField,
   values,
-}: {
-  stepErrors: QuoteRequestFieldErrors;
-  updateField: UpdateQuoteFormField;
-  values: QuoteFormValues;
-}) {
+}: QuoteRequestStepProps) {
   return (
     <fieldset className="mt-6 space-y-6">
       <legend className="sr-only">Brief and consent</legend>

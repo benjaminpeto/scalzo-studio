@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import type { AdminInsightsListData } from "@/actions/admin/insights/server";
-import { toggleAdminInsightPublished } from "@/actions/admin/insights/server";
+import { toggleAdminInsightPublished } from "@/actions/admin/insights/toggle-admin-insight-published";
+import type { AdminInsightsListProps } from "@/interfaces/admin/component-props";
+import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 
 const statusMessageByCode = {
@@ -11,31 +12,7 @@ const statusMessageByCode = {
   "update-error": "The change could not be saved right now. Try again.",
 } as const;
 
-function formatDate(value: string | null) {
-  if (!value) {
-    return "Not published";
-  }
-
-  const parsedDate = new Date(value);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return "Unknown";
-  }
-
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(parsedDate);
-}
-
-export function AdminInsightsList({
-  data,
-  status,
-}: {
-  data: AdminInsightsListData;
-  status?: string;
-}) {
+export function AdminInsightsList({ data, status }: AdminInsightsListProps) {
   const statusMessage =
     status && status in statusMessageByCode
       ? statusMessageByCode[status as keyof typeof statusMessageByCode]
@@ -225,8 +202,13 @@ export function AdminInsightsList({
                     <p>
                       Cover image: {post.coverImageUrl ? "Present" : "Missing"}
                     </p>
-                    <p>Published: {formatDate(post.publishedAt)}</p>
-                    <p>Last updated: {formatDate(post.updatedAt)}</p>
+                    <p>
+                      Published:{" "}
+                      {formatUpdatedAt(post.publishedAt, {
+                        emptyLabel: "Not published",
+                      })}
+                    </p>
+                    <p>Last updated: {formatUpdatedAt(post.updatedAt)}</p>
                   </div>
 
                   {post.excerpt ? (

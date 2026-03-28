@@ -1,26 +1,18 @@
 import {
   contactProjectTypeOptions,
   contactServiceOptions,
-} from "@/lib/content/contact";
+} from "@/constants/contact/content";
+import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 
 import { FieldError } from "./field-error";
-import type {
-  QuoteFormValues,
-  QuoteRequestFieldErrors,
-  UpdateQuoteFormField,
-} from "../quote-request-form.types";
 
 export function NeedStep({
   stepErrors,
   updateField,
   values,
-}: {
-  stepErrors: QuoteRequestFieldErrors;
-  updateField: UpdateQuoteFormField;
-  values: QuoteFormValues;
-}) {
+}: QuoteRequestStepProps) {
   return (
     <fieldset className="mt-6 space-y-6">
       <legend className="sr-only">What do you need?</legend>

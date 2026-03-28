@@ -10,12 +10,10 @@ import {
   TextReveal,
 } from "@/components/home/motion";
 import { processSteps, trustMarks } from "@/components/home/content";
-import { aboutPageContent } from "@/lib/content/about";
-import { getHomeTestimonials } from "@/lib/content/home";
-import {
-  getServicesIndexEntries,
-  type ServicesIndexEntry,
-} from "@/lib/content/services";
+import { getHomeTestimonials } from "@/actions/home/get-home-testimonials";
+import { getServicesIndexEntries } from "@/actions/services/get-services-index-entries";
+import { aboutPageContent } from "@/constants/about/content";
+import type { ServicesIndexEntry } from "@/interfaces/services/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

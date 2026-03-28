@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
-import {
-  getAdminCaseStudyBySlug,
-  updateAdminCaseStudy,
-} from "@/actions/admin/work/server";
+import { getAdminCaseStudyBySlug } from "@/actions/admin/work/get-admin-case-study-by-slug";
+import { updateAdminCaseStudy } from "@/actions/admin/work/update-admin-case-study";
 import { AdminWorkEditor } from "@/components/admin/work-editor";
 
 export default async function AdminWorkEditorPage({

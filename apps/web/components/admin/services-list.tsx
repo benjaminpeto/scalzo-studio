@@ -1,10 +1,9 @@
 import Link from "next/link";
 
-import type { AdminServicesListData } from "@/actions/admin/services/server";
-import {
-  moveAdminServiceOrder,
-  toggleAdminServicePublished,
-} from "@/actions/admin/services/server";
+import { moveAdminServiceOrder } from "@/actions/admin/services/move-admin-service-order";
+import { toggleAdminServicePublished } from "@/actions/admin/services/toggle-admin-service-published";
+import type { AdminServicesListProps } from "@/interfaces/admin/component-props";
+import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
 
@@ -18,27 +17,7 @@ const statusMessageByCode = {
   "update-error": "The change could not be saved right now. Try again.",
 } as const;
 
-function formatUpdatedAt(value: string) {
-  const parsedDate = new Date(value);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return "Unknown";
-  }
-
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(parsedDate);
-}
-
-export function AdminServicesList({
-  data,
-  status,
-}: {
-  data: AdminServicesListData;
-  status?: string;
-}) {
+export function AdminServicesList({ data, status }: AdminServicesListProps) {
   const statusMessage =
     status && status in statusMessageByCode
       ? statusMessageByCode[status as keyof typeof statusMessageByCode]

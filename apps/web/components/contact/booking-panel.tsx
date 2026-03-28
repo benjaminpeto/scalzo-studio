@@ -1,4 +1,4 @@
-import { contactPageContent } from "@/lib/content/contact";
+import { contactPageContent } from "@/constants/contact/content";
 import { Button } from "@ui/components/ui/button";
 
 export function BookingPanel() {

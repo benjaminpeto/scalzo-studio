@@ -5,6 +5,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { getFallbackWorkDetailPageData } from "@/actions/work/helpers";
+import { getWorkDetailPageData } from "@/actions/work/get-work-detail-page-data";
 import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import {
   Reveal,
@@ -12,10 +14,6 @@ import {
   RevealItem,
   ScrollFloat,
 } from "@/components/home/motion";
-import {
-  getFallbackWorkDetailPageData,
-  getWorkDetailPageData,
-} from "@/lib/content/work";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
