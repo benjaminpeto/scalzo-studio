@@ -5,6 +5,7 @@ import type {
   LegalSummaryItem,
   PrivacyProcessingActivity,
 } from "@/interfaces/legal/content";
+import { publicFeatureFlags } from "@/lib/env/public";
 
 export const legalControllerDetails = {
   address: "Spain, 35613, Tetir, Calle Tetir 59B",
@@ -19,6 +20,8 @@ export const complaintAuthority = {
   label: "Agencia Espanola de Proteccion de Datos (AEPD)",
   url: "https://www.aepd.es/",
 } as const;
+
+const bookingEnabled = publicFeatureFlags.calBookingEnabled;
 
 export const privacyPageContent = {
   intro: {
@@ -55,7 +58,7 @@ export const privacyPageContent = {
       title: "What this notice covers",
       paragraphs: [
         "This notice applies to personal data processed through the Scalzo Studio website, especially quote requests, admin authentication and session handling, and related operational follow-up.",
-        "It is written to match the current implementation plus clearly labelled near-term services that may be enabled later, such as PostHog analytics, hCaptcha anti-spam checks, or a booking provider.",
+        `It is written to match the current implementation plus clearly labelled near-term services that may be enabled later, such as PostHog analytics and hCaptcha anti-spam checks${bookingEnabled ? ", alongside the live Cal.com booking flow." : ", or a future booking provider."}`,
       ],
       note: "If a new processor or new purpose is added, this notice should be updated before the feature is launched in production.",
     },
@@ -175,18 +178,22 @@ export const privacyPageContent = {
     },
     {
       title: "Booking requests",
-      status: "Conditional",
+      status: bookingEnabled ? "Live" : "Conditional",
       lawfulBasis:
         "Pre-contract steps taken at your request when you choose to arrange a discovery call.",
-      purpose:
-        "To schedule, confirm, and prepare a discovery call if a booking provider is enabled later.",
+      purpose: bookingEnabled
+        ? "To schedule, confirm, and prepare a discovery call through the embedded Cal.com booking flow."
+        : "To schedule, confirm, and prepare a discovery call if a booking provider is enabled later.",
       dataCategories: [
         "Name, email address, scheduling preferences, and any notes you provide during booking",
       ],
-      recipients: ["Future booking provider"],
-      retention:
-        "Depends on the chosen provider and the follow-up relationship created by the booking request.",
-      note: "The current contact page uses an email fallback and does not yet rely on an embedded booking processor.",
+      recipients: [bookingEnabled ? "Cal.com" : "Future booking provider"],
+      retention: bookingEnabled
+        ? "Depends on the Cal.com booking record lifecycle and any follow-up relationship created by the booking request."
+        : "Depends on the chosen provider and the follow-up relationship created by the booking request.",
+      note: bookingEnabled
+        ? "The site uses an embedded Cal.com scheduler on the contact page and records only limited first-party booking completion metadata in Supabase."
+        : "The current contact page uses an email fallback and does not yet rely on an embedded booking processor.",
     },
   ] as const satisfies readonly PrivacyProcessingActivity[],
   processors: [
@@ -215,11 +222,12 @@ export const privacyPageContent = {
       note: undefined,
     },
     {
-      name: "Booking provider",
-      status: "Conditional",
+      name: bookingEnabled ? "Cal.com" : "Booking provider",
+      status: bookingEnabled ? "Live" : "Conditional",
       role: "Scheduling processor",
-      detail:
-        "A booking tool may be added later for discovery calls. The provider is not yet finalised.",
+      detail: bookingEnabled
+        ? "Used to host the embedded discovery-call scheduler and related booking confirmations."
+        : "A booking tool may be added later for discovery calls. The provider is not yet finalised.",
       note: undefined,
     },
     {
@@ -329,13 +337,21 @@ export const cookiesPageContent = {
     },
     {
       title: "Booking and embedded service cookies",
-      status: "Inactive until enabled",
-      purpose:
-        "To support a future embedded booking experience if a scheduling provider is added later.",
-      legalBasis:
-        "Depends on the final provider setup and whether the storage is strictly necessary for a user-requested booking flow.",
-      examples: ["Cookies or local storage created by a future booking embed"],
-      note: undefined,
+      status: bookingEnabled ? "Active" : "Inactive until enabled",
+      purpose: bookingEnabled
+        ? "To support the embedded Cal.com booking experience used for discovery-call scheduling."
+        : "To support a future embedded booking experience if a scheduling provider is added later.",
+      legalBasis: bookingEnabled
+        ? "Necessary for the user-requested booking flow where the Cal.com embed needs storage to operate."
+        : "Depends on the final provider setup and whether the storage is strictly necessary for a user-requested booking flow.",
+      examples: [
+        bookingEnabled
+          ? "Cookies or local storage created by the embedded Cal.com scheduler"
+          : "Cookies or local storage created by a future booking embed",
+      ],
+      note: bookingEnabled
+        ? "Treat this category as active only while the embedded booking flow remains live on the contact page."
+        : undefined,
     },
   ] as const satisfies readonly CookieCategoryDisclosure[],
 } as const;

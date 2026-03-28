@@ -42,7 +42,7 @@ export function MobileCtaBar() {
               asChild
               className="h-11 rounded-full bg-primary px-5 text-[0.78rem] uppercase tracking-[0.2em] text-primary-foreground hover:bg-primary/90"
             >
-              <Link href="/contact">Book a call</Link>
+              <Link href="/contact#booking">Book a call</Link>
             </Button>
           </div>
         </motion.div>

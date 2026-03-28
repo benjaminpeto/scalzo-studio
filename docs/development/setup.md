@@ -65,12 +65,14 @@ Environment validation is strict by design.
 - Missing required public variables fail fast during build and app startup.
 - Optional server-only integrations are allowed to stay unset until those features are implemented.
 - GitHub Actions injects safe placeholder public envs so CI can validate production builds without real secrets.
+- Cal.com booking is optional in local development; when enabled it uses `NEXT_PUBLIC_CAL_BOOKING_URL` and `CAL_WEBHOOK_SECRET`.
 
 ## Legal content notes
 
 - The `/privacy` and `/cookies` pages describe the current live site plus clearly labelled near-term services that are not yet active.
 - PostHog must not be enabled in production until a separate consent and cookie-preferences implementation exists.
 - Policy copy currently assumes hCaptcha as the future anti-spam provider. If production uses a different provider, update the legal content before launch.
+- Cal.com booking setup and webhook verification steps live in [`docs/integrations/cal-com.md`](/Users/benji/WORK/Projects/scalzo-studio/docs/integrations/cal-com.md).
 
 ## Pre-commit hooks
 

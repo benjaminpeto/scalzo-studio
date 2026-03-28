@@ -2,7 +2,14 @@
 
 import { describe, expect, it, vi } from "vitest";
 
+const mocks = vi.hoisted(() => ({
+  getBookingActionMock: vi.fn(),
+}));
+
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/booking/config", () => ({
+  getBookingAction: mocks.getBookingActionMock,
+}));
 vi.mock("@/lib/resend/client", () => ({
   sendResendEmail: vi.fn(),
 }));
@@ -46,7 +53,27 @@ function buildPayload() {
 }
 
 describe("quote request email helpers", () => {
+  it("uses the configured Cal.com booking link in the confirmation email", () => {
+    mocks.getBookingActionMock.mockReturnValue({
+      href: "https://cal.eu/scalzostudio/discovery-call",
+      label: "Book a discovery call",
+    });
+
+    const email = buildQuoteRequestConfirmationEmail(buildPayload(), {
+      fromEmail: "Scalzo Studio <hello@scalzostudio.com>",
+      toEmail: "hello@example.com",
+    });
+
+    expect(email.text).toContain("Book a discovery call");
+    expect(email.html).toContain("https://cal.eu/scalzostudio/discovery-call");
+  });
+
   it("builds the internal notification email with reply-to and lead context", () => {
+    mocks.getBookingActionMock.mockReturnValue({
+      href: "https://cal.eu/scalzostudio/discovery-call",
+      label: "Book a discovery call",
+    });
+
     const email = buildInternalQuoteRequestEmail(buildPayload(), {
       fromEmail: "Scalzo Studio <hello@scalzostudio.com>",
       toEmail: "studio@scalzostudio.com",
@@ -65,7 +92,12 @@ describe("quote request email helpers", () => {
     expect(email.html).toContain("We need a sharper homepage");
   });
 
-  it("builds the confirmation email with summary fields and booking fallback", () => {
+  it("falls back to the email route when Cal.com is not configured", () => {
+    mocks.getBookingActionMock.mockReturnValue({
+      href: "mailto:hello@scalzostudio.com?subject=Discovery%20call%20request",
+      label: "Arrange a call by email",
+    });
+
     const email = buildQuoteRequestConfirmationEmail(buildPayload(), {
       fromEmail: "Scalzo Studio <hello@scalzostudio.com>",
       toEmail: "hello@example.com",
@@ -83,6 +115,11 @@ describe("quote request email helpers", () => {
   });
 
   it("builds sanitized email log context without personal fields", () => {
+    mocks.getBookingActionMock.mockReturnValue({
+      href: "https://cal.eu/scalzostudio/discovery-call",
+      label: "Book a discovery call",
+    });
+
     expect(buildQuoteRequestEmailLogContext(buildPayload())).toEqual({
       budgetBand: "EUR 1,000 - 3,000",
       hasReferrer: true,
@@ -95,6 +132,11 @@ describe("quote request email helpers", () => {
   });
 
   it("serializes resend-like email errors for safe logging", () => {
+    mocks.getBookingActionMock.mockReturnValue({
+      href: "https://cal.eu/scalzostudio/discovery-call",
+      label: "Book a discovery call",
+    });
+
     const error = Object.assign(new Error("restricted"), {
       code: "restricted_api_key",
       name: "ResendSendError",

@@ -299,7 +299,10 @@ function ServiceDetailLayout({
           label: "hello@scalzostudio.com",
         }}
         kicker="Scalzo Studio"
-        primaryAction={{ href: "/#contact", label: "Book a discovery call" }}
+        primaryAction={{
+          href: "/contact#booking",
+          label: "Book a discovery call",
+        }}
         secondaryAction={{ href: "/services", label: "Back to services" }}
         title={`Ready to use ${detailPageData.title.toLowerCase()} as a sharper commercial tool?`}
       />

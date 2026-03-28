@@ -11,7 +11,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    include: ["actions/**/*.test.ts", "hooks/**/*.test.ts", "**/*.test.tsx"],
+    include: ["**/*.test.ts", "**/*.test.tsx"],
     setupFiles: ["./test/setup.tsx"],
   },
 });

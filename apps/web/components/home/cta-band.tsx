@@ -36,7 +36,10 @@ export function CtaBand() {
       }}
       gridWrapper={Reveal}
       kicker="Brand Organiser"
-      primaryAction={{ href: "/#contact", label: "Book a discovery call" }}
+      primaryAction={{
+        href: "/contact#booking",
+        label: "Book a discovery call",
+      }}
       secondaryAction={{ href: "/#journal", label: "Read the journal" }}
       briefWrapper={BriefColumn}
       title="Ready to sharpen the homepage and the brand behind it?"

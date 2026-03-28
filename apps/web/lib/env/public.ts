@@ -6,6 +6,11 @@ const optionalString = () =>
     (value) => (value === "" ? undefined : value),
     z.string().min(1).optional(),
   );
+const optionalUrl = () =>
+  z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().url().optional(),
+  );
 
 const publicEnvSchema = z
   .object({
@@ -17,6 +22,7 @@ const publicEnvSchema = z
       (value) => (value === "" ? undefined : value),
       analyticsProviderSchema.optional(),
     ),
+    NEXT_PUBLIC_CAL_BOOKING_URL: optionalUrl(),
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: optionalString(),
   })
   .superRefine((value, ctx) => {
@@ -52,6 +58,7 @@ function parsePublicEnv() {
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_ANALYTICS_PROVIDER: process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER,
+    NEXT_PUBLIC_CAL_BOOKING_URL: process.env.NEXT_PUBLIC_CAL_BOOKING_URL,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   });
 
@@ -71,10 +78,12 @@ export const publicEnv = {
     rawPublicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
     rawPublicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   analyticsProvider: rawPublicEnv.NEXT_PUBLIC_ANALYTICS_PROVIDER,
+  calBookingUrl: rawPublicEnv.NEXT_PUBLIC_CAL_BOOKING_URL,
   turnstileSiteKey: rawPublicEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
 } as const;
 
 export const publicFeatureFlags = {
   analyticsEnabled: Boolean(publicEnv.analyticsProvider),
+  calBookingEnabled: Boolean(publicEnv.calBookingUrl),
   turnstileEnabled: Boolean(publicEnv.turnstileSiteKey),
 } as const;

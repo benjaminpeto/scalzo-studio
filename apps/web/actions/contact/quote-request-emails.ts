@@ -10,6 +10,7 @@ import {
   contactServiceOptions,
   contactTimelineOptions,
 } from "@/constants/contact/content";
+import { getBookingAction } from "@/lib/booking/config";
 import { sendResendEmail } from "@/lib/resend/client";
 
 import type { ContactLeadInput } from "./schemas";
@@ -105,9 +106,11 @@ export function buildQuoteRequestEmailPayload(
   input: ContactLeadInput,
   lead: SavedLeadEmailMetadata,
 ): QuoteRequestEmailPayload {
+  const bookingAction = getBookingAction();
+
   return {
-    bookingFallbackHref: contactPageContent.booking.fallbackHref,
-    bookingFallbackLabel: contactPageContent.booking.fallbackLabel,
+    bookingFallbackHref: bookingAction.href,
+    bookingFallbackLabel: bookingAction.label,
     bookingResponseNote: contactPageContent.form.responseNote,
     budgetBandLabel:
       resolveLabel(budgetLabelByValue, input.budgetBand) ?? input.budgetBand,

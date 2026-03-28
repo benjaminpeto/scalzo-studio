@@ -386,7 +386,7 @@ export default function AboutPage() {
           label: "hello@scalzostudio.com",
         }}
         kicker="Scalzo Studio"
-        primaryAction={{ href: "/#contact", label: "Book a call" }}
+        primaryAction={{ href: "/contact#booking", label: "Book a call" }}
         secondaryAction={{ href: "/services", label: "Browse services" }}
         title={aboutPageContent.cta.title}
       />

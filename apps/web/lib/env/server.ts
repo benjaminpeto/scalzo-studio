@@ -37,6 +37,7 @@ const serverEnvSchema = z
     SUPABASE_SERVICE_ROLE_KEY: optionalString(),
     RESEND_API_KEY: optionalString(),
     RESEND_NEWSLETTER_TOPIC_ID: optionalString(),
+    CAL_WEBHOOK_SECRET: optionalString(),
     CONTACT_TO_EMAIL: optionalEmail(),
     CONTACT_EMAIL: optionalEmail(),
     CONTACT_FROM_EMAIL: optionalMailbox(),
@@ -104,6 +105,7 @@ function parseServerEnv() {
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_NEWSLETTER_TOPIC_ID: process.env.RESEND_NEWSLETTER_TOPIC_ID,
+    CAL_WEBHOOK_SECRET: process.env.CAL_WEBHOOK_SECRET,
     CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL,
     CONTACT_EMAIL: process.env.CONTACT_EMAIL,
     CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL,
@@ -125,6 +127,7 @@ export const serverEnv = {
   supabaseServiceRoleKey: rawServerEnv.SUPABASE_SERVICE_ROLE_KEY,
   resendApiKey: rawServerEnv.RESEND_API_KEY,
   resendNewsletterTopicId: rawServerEnv.RESEND_NEWSLETTER_TOPIC_ID,
+  calWebhookSecret: rawServerEnv.CAL_WEBHOOK_SECRET,
   contactToEmail: rawServerEnv.CONTACT_TO_EMAIL ?? rawServerEnv.CONTACT_EMAIL,
   contactFromEmail: rawServerEnv.CONTACT_FROM_EMAIL,
   turnstileSecretKey: rawServerEnv.TURNSTILE_SECRET_KEY,
@@ -144,6 +147,11 @@ export const serverFeatureFlags = {
     serverEnv.resendApiKey &&
     serverEnv.contactFromEmail &&
     serverEnv.resendNewsletterTopicId,
+  ),
+  calWebhookEnabled: Boolean(
+    serverEnv.supabaseServiceRoleKey &&
+    serverEnv.calWebhookSecret &&
+    serverEnv.calBookingUrl,
   ),
   serviceRoleEnabled: Boolean(serverEnv.supabaseServiceRoleKey),
   turnstileEnabled: Boolean(

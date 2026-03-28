@@ -128,7 +128,6 @@ export const contactPageContent = {
     title: "Prefer to talk before filling a longer brief?",
     intro:
       "If the scope is still moving or the right service is not obvious yet, a short discovery call is usually the faster route.",
-    embedUrl: null as string | null,
     frameTitle: "Discovery call booking",
     fallbackHref:
       "mailto:hello@scalzostudio.com?subject=Discovery%20call%20request",

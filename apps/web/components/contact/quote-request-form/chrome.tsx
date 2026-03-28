@@ -33,7 +33,7 @@ export function QuoteRequestSuccessState() {
           asChild
           className="h-12 rounded-full bg-foreground px-6 text-[0.78rem] uppercase tracking-[0.2em] text-background hover:bg-primary"
         >
-          <a href="#booking">Book a call</a>
+          <a href="/contact#booking">Book a call</a>
         </Button>
         <Button
           asChild

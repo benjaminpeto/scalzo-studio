@@ -21,7 +21,7 @@ export const navigationLinks = [
 ] as const satisfies readonly NavigationLink[];
 
 export const primaryCta = {
-  href: "/contact",
+  href: "/contact#booking",
   label: "Book a call",
 } as const satisfies PrimaryCta;
 

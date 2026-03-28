@@ -106,10 +106,12 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_ANALYTICS_PROVIDER=
+NEXT_PUBLIC_CAL_BOOKING_URL=
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 RESEND_API_KEY=
 RESEND_NEWSLETTER_TOPIC_ID=
+CAL_WEBHOOK_SECRET=
 CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
 TURNSTILE_SECRET_KEY=
@@ -128,10 +130,12 @@ Notes:
 
 - Public Supabase auth supports either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
+- Cal.com booking uses `NEXT_PUBLIC_CAL_BOOKING_URL` for the embedded scheduler and `CAL_WEBHOOK_SECRET` for signed webhook ingestion.
 - Contact notifications require `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.
 - Newsletter signup requires `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and `RESEND_NEWSLETTER_TOPIC_ID`.
 - Because the app currently uses one `RESEND_API_KEY` for both email sends and newsletter contact/topic sync, that Resend key must have `Full access`, not `Sending access`.
 - CI uses safe placeholder public envs for build-only validation.
+- Cal.com setup and verification steps live in [`docs/integrations/cal-com.md`](/Users/benji/WORK/Projects/scalzo-studio/docs/integrations/cal-com.md).
 
 ## Supabase client helpers
 
@@ -240,7 +244,8 @@ Practical rule:
 - Stored lead metadata includes `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` values such as `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, plus the fixed `submitted_via` marker.
 - When Resend is configured, the same server action also sends an internal notification email plus a confirmation email to the lead. Lead persistence remains the primary success condition, so email delivery is best-effort and failures are logged without blocking the submission.
 - When the quote-form newsletter checkbox stays enabled, the same server action also creates or refreshes a pending newsletter subscriber record and sends the normal double opt-in confirmation email. This newsletter sidecar remains best-effort and does not block lead success.
-- The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
+- The booking section uses `NEXT_PUBLIC_CAL_BOOKING_URL` for the inline Cal.com embed and falls back to the email route only when Cal is not configured.
+- `POST /api/webhooks/cal` is the canonical server boundary for signed Cal.com booking events and stores normalized `booking_complete` rows in `public.events`.
 
 ## Newsletter verification
 
@@ -270,6 +275,18 @@ Use this checklist when validating the current quote-request flow in local or pr
 - Failure observability: inspect the server logs for structured `console.error` entries on validation failures, disabled service-role mode, insert failures, and unexpected submission errors.
 - Email outage: keep lead persistence enabled but break Resend delivery and verify the lead still saves, the form still returns success, and the log only includes lead id, page path, service/budget/timeline context, and email-kind metadata.
 - Log hygiene: verify the error metadata includes only operational context such as page path, project type, budget/timeline bands, service selections, and boolean source flags, with no name, email, company, website, message, raw referrer, or raw UTM values.
+
+## Cal.com booking verification
+
+Use this checklist when validating the embedded booking flow in local or preview:
+
+- Confirm the environment includes `NEXT_PUBLIC_CAL_BOOKING_URL`, `CAL_WEBHOOK_SECRET`, and `SUPABASE_SERVICE_ROLE_KEY`.
+- Open `/contact` and verify the inline Cal.com scheduler loads inside the booking panel.
+- Click booking-oriented CTAs from the header, mobile CTA bar, home CTA band, about CTA band, and a service detail CTA, then confirm they land on `/contact#booking`.
+- Complete a discovery-call booking and verify the booking panel swaps to the on-page success state instead of navigating away.
+- Confirm Cal.com delivers a signed `BOOKING_CREATED` webhook to `/api/webhooks/cal`.
+- Inspect the created `events` row and confirm `event_name = booking_complete`, `page_path = /contact`, and `properties` only contain the normalized non-PII booking metadata.
+- Confirm attendee email, attendee name, notes, and video call URLs are not persisted into `public.events`.
 
 ## Admin auth verification
 
