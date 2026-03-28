@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   contactFormSteps,
   contactPageContent,
@@ -17,6 +20,7 @@ import { QuoteRequestActiveStep } from "./quote-request-form/active-step";
 import { useQuoteRequestForm } from "@/hooks/contact/use-quote-request-form";
 
 export function QuoteRequestForm() {
+  const router = useRouter();
   const {
     activeStep,
     formAction,
@@ -32,6 +36,12 @@ export function QuoteRequestForm() {
     utmValues,
     values,
   } = useQuoteRequestForm();
+
+  useEffect(() => {
+    if (serverState.status === "success") {
+      router.replace("/contact/thank-you");
+    }
+  }, [router, serverState.status]);
 
   if (serverState.status === "success") {
     return <QuoteRequestSuccessState />;

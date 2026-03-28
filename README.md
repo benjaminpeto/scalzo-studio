@@ -223,6 +223,7 @@ Practical rule:
 ## Contact page boundary
 
 - `/contact` is a static in-repo marketing route composed through `apps/web/constants/contact/content.ts`.
+- `/contact/thank-you` is a static in-repo confirmation route that reuses the contact success and booking components for the post-submit handoff.
 - Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
 - The server action is the canonical lead-ingestion boundary for the quote form; no public client-side secret handling or direct browser database writes are part of the flow.
 - Stored lead metadata includes `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` values such as `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, plus the fixed `submitted_via` marker.
@@ -236,6 +237,7 @@ Use this checklist when validating the current quote-request flow in local or pr
 - Confirm the environment includes a valid Supabase service-role key and the leads table is available for writes.
 - Open `/contact` and verify the quote form renders as a four-step flow with Need, Context, Budget, and Brief steps.
 - Happy path: complete all required fields, submit the form, and verify the success state replaces the form after the request is saved.
+- Thank-you handoff: after a successful submission, verify the client redirects to `/contact/thank-you` and the page shows both the confirmation card and booking panel.
 - Stored lead record: inspect the created `leads` row and confirm `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` were persisted from the submission.
 - Resend happy path: with `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL` configured, confirm one internal email lands in the studio inbox and one confirmation email lands in the submitter inbox.
 - Client validation: attempt to continue or submit with required fields missing and verify the active step blocks progression and shows the relevant field errors.
