@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { normalizeInternalRedirectPath } from "@/actions/redirects/helpers";
 import type {
   AdminRedirectEditorFieldErrors,
   AdminRedirectEditorState,
@@ -9,6 +10,8 @@ import type {
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import type { RedirectEditorInput, RedirectUpdateInput } from "./schemas";
+
+export { normalizeInternalRedirectPath } from "@/actions/redirects/helpers";
 
 type RedirectWithSearchText = AdminRedirectListItem & {
   searchText: string;
@@ -149,49 +152,6 @@ export function revalidateRedirectRoutes(ids: string | string[]) {
 
   for (const redirectId of new Set(redirectIds.filter(Boolean))) {
     revalidatePath(`/admin/redirects/${redirectId}`);
-  }
-}
-
-export function normalizeInternalRedirectPath(value: string) {
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return {
-      error: "Enter a path.",
-      value: null as string | null,
-    };
-  }
-
-  if (!trimmed.startsWith("/") || trimmed.startsWith("//")) {
-    return {
-      error: "Enter an internal path that starts with /.",
-      value: null,
-    };
-  }
-
-  if (/\s/.test(trimmed)) {
-    return {
-      error: "Paths cannot contain spaces.",
-      value: null,
-    };
-  }
-
-  try {
-    const normalizedUrl = new URL(trimmed, "https://scalzo.internal");
-    const normalizedPathname =
-      normalizedUrl.pathname === "/"
-        ? "/"
-        : normalizedUrl.pathname.replace(/\/+$/, "");
-
-    return {
-      error: null,
-      value: `${normalizedPathname}${normalizedUrl.search}${normalizedUrl.hash}`,
-    };
-  } catch {
-    return {
-      error: "Enter a valid internal path.",
-      value: null,
-    };
   }
 }
 

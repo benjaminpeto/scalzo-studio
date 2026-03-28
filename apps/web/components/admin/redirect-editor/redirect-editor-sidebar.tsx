@@ -24,8 +24,9 @@ export function RedirectEditorSidebar({
           <div>
             <dt className="font-semibold text-foreground">Runtime status</dt>
             <dd>
-              These records are validated and managed here first. Public runtime
-              handling lands in <code>ST-045</code>.
+              Public requests now honor these redirects in proxy. Source hash
+              fragments are not matchable at request time, but destination
+              hashes are preserved.
             </dd>
           </div>
           <div>
@@ -42,8 +43,8 @@ export function RedirectEditorSidebar({
           Save
         </p>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Saving revalidates the admin redirects routes only. No public runtime
-          redirect behavior changes in this task.
+          Saving revalidates the admin redirects routes. Updated rules apply to
+          subsequent public requests without a new build step.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <AdminSubmitButton createLabel="Create redirect" mode={mode} />

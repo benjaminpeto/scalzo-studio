@@ -6,6 +6,7 @@ import {
   getAdminAppRouteRedirect,
   isAdminAppRoute,
 } from "@/actions/admin/server";
+import { getRuntimeRedirectResponse } from "@/actions/session/runtime-redirects";
 import { normalizeAuthRedirectPath } from "@/lib/supabase/auth-flow";
 import { createProxySupabaseContext } from "@/lib/supabase/proxy";
 
@@ -21,8 +22,36 @@ function buildAnonymousLoginRedirect(request: NextRequest) {
   return loginUrl;
 }
 
+function copyResponseCookies(source: NextResponse, target: NextResponse) {
+  for (const cookie of source.cookies.getAll()) {
+    target.cookies.set(cookie);
+  }
+}
+
+function buildProxyRedirectResponse(input: {
+  proxyResponse: NextResponse;
+  redirectUrl: URL;
+  status?: 301 | 302 | 307 | 308;
+}) {
+  const response = NextResponse.redirect(input.redirectUrl, input.status);
+
+  copyResponseCookies(input.proxyResponse, response);
+
+  return response;
+}
+
 export async function updateSession(request: NextRequest) {
   const proxyContext = createProxySupabaseContext(request);
+
+  const runtimeRedirectResponse = await getRuntimeRedirectResponse({
+    request,
+    response: proxyContext.response,
+  });
+
+  if (runtimeRedirectResponse) {
+    return runtimeRedirectResponse;
+  }
+
   if (!isAdminAppRoute(request.nextUrl.pathname)) {
     return proxyContext.response;
   }
@@ -31,7 +60,10 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims;
 
   if (!user) {
-    return NextResponse.redirect(buildAnonymousLoginRedirect(request));
+    return buildProxyRedirectResponse({
+      proxyResponse: proxyContext.response,
+      redirectUrl: buildAnonymousLoginRedirect(request),
+    });
   }
 
   const adminRedirectPath = await getAdminAppRouteRedirect({
@@ -41,9 +73,10 @@ export async function updateSession(request: NextRequest) {
   });
 
   if (adminRedirectPath) {
-    return NextResponse.redirect(
-      new URL(adminRedirectPath, request.nextUrl.origin),
-    );
+    return buildProxyRedirectResponse({
+      proxyResponse: proxyContext.response,
+      redirectUrl: new URL(adminRedirectPath, request.nextUrl.origin),
+    });
   }
 
   return proxyContext.response;

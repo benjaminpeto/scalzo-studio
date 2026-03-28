@@ -41,7 +41,7 @@ Current auth example:
 
 Current admin/session example:
 
-- [`apps/web/proxy.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/proxy.ts) delegates request/session orchestration to [`apps/web/actions/session/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/session/server.ts)
+- [`apps/web/proxy.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/proxy.ts) delegates request/session orchestration to [`apps/web/actions/session/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/session/server.ts), which owns session refresh, admin-route protection, and runtime CMS redirect handling
 - [`apps/web/app/(admin)/admin/page.tsx`](</Users/benji/WORK/Projects/scalzo-studio/apps/web/app/(admin)/admin/page.tsx>) and [`apps/web/app/(admin)/admin/layout.tsx`](</Users/benji/WORK/Projects/scalzo-studio/apps/web/app/(admin)/admin/layout.tsx>) delegate admin-route access control and shell composition to [`apps/web/actions/admin/server.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/actions/admin/server.ts) plus dedicated admin UI components
 
 Current public-content example:
