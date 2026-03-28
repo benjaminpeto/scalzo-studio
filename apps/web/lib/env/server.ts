@@ -14,6 +14,23 @@ const optionalEmail = () =>
     (value) => (value === "" ? undefined : value),
     z.email().optional(),
   );
+const optionalMailbox = () =>
+  z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z
+      .string()
+      .trim()
+      .refine(
+        (candidate) =>
+          /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(candidate) ||
+          /^[^<>]+<\s*[^@\s]+@[^@\s]+\.[^@\s]+\s*>$/.test(candidate),
+        {
+          message:
+            "Enter a valid mailbox such as hello@example.com or Studio <hello@example.com>.",
+        },
+      )
+      .optional(),
+  );
 
 const serverEnvSchema = z
   .object({
@@ -21,6 +38,7 @@ const serverEnvSchema = z
     RESEND_API_KEY: optionalString(),
     CONTACT_TO_EMAIL: optionalEmail(),
     CONTACT_EMAIL: optionalEmail(),
+    CONTACT_FROM_EMAIL: optionalMailbox(),
     TURNSTILE_SECRET_KEY: optionalString(),
     TURNSTILE_SITE_KEY: optionalString(),
   })
@@ -35,6 +53,14 @@ const serverEnvSchema = z
         message:
           "Set CONTACT_TO_EMAIL or CONTACT_EMAIL when RESEND_API_KEY is configured.",
         path: ["CONTACT_TO_EMAIL"],
+      });
+    }
+
+    if (value.RESEND_API_KEY && !value.CONTACT_FROM_EMAIL) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Set CONTACT_FROM_EMAIL when RESEND_API_KEY is configured.",
+        path: ["CONTACT_FROM_EMAIL"],
       });
     }
 
@@ -69,6 +95,7 @@ function parseServerEnv() {
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL,
     CONTACT_EMAIL: process.env.CONTACT_EMAIL,
+    CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
     TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY,
   });
@@ -87,6 +114,7 @@ export const serverEnv = {
   supabaseServiceRoleKey: rawServerEnv.SUPABASE_SERVICE_ROLE_KEY,
   resendApiKey: rawServerEnv.RESEND_API_KEY,
   contactToEmail: rawServerEnv.CONTACT_TO_EMAIL ?? rawServerEnv.CONTACT_EMAIL,
+  contactFromEmail: rawServerEnv.CONTACT_FROM_EMAIL,
   turnstileSecretKey: rawServerEnv.TURNSTILE_SECRET_KEY,
   turnstileSiteKey:
     publicEnv.turnstileSiteKey ?? rawServerEnv.TURNSTILE_SITE_KEY,
@@ -95,7 +123,9 @@ export const serverEnv = {
 export const serverFeatureFlags = {
   ...publicFeatureFlags,
   contactNotificationsEnabled: Boolean(
-    serverEnv.resendApiKey && serverEnv.contactToEmail,
+    serverEnv.resendApiKey &&
+    serverEnv.contactToEmail &&
+    serverEnv.contactFromEmail,
   ),
   serviceRoleEnabled: Boolean(serverEnv.supabaseServiceRoleKey),
   turnstileEnabled: Boolean(

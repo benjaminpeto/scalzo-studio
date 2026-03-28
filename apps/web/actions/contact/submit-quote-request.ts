@@ -13,6 +13,12 @@ import {
   readLeadFormData,
   serializeErrorForLog,
 } from "./helpers";
+import {
+  buildQuoteRequestEmailLogContext,
+  buildQuoteRequestEmailPayload,
+  sendQuoteRequestEmails,
+  serializeQuoteRequestEmailErrorForLog,
+} from "./quote-request-emails";
 import { contactLeadSchema } from "./schemas";
 
 export async function submitQuoteRequest(
@@ -122,7 +128,11 @@ export async function submitQuoteRequest(
       website: input.website,
     };
 
-    const { error } = await supabase.from("leads").insert(leadInsert);
+    const { data, error } = await supabase
+      .from("leads")
+      .insert(leadInsert)
+      .select("created_at, id")
+      .single();
 
     if (error) {
       console.error("Quote request insert failed", {
@@ -139,6 +149,27 @@ export async function submitQuoteRequest(
           "The request could not be saved right now. Please try again or email hello@scalzostudio.com.",
         fieldErrors: {},
       };
+    }
+
+    if (serverFeatureFlags.contactNotificationsEnabled) {
+      const emailPayload = buildQuoteRequestEmailPayload(input, {
+        createdAt: data.created_at,
+        id: data.id,
+      });
+      const emailLogContext = buildQuoteRequestEmailLogContext(emailPayload);
+      const emailResults = await sendQuoteRequestEmails(emailPayload);
+
+      for (const [emailKind, result] of Object.entries(emailResults)) {
+        if (result.status === "fulfilled") {
+          continue;
+        }
+
+        console.error("Quote request email send failed", {
+          ...emailLogContext,
+          emailKind,
+          error: serializeQuoteRequestEmailErrorForLog(result.reason),
+        });
+      }
     }
 
     return {

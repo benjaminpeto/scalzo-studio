@@ -5,11 +5,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { submitQuoteRequest } from "./submit-quote-request";
 
 const mocks = vi.hoisted(() => ({
+  buildQuoteRequestEmailLogContextMock: vi.fn(),
+  buildQuoteRequestEmailPayloadMock: vi.fn(),
   fromMock: vi.fn(),
   insertMock: vi.fn(),
+  selectMock: vi.fn(),
+  sendQuoteRequestEmailsMock: vi.fn(),
+  serializeQuoteRequestEmailErrorForLogMock: vi.fn(),
   serverFeatureFlags: {
+    contactNotificationsEnabled: false,
     serviceRoleEnabled: true,
   },
+  singleMock: vi.fn(),
 }));
 
 vi.mock("@/lib/env/server", () => ({
@@ -20,6 +27,14 @@ vi.mock("@/lib/supabase/service-role", () => ({
   createServiceRoleSupabaseClient: () => ({
     from: mocks.fromMock,
   }),
+}));
+
+vi.mock("./quote-request-emails", () => ({
+  buildQuoteRequestEmailLogContext: mocks.buildQuoteRequestEmailLogContextMock,
+  buildQuoteRequestEmailPayload: mocks.buildQuoteRequestEmailPayloadMock,
+  sendQuoteRequestEmails: mocks.sendQuoteRequestEmailsMock,
+  serializeQuoteRequestEmailErrorForLog:
+    mocks.serializeQuoteRequestEmailErrorForLogMock,
 }));
 
 function buildValidFormData() {
@@ -102,12 +117,47 @@ function expectLeadInsertPayload(
 
 describe("submitQuoteRequest", () => {
   beforeEach(() => {
+    mocks.buildQuoteRequestEmailLogContextMock.mockReset();
+    mocks.buildQuoteRequestEmailPayloadMock.mockReset();
     mocks.fromMock.mockReset();
     mocks.insertMock.mockReset();
+    mocks.selectMock.mockReset();
+    mocks.sendQuoteRequestEmailsMock.mockReset();
+    mocks.serializeQuoteRequestEmailErrorForLogMock.mockReset();
+    mocks.singleMock.mockReset();
     mocks.fromMock.mockReturnValue({
       insert: mocks.insertMock,
     });
+    mocks.insertMock.mockReturnValue({
+      select: mocks.selectMock,
+    });
+    mocks.selectMock.mockReturnValue({
+      single: mocks.singleMock,
+    });
+    mocks.serverFeatureFlags.contactNotificationsEnabled = false;
     mocks.serverFeatureFlags.serviceRoleEnabled = true;
+    mocks.buildQuoteRequestEmailPayloadMock.mockReturnValue({
+      leadId: "lead_123",
+      pagePath: "/contact",
+      servicesInterestLabels: ["Strategic framing"],
+      budgetBandLabel: "EUR 1,000 - 3,000",
+      timelineBandLabel: "2-4 weeks",
+    });
+    mocks.buildQuoteRequestEmailLogContextMock.mockReturnValue({
+      leadId: "lead_123",
+      pagePath: "/contact",
+      servicesInterest: ["Strategic framing"],
+      budgetBand: "EUR 1,000 - 3,000",
+      timelineBand: "2-4 weeks",
+      hasReferrer: true,
+      hasUtm: false,
+    });
+    mocks.serializeQuoteRequestEmailErrorForLogMock.mockImplementation(
+      (error) => ({
+        message: error instanceof Error ? error.message : String(error),
+        name: error instanceof Error ? error.name : "UnknownError",
+      }),
+    );
   });
 
   it("short-circuits honeypot submissions without touching the database", async () => {
@@ -121,6 +171,7 @@ describe("submitQuoteRequest", () => {
 
     expect(result.status).toBe("success");
     expect(mocks.fromMock).not.toHaveBeenCalled();
+    expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
   });
 
   it("logs sanitized validation failures and returns field errors for invalid submissions", async () => {
@@ -194,13 +245,15 @@ describe("submitQuoteRequest", () => {
       }),
     );
     expect(mocks.fromMock).not.toHaveBeenCalled();
+    expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
   });
 
   it("logs insert failures and returns the generic save error", async () => {
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
-    mocks.insertMock.mockResolvedValueOnce({
+    mocks.singleMock.mockResolvedValueOnce({
+      data: null,
       error: {
         code: "23505",
         details: "duplicate",
@@ -233,13 +286,14 @@ describe("submitQuoteRequest", () => {
         timelineBand: "2-4-weeks",
       }),
     );
+    expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
   });
 
   it("logs unexpected insert errors and returns the generic save error", async () => {
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
-    mocks.insertMock.mockRejectedValueOnce(new Error("network down"));
+    mocks.singleMock.mockRejectedValueOnce(new Error("network down"));
 
     const result = await submitQuoteRequest(
       { fieldErrors: {}, message: null, status: "idle" },
@@ -265,13 +319,20 @@ describe("submitQuoteRequest", () => {
         timelineBand: "2-4-weeks",
       }),
     );
+    expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
   });
 
-  it("inserts valid leads through the service-role client without logging an error", async () => {
+  it("inserts valid leads and skips email sends when notifications are disabled", async () => {
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
-    mocks.insertMock.mockResolvedValueOnce({ error: null });
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
 
     const result = await submitQuoteRequest(
       { fieldErrors: {}, message: null, status: "idle" },
@@ -282,11 +343,156 @@ describe("submitQuoteRequest", () => {
     expect(mocks.insertMock).toHaveBeenCalledTimes(1);
     expectLeadInsertPayload(mocks.insertMock.mock.calls[0]?.[0]);
     expect(result.status).toBe("success");
+    expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
+  it("sends both emails after a successful lead insert when notifications are enabled", async () => {
+    mocks.serverFeatureFlags.contactNotificationsEnabled = true;
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
+    mocks.sendQuoteRequestEmailsMock.mockResolvedValueOnce({
+      confirmation: {
+        status: "fulfilled",
+        value: { id: "email_confirmation" },
+      },
+      internal: { status: "fulfilled", value: { id: "email_internal" } },
+    });
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("success");
+    expect(mocks.buildQuoteRequestEmailPayloadMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: "hello@example.com",
+        name: "Ben",
+      }),
+      {
+        createdAt: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+    );
+    expect(mocks.sendQuoteRequestEmailsMock).toHaveBeenCalledWith(
+      mocks.buildQuoteRequestEmailPayloadMock.mock.results[0]?.value,
+    );
+  });
+
+  it("returns success and logs a sanitized error when one email send fails", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const resendError = Object.assign(new Error("resend down"), {
+      name: "ResendSendError",
+    });
+
+    mocks.serverFeatureFlags.contactNotificationsEnabled = true;
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
+    mocks.sendQuoteRequestEmailsMock.mockResolvedValueOnce({
+      confirmation: {
+        status: "fulfilled",
+        value: { id: "email_confirmation" },
+      },
+      internal: { status: "rejected", reason: resendError },
+    });
+    mocks.serializeQuoteRequestEmailErrorForLogMock.mockReturnValueOnce({
+      code: "application_error",
+      message: "resend down",
+      name: "ResendSendError",
+      statusCode: 500,
+    });
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("success");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Quote request email send failed",
+      expect.objectContaining({
+        budgetBand: "EUR 1,000 - 3,000",
+        emailKind: "internal",
+        error: {
+          code: "application_error",
+          message: "resend down",
+          name: "ResendSendError",
+          statusCode: 500,
+        },
+        hasReferrer: true,
+        hasUtm: false,
+        leadId: "lead_123",
+        pagePath: "/contact",
+        servicesInterest: ["Strategic framing"],
+        timelineBand: "2-4 weeks",
+      }),
+    );
+  });
+
+  it("returns success and logs both failures when both email sends fail", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const confirmationError = new Error("confirmation failed");
+    const internalError = new Error("internal failed");
+
+    mocks.serverFeatureFlags.contactNotificationsEnabled = true;
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
+    mocks.sendQuoteRequestEmailsMock.mockResolvedValueOnce({
+      confirmation: { status: "rejected", reason: confirmationError },
+      internal: { status: "rejected", reason: internalError },
+    });
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("success");
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
+    expect(consoleErrorSpy).toHaveBeenNthCalledWith(
+      1,
+      "Quote request email send failed",
+      expect.objectContaining({
+        emailKind: "confirmation",
+      }),
+    );
+    expect(consoleErrorSpy).toHaveBeenNthCalledWith(
+      2,
+      "Quote request email send failed",
+      expect.objectContaining({
+        emailKind: "internal",
+      }),
+    );
+  });
+
   it("persists lead metadata and fallback defaults for optional fields", async () => {
-    mocks.insertMock.mockResolvedValueOnce({ error: null });
+    mocks.singleMock.mockResolvedValueOnce({
+      data: {
+        created_at: "2026-03-28T10:30:00.000Z",
+        id: "lead_123",
+      },
+      error: null,
+    });
 
     const formData = buildValidFormData();
     formData.delete("company");

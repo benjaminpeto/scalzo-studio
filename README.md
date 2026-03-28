@@ -110,6 +110,7 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 RESEND_API_KEY=
 CONTACT_TO_EMAIL=
+CONTACT_FROM_EMAIL=
 TURNSTILE_SECRET_KEY=
 ```
 
@@ -126,6 +127,7 @@ Notes:
 
 - Public Supabase auth supports either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
+- Resend notifications require `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.
 - CI uses safe placeholder public envs for build-only validation.
 
 ## Supabase client helpers
@@ -224,6 +226,7 @@ Practical rule:
 - Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
 - The server action is the canonical lead-ingestion boundary for the quote form; no public client-side secret handling or direct browser database writes are part of the flow.
 - Stored lead metadata includes `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` values such as `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, plus the fixed `submitted_via` marker.
+- When Resend is configured, the same server action also sends an internal notification email plus a confirmation email to the lead. Lead persistence remains the primary success condition, so email delivery is best-effort and failures are logged without blocking the submission.
 - The booking section supports an embedded provider URL when one is configured in content and otherwise falls back to a direct email route without adding a new environment contract yet.
 
 ## Contact form verification
@@ -234,10 +237,12 @@ Use this checklist when validating the current quote-request flow in local or pr
 - Open `/contact` and verify the quote form renders as a four-step flow with Need, Context, Budget, and Brief steps.
 - Happy path: complete all required fields, submit the form, and verify the success state replaces the form after the request is saved.
 - Stored lead record: inspect the created `leads` row and confirm `page_path`, `services_interest`, `budget_band`, `timeline_band`, and `source_utm` were persisted from the submission.
+- Resend happy path: with `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL` configured, confirm one internal email lands in the studio inbox and one confirmation email lands in the submitter inbox.
 - Client validation: attempt to continue or submit with required fields missing and verify the active step blocks progression and shows the relevant field errors.
 - Server validation: submit an invalid payload through the server action path and verify the form returns the generic validation message plus field-level errors.
 - Temporary outage: disable service-role access, submit a valid request, and verify the temporary-unavailable message is shown without exposing secrets or stack details.
 - Failure observability: inspect the server logs for structured `console.error` entries on validation failures, disabled service-role mode, insert failures, and unexpected submission errors.
+- Email outage: keep lead persistence enabled but break Resend delivery and verify the lead still saves, the form still returns success, and the log only includes lead id, page path, service/budget/timeline context, and email-kind metadata.
 - Log hygiene: verify the error metadata includes only operational context such as page path, project type, budget/timeline bands, service selections, and boolean source flags, with no name, email, company, website, message, raw referrer, or raw UTM values.
 
 ## Admin auth verification

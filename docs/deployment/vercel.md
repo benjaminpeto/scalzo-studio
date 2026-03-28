@@ -32,6 +32,7 @@ Set environment variables in all three Vercel environments as needed:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `RESEND_API_KEY`
 - `CONTACT_TO_EMAIL`
+- `CONTACT_FROM_EMAIL`
 - Optional analytics and Turnstile keys
 
 ### Preview
@@ -39,7 +40,11 @@ Set environment variables in all three Vercel environments as needed:
 - `NEXT_PUBLIC_SITE_URL`: preview or staging domain used for QA
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-- Optional preview-safe server keys if preview needs forms, auth writes, or anti-spam validation
+- Optional preview-safe server keys if preview needs forms, auth writes, anti-spam validation, or Resend smoke tests:
+  - `SUPABASE_SERVICE_ROLE_KEY`
+  - `RESEND_API_KEY`
+  - `CONTACT_TO_EMAIL`
+  - `CONTACT_FROM_EMAIL`
 
 ### Development
 
