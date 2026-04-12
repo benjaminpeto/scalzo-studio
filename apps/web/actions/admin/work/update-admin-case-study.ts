@@ -1,3 +1,5 @@
+"use server";
+
 import type { Database, Json } from "@/lib/supabase/database.types";
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type {
@@ -29,8 +31,6 @@ export async function updateAdminCaseStudy(
   _prevState: AdminCaseStudyEditorState,
   formData: FormData,
 ): Promise<AdminCaseStudyEditorState> {
-  "use server";
-
   const rawInput = readCaseStudyEditorFormData(formData);
   const currentSlug = normalizeStringEntry(rawInput.currentSlug);
 

@@ -1,3 +1,5 @@
+"use server";
+
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type { Database } from "@/lib/supabase/database.types";
 import type {
@@ -23,8 +25,6 @@ export async function createAdminRedirect(
   _prevState: AdminRedirectEditorState,
   formData: FormData,
 ): Promise<AdminRedirectEditorState> {
-  "use server";
-
   await requireCurrentAdminAccess("/admin/redirects/new");
 
   const rawInput = readRedirectEditorFormData(formData);

@@ -1,3 +1,5 @@
+"use server";
+
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type { Database } from "@/lib/supabase/database.types";
 import type {
@@ -25,8 +27,6 @@ export async function createAdminInsight(
   _prevState: AdminInsightEditorState,
   formData: FormData,
 ): Promise<AdminInsightEditorState> {
-  "use server";
-
   await requireCurrentAdminAccess("/admin/insights/new");
 
   const rawInput = readInsightEditorFormData(formData);

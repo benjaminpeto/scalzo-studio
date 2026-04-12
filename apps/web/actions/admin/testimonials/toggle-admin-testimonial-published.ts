@@ -1,3 +1,5 @@
+"use server";
+
 import { redirect } from "next/navigation";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
@@ -10,8 +12,6 @@ import {
 import { publishActionSchema } from "./schemas";
 
 export async function toggleAdminTestimonialPublished(formData: FormData) {
-  "use server";
-
   await requireCurrentAdminAccess("/admin/testimonials");
 
   const parsedInput = publishActionSchema.safeParse({

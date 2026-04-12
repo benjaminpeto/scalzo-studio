@@ -1,3 +1,5 @@
+"use server";
+
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type { AdminServiceEditorState } from "@/interfaces/admin/service-editor";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -20,8 +22,6 @@ export async function createAdminService(
   _prevState: AdminServiceEditorState,
   formData: FormData,
 ): Promise<AdminServiceEditorState> {
-  "use server";
-
   await requireCurrentAdminAccess("/admin/services/new");
 
   const rawInput = readServiceEditorFormData(formData);

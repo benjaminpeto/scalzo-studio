@@ -1,3 +1,5 @@
+"use server";
+
 import type { Database } from "@/lib/supabase/database.types";
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type {
@@ -26,8 +28,6 @@ export async function updateAdminTestimonial(
   _prevState: AdminTestimonialEditorState,
   formData: FormData,
 ): Promise<AdminTestimonialEditorState> {
-  "use server";
-
   const rawInput = readTestimonialEditorFormData(formData);
   const testimonialId = normalizeStringEntry(rawInput.testimonialId);
 

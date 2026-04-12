@@ -7,6 +7,7 @@ import type {
   AdminInsightEditorState,
   AdminInsightMediaState,
 } from "@/interfaces/admin/insight-editor";
+import type { AdminLeadsListData } from "@/interfaces/admin/lead-list";
 import type { AdminNavigationItem } from "@/interfaces/admin/navigation";
 import type {
   AdminServiceEditorFieldErrors,
@@ -342,4 +343,8 @@ export interface AdminTestimonialEditorProps {
 export interface AdminTestimonialsListProps {
   data: AdminTestimonialsListData;
   status?: string;
+}
+
+export interface AdminLeadsListProps {
+  data: AdminLeadsListData;
 }

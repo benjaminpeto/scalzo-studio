@@ -55,6 +55,14 @@ const adminRedirectsRoute: AdminNavigationItem = {
   matchStrategy: "prefix",
 };
 
+const adminLeadsRoute: AdminNavigationItem = {
+  description: "Search, filter, and review incoming lead submissions.",
+  href: "/admin/leads",
+  icon: "operations",
+  label: "Leads",
+  matchStrategy: "prefix",
+};
+
 const adminServicesSectionNavigation: AdminNavigationItem[] = [
   {
     description: "Search, counts, and route-level admin context.",
@@ -130,6 +138,21 @@ const adminRedirectsSectionNavigation: AdminNavigationItem[] = [
   },
 ];
 
+const adminLeadsSectionNavigation: AdminNavigationItem[] = [
+  {
+    description: "Filter state, counts, and route-level admin context.",
+    href: "/admin/leads#overview",
+    icon: "overview",
+    label: "Overview",
+  },
+  {
+    description: "Current lead list with search and filter controls.",
+    href: "/admin/leads#lead-list",
+    icon: "list",
+    label: "List view",
+  },
+];
+
 export const adminPrimaryNavigation: AdminNavigationItem[] = [
   adminDashboardRoute,
   adminServicesRoute,
@@ -137,6 +160,7 @@ export const adminPrimaryNavigation: AdminNavigationItem[] = [
   adminInsightsRoute,
   adminTestimonialsRoute,
   adminRedirectsRoute,
+  adminLeadsRoute,
 ];
 
 export const adminDashboardSections: AdminDashboardSection[] = [
@@ -204,5 +228,12 @@ export const adminRouteMetadata: AdminRouteMetadata[] = [
     navigation: adminRedirectsRoute,
     sectionNavigationItems: adminRedirectsSectionNavigation,
     sectionNavigationLabel: "Redirects list sections",
+  },
+  {
+    breadcrumb: ["Admin", "Leads"],
+    heading: "Leads management",
+    navigation: adminLeadsRoute,
+    sectionNavigationItems: adminLeadsSectionNavigation,
+    sectionNavigationLabel: "Leads list sections",
   },
 ];

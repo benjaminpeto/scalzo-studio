@@ -1,3 +1,5 @@
+"use server";
+
 import { redirect } from "next/navigation";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
@@ -7,8 +9,6 @@ import { buildServicesReturnPath, revalidateServiceRoutes } from "./helpers";
 import { publishActionSchema } from "./schemas";
 
 export async function toggleAdminServicePublished(formData: FormData) {
-  "use server";
-
   await requireCurrentAdminAccess("/admin/services");
 
   const parsedInput = publishActionSchema.safeParse({

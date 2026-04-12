@@ -1,3 +1,5 @@
+"use server";
+
 import { redirect } from "next/navigation";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
@@ -12,8 +14,6 @@ import {
 import { deleteActionSchema } from "./schemas";
 
 export async function deleteAdminTestimonial(formData: FormData) {
-  "use server";
-
   const parsedInput = deleteActionSchema.safeParse({
     confirmDelete: formData.get("confirmDelete"),
     testimonialId: formData.get("testimonialId"),

@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";

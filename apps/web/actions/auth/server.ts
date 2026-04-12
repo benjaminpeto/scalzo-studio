@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import { type EmailOtpType } from "@supabase/supabase-js";
