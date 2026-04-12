@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useId, useRef } from "react";
-import posthog from "posthog-js";
+import { captureEvent } from "@/lib/analytics/client";
 
 import { Reveal } from "@/components/home/motion";
 import { newsletterSignupContent } from "@/constants/newsletter/content";
@@ -63,7 +63,10 @@ function NewsletterSignupForm({
   useEffect(() => {
     if (serverState.status === "success" && !capturedRef.current) {
       capturedRef.current = true;
-      posthog.capture("newsletter_signup_submitted", { placement });
+      captureEvent("newsletter_subscribe", {
+        page_path: window.location.pathname,
+        placement,
+      });
     }
   }, [serverState.status, placement]);
 

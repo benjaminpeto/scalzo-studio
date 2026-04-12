@@ -18,6 +18,7 @@ import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
+import { CaseStudyViewTracker } from "@/components/tracking/case-study-view-tracker";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { TestimonialCard } from "@ui/components/marketing/testimonial-card";
 
@@ -98,6 +99,10 @@ function WorkDetailLayout({
 
   return (
     <>
+      <CaseStudyViewTracker
+        slug={detailPageData.slug}
+        title={detailPageData.title}
+      />
       {isPreview ? (
         <Section spacing="tight" className="pb-0">
           <div className="rounded-[1.35rem] border border-[#735c00]/20 bg-[linear-gradient(135deg,rgba(252,205,3,0.18),rgba(255,255,255,0.94))] px-5 py-4 shadow-[0_12px_30px_rgba(115,92,0,0.08)]">

@@ -2,7 +2,7 @@
 
 import Cal, { getCalApi } from "@calcom/embed-react";
 import { useEffect, useState } from "react";
-import posthog from "posthog-js";
+import { captureEvent } from "@/lib/analytics/client";
 
 import type { BookingProviderConfig } from "@/lib/booking/config";
 
@@ -109,12 +109,11 @@ export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
             }
 
             const data = event.detail?.data ?? {};
-            posthog.capture("cal_booking_completed", {
-              booking_uid: data.uid ?? null,
+            captureEvent("booking_complete", {
               booking_title: data.title ?? null,
+              booking_uid: data.uid ?? null,
+              provider: "cal.com",
               start_time: data.startTime ?? null,
-              end_time: data.endTime ?? null,
-              status: data.status ?? null,
             });
             readyOrFailed = true;
             setBookingSuccess(data);

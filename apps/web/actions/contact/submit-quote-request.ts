@@ -5,7 +5,7 @@ import type { Database } from "@/lib/supabase/database.types";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import type { SubmitQuoteRequestState } from "@/interfaces/contact/form";
 import { createOrRefreshPendingNewsletterSignup } from "@/actions/newsletter/create-or-refresh-pending-newsletter-signup";
-import { getPostHogClient } from "@/lib/posthog-server";
+import { captureServerEvent } from "@/lib/analytics/server";
 import {
   buildNewsletterSignupLogContext,
   serializeNewsletterErrorForLog,
@@ -217,21 +217,17 @@ export async function submitQuoteRequest(
       };
     }
 
-    getPostHogClient().capture({
-      distinctId: input.email,
-      event: "quote_request_submitted",
-      properties: {
-        lead_id: data.id,
-        budget_band: input.budgetBand,
-        project_type: input.projectType,
-        services_interest: input.servicesInterest,
-        timeline_band: input.timelineBand,
-        page_path: input.pagePath,
-        utm_source: input.utmSource ?? null,
-        utm_medium: input.utmMedium ?? null,
-        utm_campaign: input.utmCampaign ?? null,
-        newsletter_opt_in: newsletterOptIn,
-      },
+    captureServerEvent(input.email, "quote_request_submitted", {
+      budget_band: input.budgetBand,
+      lead_id: data.id,
+      newsletter_opt_in: newsletterOptIn,
+      page_path: input.pagePath,
+      project_type: input.projectType,
+      services_interest: input.servicesInterest,
+      timeline_band: input.timelineBand,
+      utm_campaign: input.utmCampaign ?? null,
+      utm_medium: input.utmMedium ?? null,
+      utm_source: input.utmSource ?? null,
     });
 
     if (serverFeatureFlags.contactNotificationsEnabled) {

@@ -5,6 +5,7 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 
 import { navigationLinks, primaryCta } from "@/components/home/content";
+import { captureEvent } from "@/lib/analytics/client";
 import {
   Sheet,
   SheetContent,
@@ -48,7 +49,18 @@ export function SiteHeader() {
             asChild
             className="h-11 rounded-full bg-primary px-5 text-[0.78rem] uppercase tracking-[0.2em] text-primary-foreground hover:bg-primary/90"
           >
-            <Link href={primaryCta.href}>{primaryCta.label}</Link>
+            <Link
+              href={primaryCta.href}
+              onClick={() =>
+                captureEvent("cta_click", {
+                  cta_id: "header-contact",
+                  page_path: window.location.pathname,
+                  placement: "header",
+                })
+              }
+            >
+              {primaryCta.label}
+            </Link>
           </Button>
         </div>
 

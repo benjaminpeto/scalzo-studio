@@ -4,6 +4,7 @@ import {
   useActionState,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type FormEvent,
 } from "react";
@@ -28,7 +29,7 @@ import {
   readUtmValues,
   validateQuoteValues,
 } from "@/lib/contact/quote-request-form";
-import posthog from "posthog-js";
+import { captureEvent } from "@/lib/analytics/client";
 
 export function useQuoteRequestForm() {
   const [serverState, formAction, isPending] = useActionState(
@@ -44,6 +45,8 @@ export function useQuoteRequestForm() {
   const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [referrer, setReferrer] = useState("");
   const [utmValues, setUtmValues] = useState<UTMValues>(initialQuoteUtmValues);
+  const formStartedRef = useRef(false);
+  const formSubmittedRef = useRef(false);
 
   useEffect(() => {
     setReferrer(document.referrer ?? "");
@@ -77,6 +80,22 @@ export function useQuoteRequestForm() {
     }
   }, [serverState.status]);
 
+  useEffect(() => {
+    if (serverState.status === "success" && !formSubmittedRef.current) {
+      formSubmittedRef.current = true;
+      captureEvent("form_submit", {
+        budget_band: values.budgetBand || undefined,
+        form_id: "quote_request",
+        service_interest: values.servicesInterest.length
+          ? values.servicesInterest
+          : undefined,
+        timeline_band: values.timelineBand || undefined,
+      });
+    }
+    // values intentionally excluded — snapshot at submission time
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serverState.status]);
+
   const visibleServerErrors = useMemo(
     () =>
       Object.entries(serverState.fieldErrors).reduce<QuoteRequestFieldErrors>(
@@ -105,6 +124,11 @@ export function useQuoteRequestForm() {
     field: K,
     nextValue: QuoteFormValues[K],
   ) {
+    if (!formStartedRef.current) {
+      formStartedRef.current = true;
+      captureEvent("form_start", { form_id: "quote_request" });
+    }
+
     setValues((currentValues) => ({
       ...currentValues,
       [field]: nextValue,
@@ -146,8 +170,13 @@ export function useQuoteRequestForm() {
   function handleNextStep(totalSteps: number) {
     if (validateCurrentStep(activeStep)) {
       const nextStep = Math.min(activeStep + 1, totalSteps - 1);
-      posthog.capture("quote_request_step_advanced", {
+      captureEvent("form_step_complete", {
+        budget_band: values.budgetBand || undefined,
+        form_id: "quote_request",
         from_step: activeStep,
+        service_interest: values.servicesInterest.length
+          ? values.servicesInterest
+          : undefined,
         to_step: nextStep,
         total_steps: totalSteps,
       });
