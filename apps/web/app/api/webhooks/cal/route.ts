@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
   if (!error) {
     const props = eventInsert.properties as Record<string, unknown>;
-    captureServerEvent(
+    await captureServerEvent(
       (props.bookingUid as string) ?? "booking-webhook",
       "booking_created",
       {
@@ -90,6 +90,10 @@ export async function POST(request: NextRequest) {
         event_type_id: props.eventTypeId ?? null,
         start_time: (props.startTime as string) ?? null,
         status: (props.status as string) ?? null,
+      },
+      {
+        pagePath: eventInsert.page_path,
+        userAgent: eventInsert.user_agent ?? null,
       },
     );
   }

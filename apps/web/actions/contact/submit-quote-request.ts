@@ -217,18 +217,26 @@ export async function submitQuoteRequest(
       };
     }
 
-    captureServerEvent(input.email, "quote_request_submitted", {
-      budget_band: input.budgetBand,
-      lead_id: data.id,
-      newsletter_opt_in: newsletterOptIn,
-      page_path: input.pagePath,
-      project_type: input.projectType,
-      services_interest: input.servicesInterest,
-      timeline_band: input.timelineBand,
-      utm_campaign: input.utmCampaign ?? null,
-      utm_medium: input.utmMedium ?? null,
-      utm_source: input.utmSource ?? null,
-    });
+    await captureServerEvent(
+      input.email,
+      "quote_request_submitted",
+      {
+        budget_band: input.budgetBand,
+        lead_id: data.id,
+        newsletter_opt_in: newsletterOptIn,
+        page_path: input.pagePath,
+        project_type: input.projectType,
+        services_interest: input.servicesInterest,
+        timeline_band: input.timelineBand,
+        utm_campaign: input.utmCampaign ?? null,
+        utm_medium: input.utmMedium ?? null,
+        utm_source: input.utmSource ?? null,
+      },
+      {
+        pagePath: input.pagePath,
+        referrer: input.referrer ?? null,
+      },
+    );
 
     if (serverFeatureFlags.contactNotificationsEnabled) {
       const emailPayload = buildQuoteRequestEmailPayload(input, {

@@ -137,10 +137,17 @@ export async function handleNewsletterConfirmRequest(input: {
       return buildNewsletterConfirmedPath("error");
     }
 
-    captureServerEvent(subscriber.email, "newsletter_confirmed", {
-      page_path: subscriber.page_path,
-      placement: subscriber.placement,
-    });
+    await captureServerEvent(
+      subscriber.email,
+      "newsletter_confirmed",
+      {
+        page_path: subscriber.page_path,
+        placement: subscriber.placement,
+      },
+      {
+        pagePath: subscriber.page_path,
+      },
+    );
 
     return buildNewsletterConfirmedPath("confirmed");
   } catch (error) {

@@ -1,6 +1,7 @@
 import { MobileCtaBar } from "@/components/layout/mobile-cta-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { MarketingPageViewTracker } from "@/components/tracking/marketing-page-view-tracker";
 
 export default function MarketingLayout({
   children,
@@ -16,6 +17,7 @@ export default function MarketingLayout({
         Skip to content
       </a>
       <div className="flex min-h-svh flex-col">
+        <MarketingPageViewTracker />
         <SiteHeader />
         <main id="main-content" className="flex-1">
           {children}
