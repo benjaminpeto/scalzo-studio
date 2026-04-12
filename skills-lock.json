@@ -21,6 +21,11 @@
       "sourceType": "github",
       "computedHash": "ec3109d213dde1747614ad1112ef0e498e04b24e464538968e156dfbfadb2121"
     },
+    "supabase": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "computedHash": "cb675a889c60172febe84740e7c22b600c8241c390deaff3d368c408f10dffdf"
+    },
     "supabase-postgres-best-practices": {
       "source": "supabase/agent-skills",
       "sourceType": "github",
