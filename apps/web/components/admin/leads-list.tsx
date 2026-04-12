@@ -81,6 +81,17 @@ export function AdminLeadsList({ data }: AdminLeadsListProps) {
                   <Link href="/admin/leads">Clear</Link>
                 </Button>
               ) : null}
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-full px-6"
+              >
+                <a
+                  href={`/admin/leads/export?q=${encodeURIComponent(data.query)}&status=${encodeURIComponent(data.selectedStatus)}&budget=${encodeURIComponent(data.selectedBudget)}`}
+                >
+                  Export CSV
+                </a>
+              </Button>
             </div>
           </form>
         </div>

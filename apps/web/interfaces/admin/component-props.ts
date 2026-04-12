@@ -7,6 +7,10 @@ import type {
   AdminInsightEditorState,
   AdminInsightMediaState,
 } from "@/interfaces/admin/insight-editor";
+import type {
+  AdminLeadEditorRecord,
+  AdminLeadEditorState,
+} from "@/interfaces/admin/lead-editor";
 import type { AdminLeadsListData } from "@/interfaces/admin/lead-list";
 import type { AdminNavigationItem } from "@/interfaces/admin/navigation";
 import type {
@@ -347,4 +351,13 @@ export interface AdminTestimonialsListProps {
 
 export interface AdminLeadsListProps {
   data: AdminLeadsListData;
+}
+
+export interface AdminLeadEditorProps {
+  action: (
+    state: AdminLeadEditorState,
+    payload: FormData,
+  ) => Promise<AdminLeadEditorState>;
+  lead: AdminLeadEditorRecord;
+  status?: string;
 }

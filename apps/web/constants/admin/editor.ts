@@ -22,3 +22,7 @@ export const adminRedirectEditorStatusMessageByCode = {
   created: "The redirect has been created and is ready for editing.",
   saved: "The latest redirect changes have been saved.",
 } as const;
+
+export const adminLeadEditorStatusMessageByCode = {
+  saved: "Lead status and notes have been saved.",
+} as const;
