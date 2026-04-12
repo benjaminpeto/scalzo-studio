@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildAdminOverviewDashboardData,
+  buildAdminOverviewWatchdogAlerts,
   resolveAdminOverviewRange,
 } from "./helpers";
 
@@ -119,6 +120,7 @@ describe("admin overview analytics helpers", () => {
     expect(data.sessions.value).toBe(2);
     expect(data.qualifiedLeads.value).toBe(1);
     expect(data.conversionRate.value).toBe(50);
+    expect(data.alerts).toEqual([]);
     expect(data.topLandingPages).toEqual([
       { pagePath: "/contact", sessions: 1 },
       { pagePath: "/services", sessions: 1 },
@@ -130,5 +132,127 @@ describe("admin overview analytics helpers", () => {
         placement: "header",
       },
     ]);
+  });
+
+  it("marks a recent form failure as critical and recent analytics as healthy", () => {
+    const alerts = buildAdminOverviewWatchdogAlerts({
+      featureFlags: {
+        hcaptchaEnabled: true,
+        newsletterSignupEnabled: true,
+        serviceRoleEnabled: true,
+      },
+      latestAnalyticsEventAt: "2026-04-12T11:00:00.000Z",
+      latestWatchdogEvents: [
+        {
+          created_at: "2026-04-12T10:00:00.000Z",
+          reason: "lead_insert_failed",
+          source: "quote_request",
+          status: "error",
+        },
+        {
+          created_at: "2026-04-12T09:00:00.000Z",
+          reason: "submitted",
+          source: "newsletter_signup",
+          status: "success",
+        },
+      ],
+      now: new Date("2026-04-12T12:00:00.000Z"),
+    });
+
+    expect(alerts).toEqual([
+      expect.objectContaining({
+        id: "quote_request_form",
+        status: "critical",
+      }),
+      expect.objectContaining({
+        id: "newsletter_signup",
+        status: "healthy",
+      }),
+      expect.objectContaining({
+        id: "analytics_mirror",
+        status: "healthy",
+      }),
+    ]);
+  });
+
+  it("uses the newest per-source watchdog event when a failure is followed by success", () => {
+    const alerts = buildAdminOverviewWatchdogAlerts({
+      featureFlags: {
+        hcaptchaEnabled: true,
+        newsletterSignupEnabled: true,
+        serviceRoleEnabled: true,
+      },
+      latestAnalyticsEventAt: "2026-04-12T11:00:00.000Z",
+      latestWatchdogEvents: [
+        {
+          created_at: "2026-04-11T10:00:00.000Z",
+          reason: "lead_insert_failed",
+          source: "quote_request",
+          status: "error",
+        },
+        {
+          created_at: "2026-04-12T10:00:00.000Z",
+          reason: "submitted",
+          source: "quote_request",
+          status: "success",
+        },
+      ],
+      now: new Date("2026-04-12T12:00:00.000Z"),
+    });
+
+    expect(alerts[0]).toEqual(
+      expect.objectContaining({
+        id: "quote_request_form",
+        status: "healthy",
+      }),
+    );
+  });
+
+  it("marks disabled integrations inactive", () => {
+    const alerts = buildAdminOverviewWatchdogAlerts({
+      featureFlags: {
+        hcaptchaEnabled: false,
+        newsletterSignupEnabled: false,
+        serviceRoleEnabled: false,
+      },
+      latestAnalyticsEventAt: null,
+      latestWatchdogEvents: [],
+      now: new Date("2026-04-12T12:00:00.000Z"),
+    });
+
+    expect(alerts).toEqual([
+      expect.objectContaining({
+        id: "quote_request_form",
+        status: "inactive",
+      }),
+      expect.objectContaining({
+        id: "newsletter_signup",
+        status: "inactive",
+      }),
+      expect.objectContaining({
+        id: "analytics_mirror",
+        status: "inactive",
+      }),
+    ]);
+  });
+
+  it("marks stale analytics as warning", () => {
+    const alerts = buildAdminOverviewWatchdogAlerts({
+      featureFlags: {
+        hcaptchaEnabled: true,
+        newsletterSignupEnabled: true,
+        serviceRoleEnabled: true,
+      },
+      latestAnalyticsEventAt: "2026-04-10T11:00:00.000Z",
+      latestWatchdogEvents: [],
+      now: new Date("2026-04-12T12:00:00.000Z"),
+    });
+
+    expect(alerts[2]).toEqual(
+      expect.objectContaining({
+        id: "analytics_mirror",
+        status: "warning",
+      }),
+    );
   });
 });

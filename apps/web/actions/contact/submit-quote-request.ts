@@ -3,6 +3,7 @@
 import { serverFeatureFlags } from "@/lib/env/server";
 import type { Database } from "@/lib/supabase/database.types";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
+import { recordWatchdogEvent } from "@/lib/watchdog/server";
 import type { SubmitQuoteRequestState } from "@/interfaces/contact/form";
 import { createOrRefreshPendingNewsletterSignup } from "@/actions/newsletter/create-or-refresh-pending-newsletter-signup";
 import { captureServerEvent } from "@/lib/analytics/server";
@@ -28,15 +29,28 @@ import {
 } from "./quote-request-emails";
 import { contactLeadSchema } from "./schemas";
 
+function getEmailDomain(value: string | null) {
+  return value && value.includes("@") ? (value.split("@")[1] ?? null) : null;
+}
+
 export async function submitQuoteRequest(
   _prevState: SubmitQuoteRequestState,
   formData: FormData,
 ): Promise<SubmitQuoteRequestState> {
   const rawInput = readLeadFormData(formData);
+  const email = normalizeString(rawInput.email);
+  const pagePath = normalizeString(rawInput.pagePath) || "/contact";
+  const emailDomain = getEmailDomain(email);
+  const watchdogContext = {
+    emailDomain,
+    hcaptchaEnabled: serverFeatureFlags.hcaptchaEnabled,
+    pagePath,
+    serviceRoleEnabled: serverFeatureFlags.serviceRoleEnabled,
+  };
   const logContext = buildQuoteRequestLogContext({
     budgetBand: normalizeString(rawInput.budgetBand),
     newsletterOptIn: normalizeString(rawInput.newsletterOptIn) === "true",
-    pagePath: normalizeString(rawInput.pagePath) || "/contact",
+    pagePath,
     projectType: normalizeString(rawInput.projectType),
     referrer: normalizeString(rawInput.referrer),
     servicesInterest: rawInput.servicesInterest.filter(
@@ -55,11 +69,11 @@ export async function submitQuoteRequest(
     budgetBand: normalizeString(rawInput.budgetBand),
     company: normalizeString(rawInput.company),
     consent: normalizeString(rawInput.consent),
-    email: normalizeString(rawInput.email),
+    email,
     location: normalizeString(rawInput.location),
     message: normalizeString(rawInput.message),
     name: normalizeString(rawInput.name),
-    pagePath: normalizeString(rawInput.pagePath) || "/contact",
+    pagePath,
     primaryGoal: normalizeString(rawInput.primaryGoal),
     projectType: normalizeString(rawInput.projectType),
     referrer: normalizeString(rawInput.referrer),
@@ -96,6 +110,12 @@ export async function submitQuoteRequest(
       "Quote request submission skipped because service-role access is disabled",
       logContext,
     );
+    await recordWatchdogEvent({
+      context: watchdogContext,
+      reason: "service_role_disabled",
+      source: "quote_request",
+      status: "error",
+    });
 
     return {
       captchaError: null,
@@ -111,6 +131,12 @@ export async function submitQuoteRequest(
       "Quote request submission skipped because hCaptcha is disabled",
       logContext,
     );
+    await recordWatchdogEvent({
+      context: watchdogContext,
+      reason: "hcaptcha_disabled",
+      source: "quote_request",
+      status: "error",
+    });
 
     return {
       captchaError: null,
@@ -156,6 +182,15 @@ export async function submitQuoteRequest(
     console.error("Quote request hCaptcha verification errored", {
       ...logContext,
       error: serializeErrorForLog(error),
+    });
+    await recordWatchdogEvent({
+      context: {
+        ...watchdogContext,
+        errorName: error instanceof Error ? error.name : "UnknownError",
+      },
+      reason: "hcaptcha_verification_error",
+      source: "quote_request",
+      status: "error",
     });
 
     return {
@@ -206,6 +241,15 @@ export async function submitQuoteRequest(
         details: error.details,
         hint: error.hint,
         message: error.message,
+      });
+      await recordWatchdogEvent({
+        context: {
+          ...watchdogContext,
+          errorCode: error.code ?? null,
+        },
+        reason: "lead_insert_failed",
+        source: "quote_request",
+        status: "error",
       });
 
       return {
@@ -287,6 +331,16 @@ export async function submitQuoteRequest(
       }
     }
 
+    await recordWatchdogEvent({
+      context: {
+        ...watchdogContext,
+        leadId: data.id,
+      },
+      reason: "submitted",
+      source: "quote_request",
+      status: "success",
+    });
+
     return {
       captchaError: null,
       status: "success",
@@ -297,6 +351,15 @@ export async function submitQuoteRequest(
     console.error("Quote request submission threw an unexpected error", {
       ...logContext,
       error: serializeErrorForLog(error),
+    });
+    await recordWatchdogEvent({
+      context: {
+        ...watchdogContext,
+        errorName: error instanceof Error ? error.name : "UnknownError",
+      },
+      reason: "unexpected_error",
+      source: "quote_request",
+      status: "error",
     });
 
     return {

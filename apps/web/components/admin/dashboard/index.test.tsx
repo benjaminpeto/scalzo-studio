@@ -8,6 +8,31 @@ describe("AdminOverviewDashboard", () => {
     render(
       <AdminOverviewDashboard
         data={{
+          alerts: [
+            {
+              id: "quote_request_form",
+              label: "Quote request form",
+              lastCheckedAt: "2026-04-12T10:30:00.000Z",
+              status: "healthy",
+              summary: "No recent operational failures were recorded.",
+            },
+            {
+              id: "newsletter_signup",
+              label: "Newsletter signup",
+              lastCheckedAt: "2026-04-12T10:00:00.000Z",
+              status: "warning",
+              summary:
+                "No analytics events were mirrored in the last 24 hours.",
+            },
+            {
+              id: "analytics_mirror",
+              label: "Analytics mirror",
+              lastCheckedAt: null,
+              status: "inactive",
+              summary:
+                "Analytics mirroring is not configured in this environment.",
+            },
+          ],
           conversionRate: {
             delta: {
               percentageDelta: 25,
@@ -62,6 +87,8 @@ describe("AdminOverviewDashboard", () => {
 
     expect(screen.getByText("Overview KPI dashboard")).toBeTruthy();
     expect(screen.getByText(/Current window: Last 30 days\./)).toBeTruthy();
+    expect(screen.getByText("Quote request form")).toBeTruthy();
+    expect(screen.getByText("Healthy")).toBeTruthy();
     expect(screen.getByText("Qualified leads")).toBeTruthy();
     expect(screen.getByText("/contact")).toBeTruthy();
     expect(screen.getByText("book-call")).toBeTruthy();
@@ -71,6 +98,31 @@ describe("AdminOverviewDashboard", () => {
     render(
       <AdminOverviewDashboard
         data={{
+          alerts: [
+            {
+              id: "quote_request_form",
+              label: "Quote request form",
+              lastCheckedAt: null,
+              status: "critical",
+              summary: "The latest form attempt failed.",
+            },
+            {
+              id: "newsletter_signup",
+              label: "Newsletter signup",
+              lastCheckedAt: null,
+              status: "inactive",
+              summary:
+                "Newsletter signup is not configured in this environment.",
+            },
+            {
+              id: "analytics_mirror",
+              label: "Analytics mirror",
+              lastCheckedAt: "2026-03-30T08:00:00.000Z",
+              status: "warning",
+              summary:
+                "No analytics events were mirrored in the last 24 hours.",
+            },
+          ],
           conversionRate: {
             delta: {
               percentageDelta: 0,
@@ -121,5 +173,6 @@ describe("AdminOverviewDashboard", () => {
     expect(
       screen.getByText("No CTA clicks were captured in this range."),
     ).toBeTruthy();
+    expect(screen.getByText("The latest form attempt failed.")).toBeTruthy();
   });
 });

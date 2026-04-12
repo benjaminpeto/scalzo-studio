@@ -4,6 +4,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   createOrRefreshPendingNewsletterSignupMock: vi.fn(),
+  recordWatchdogEventMock: vi.fn(),
+  serverFeatureFlags: {
+    newsletterSignupEnabled: true,
+    serviceRoleEnabled: true,
+  },
 }));
 
 vi.mock("server-only", () => ({}));
@@ -11,6 +16,14 @@ vi.mock("server-only", () => ({}));
 vi.mock("./create-or-refresh-pending-newsletter-signup", () => ({
   createOrRefreshPendingNewsletterSignup:
     mocks.createOrRefreshPendingNewsletterSignupMock,
+}));
+
+vi.mock("@/lib/env/server", () => ({
+  serverFeatureFlags: mocks.serverFeatureFlags,
+}));
+
+vi.mock("@/lib/watchdog/server", () => ({
+  recordWatchdogEvent: mocks.recordWatchdogEventMock,
 }));
 
 vi.mock("./newsletter-emails", () => ({
@@ -33,6 +46,9 @@ function buildValidFormData() {
 describe("submitNewsletterSignup", () => {
   beforeEach(() => {
     mocks.createOrRefreshPendingNewsletterSignupMock.mockReset();
+    mocks.recordWatchdogEventMock.mockReset();
+    mocks.serverFeatureFlags.newsletterSignupEnabled = true;
+    mocks.serverFeatureFlags.serviceRoleEnabled = true;
   });
 
   it("returns field errors for invalid submissions", async () => {
@@ -56,6 +72,7 @@ describe("submitNewsletterSignup", () => {
     expect(
       mocks.createOrRefreshPendingNewsletterSignupMock,
     ).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).not.toHaveBeenCalled();
   });
 
   it("returns the unavailable state when the integration is disabled", async () => {
@@ -85,6 +102,18 @@ describe("submitNewsletterSignup", () => {
         placement: "insights-index",
       },
     );
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        newsletterSignupEnabled: true,
+        pagePath: "/insights",
+        placement: "insights-index",
+        serviceRoleEnabled: true,
+      },
+      reason: "integration_disabled",
+      source: "newsletter_signup",
+      status: "error",
+    });
   });
 
   it("returns the already-subscribed success state when the helper reports an existing subscription", async () => {
@@ -103,6 +132,18 @@ describe("submitNewsletterSignup", () => {
         "This email is already subscribed. Future notes will land there automatically.",
       status: "success",
     });
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        newsletterSignupEnabled: true,
+        pagePath: "/insights",
+        placement: "insights-index",
+        serviceRoleEnabled: true,
+      },
+      reason: "already_subscribed",
+      source: "newsletter_signup",
+      status: "success",
+    });
   });
 
   it("returns the inbox confirmation state for a fresh or refreshed pending signup", async () => {
@@ -119,6 +160,18 @@ describe("submitNewsletterSignup", () => {
       fieldErrors: {},
       message:
         "Check your inbox and confirm your subscription to finish joining the newsletter.",
+      status: "success",
+    });
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        newsletterSignupEnabled: true,
+        pagePath: "/insights",
+        placement: "insights-index",
+        serviceRoleEnabled: true,
+      },
+      reason: "submitted",
+      source: "newsletter_signup",
       status: "success",
     });
   });
@@ -158,5 +211,18 @@ describe("submitNewsletterSignup", () => {
         placement: "insights-index",
       },
     );
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        errorName: "Error",
+        newsletterSignupEnabled: true,
+        pagePath: "/insights",
+        placement: "insights-index",
+        serviceRoleEnabled: true,
+      },
+      reason: "request_failed",
+      source: "newsletter_signup",
+      status: "error",
+    });
   });
 });

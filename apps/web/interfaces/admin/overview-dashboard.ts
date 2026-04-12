@@ -46,7 +46,22 @@ export interface AdminOverviewTopCtaRow {
   placement: string;
 }
 
+export type AdminOverviewWatchdogAlertStatus =
+  | "critical"
+  | "healthy"
+  | "inactive"
+  | "warning";
+
+export interface AdminOverviewWatchdogAlert {
+  id: "analytics_mirror" | "newsletter_signup" | "quote_request_form";
+  label: string;
+  lastCheckedAt: string | null;
+  status: AdminOverviewWatchdogAlertStatus;
+  summary: string;
+}
+
 export interface AdminOverviewDashboardData {
+  alerts: AdminOverviewWatchdogAlert[];
   conversionRate: AdminOverviewKpi;
   qualifiedLeads: AdminOverviewKpi;
   range: AdminOverviewDateRange;

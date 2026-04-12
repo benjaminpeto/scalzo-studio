@@ -126,3 +126,12 @@ Typical local cycle:
 4. Create your first auth user, then promote it with `npm run supabase:admin:bootstrap:local -- you@example.com`.
 5. After schema changes, regenerate app types with `npm run supabase:types:local`.
 6. Stop both local servers with `npm run dev:local:stop`, or use `Ctrl+C` in the terminal running `npm run dev:local`.
+
+## Admin watchdog verification
+
+To verify the overview watchdog cards locally:
+
+1. Run `npm run dev:local` and sign in to `/admin`.
+2. Submit a successful quote request from `/contact` and confirm the `Quote request form` card returns to `Healthy`.
+3. Leave `RESEND_API_KEY` or `RESEND_NEWSLETTER_TOPIC_ID` unset, reload `/admin`, and confirm `Newsletter signup` shows `Inactive`.
+4. If your local `events` table has no rows from the last 24 hours, confirm `Analytics mirror` shows `Warning`; otherwise insert or mirror a fresh event and confirm it returns to `Healthy`.

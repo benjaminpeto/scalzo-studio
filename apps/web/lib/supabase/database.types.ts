@@ -225,6 +225,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      watchdog_events: {
+        Row: {
+          context: Json;
+          created_at: string;
+          id: string;
+          reason: string;
+          source: string;
+          status: string;
+        };
+        Insert: {
+          context?: Json;
+          created_at?: string;
+          id?: string;
+          reason: string;
+          source: string;
+          status: string;
+        };
+        Update: {
+          context?: Json;
+          created_at?: string;
+          id?: string;
+          reason?: string;
+          source?: string;
+          status?: string;
+        };
+        Relationships: [];
+      };
       posts: {
         Row: {
           content_md: string;

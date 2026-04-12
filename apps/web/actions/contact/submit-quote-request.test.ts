@@ -10,12 +10,14 @@ const mocks = vi.hoisted(() => ({
   createOrRefreshPendingNewsletterSignupMock: vi.fn(),
   buildQuoteRequestEmailLogContextMock: vi.fn(),
   buildQuoteRequestEmailPayloadMock: vi.fn(),
+  captureServerEventMock: vi.fn(),
   fromMock: vi.fn(),
   insertMock: vi.fn(),
   selectMock: vi.fn(),
   sendQuoteRequestEmailsMock: vi.fn(),
   serializeNewsletterErrorForLogMock: vi.fn(),
   serializeQuoteRequestEmailErrorForLogMock: vi.fn(),
+  recordWatchdogEventMock: vi.fn(),
   headersMock: vi.fn(),
   serverFeatureFlags: {
     contactNotificationsEnabled: false,
@@ -31,6 +33,14 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/lib/env/server", () => ({
   serverFeatureFlags: mocks.serverFeatureFlags,
   serverEnv: mocks.serverEnv,
+}));
+
+vi.mock("@/lib/watchdog/server", () => ({
+  recordWatchdogEvent: mocks.recordWatchdogEventMock,
+}));
+
+vi.mock("@/lib/analytics/server", () => ({
+  captureServerEvent: mocks.captureServerEventMock,
 }));
 
 vi.mock("next/headers", () => ({
@@ -161,6 +171,7 @@ describe("submitQuoteRequest", () => {
   beforeEach(() => {
     mocks.buildQuoteRequestEmailLogContextMock.mockReset();
     mocks.buildQuoteRequestEmailPayloadMock.mockReset();
+    mocks.captureServerEventMock.mockReset();
     mocks.createOrRefreshPendingNewsletterSignupMock.mockReset();
     mocks.fromMock.mockReset();
     mocks.insertMock.mockReset();
@@ -168,6 +179,7 @@ describe("submitQuoteRequest", () => {
     mocks.sendQuoteRequestEmailsMock.mockReset();
     mocks.serializeNewsletterErrorForLogMock.mockReset();
     mocks.serializeQuoteRequestEmailErrorForLogMock.mockReset();
+    mocks.recordWatchdogEventMock.mockReset();
     mocks.singleMock.mockReset();
     mocks.headersMock.mockReset();
     mocks.fromMock.mockReturnValue({
@@ -252,6 +264,7 @@ describe("submitQuoteRequest", () => {
     expect(
       mocks.createOrRefreshPendingNewsletterSignupMock,
     ).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).not.toHaveBeenCalled();
   });
 
   it("rejects submissions when hCaptcha verification fails", async () => {
@@ -276,6 +289,7 @@ describe("submitQuoteRequest", () => {
       "Complete the hCaptcha check before submitting.",
     );
     expect(mocks.fromMock).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).not.toHaveBeenCalled();
   });
 
   it("returns a retryable error when hCaptcha verification throws", async () => {
@@ -295,6 +309,18 @@ describe("submitQuoteRequest", () => {
       "The anti-spam check could not be verified. Try again.",
     );
     expect(mocks.fromMock).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        errorName: "Error",
+        hcaptchaEnabled: true,
+        pagePath: "/contact",
+        serviceRoleEnabled: true,
+      },
+      reason: "hcaptcha_verification_error",
+      source: "quote_request",
+      status: "error",
+    });
   });
 
   it("logs sanitized validation failures and returns field errors for invalid submissions", async () => {
@@ -339,6 +365,7 @@ describe("submitQuoteRequest", () => {
       "email",
       "bad-email",
     );
+    expect(mocks.recordWatchdogEventMock).not.toHaveBeenCalled();
   });
 
   it("logs service-role disabled mode and returns the temporary-unavailable state", async () => {
@@ -372,6 +399,17 @@ describe("submitQuoteRequest", () => {
     expect(
       mocks.createOrRefreshPendingNewsletterSignupMock,
     ).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        hcaptchaEnabled: true,
+        pagePath: "/contact",
+        serviceRoleEnabled: false,
+      },
+      reason: "service_role_disabled",
+      source: "quote_request",
+      status: "error",
+    });
   });
 
   it("logs hCaptcha-disabled mode and returns the temporary-unavailable state", async () => {
@@ -401,6 +439,17 @@ describe("submitQuoteRequest", () => {
       }),
     );
     expect(mocks.fromMock).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        hcaptchaEnabled: false,
+        pagePath: "/contact",
+        serviceRoleEnabled: true,
+      },
+      reason: "hcaptcha_disabled",
+      source: "quote_request",
+      status: "error",
+    });
   });
 
   it("logs insert failures and returns the generic save error", async () => {
@@ -445,6 +494,18 @@ describe("submitQuoteRequest", () => {
     expect(
       mocks.createOrRefreshPendingNewsletterSignupMock,
     ).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        errorCode: "23505",
+        hcaptchaEnabled: true,
+        pagePath: "/contact",
+        serviceRoleEnabled: true,
+      },
+      reason: "lead_insert_failed",
+      source: "quote_request",
+      status: "error",
+    });
   });
 
   it("logs unexpected insert errors and returns the generic save error", async () => {
@@ -481,6 +542,18 @@ describe("submitQuoteRequest", () => {
     expect(
       mocks.createOrRefreshPendingNewsletterSignupMock,
     ).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        errorName: "Error",
+        hcaptchaEnabled: true,
+        pagePath: "/contact",
+        serviceRoleEnabled: true,
+      },
+      reason: "unexpected_error",
+      source: "quote_request",
+      status: "error",
+    });
   });
 
   it("inserts valid leads and skips email sends when notifications are disabled", async () => {
@@ -513,6 +586,18 @@ describe("submitQuoteRequest", () => {
     });
     expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
     expect(consoleErrorSpy).not.toHaveBeenCalled();
+    expect(mocks.recordWatchdogEventMock).toHaveBeenCalledWith({
+      context: {
+        emailDomain: "example.com",
+        hcaptchaEnabled: true,
+        leadId: "lead_123",
+        pagePath: "/contact",
+        serviceRoleEnabled: true,
+      },
+      reason: "submitted",
+      source: "quote_request",
+      status: "success",
+    });
   });
 
   it("skips newsletter signup when the opt-in checkbox is unchecked", async () => {
