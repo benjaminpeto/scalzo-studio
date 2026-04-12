@@ -43,4 +43,37 @@ describe("useQuoteRequestForm", () => {
     );
     expect(result.current.activeStep).toBe(0);
   });
+
+  it("blocks submit when the hCaptcha token is missing", () => {
+    const preventDefault = vi.fn();
+    const { result } = renderHook(() => useQuoteRequestForm());
+
+    act(() => {
+      result.current.updateField("servicesInterest", ["strategic-framing"]);
+      result.current.updateField(
+        "primaryGoal",
+        "Clarify the offer and improve conversion",
+      );
+      result.current.updateField("name", "Ben");
+      result.current.updateField("email", "hello@example.com");
+      result.current.updateField("budgetBand", "1000-3000");
+      result.current.updateField("timelineBand", "2-4-weeks");
+      result.current.updateField(
+        "message",
+        "We need a clearer commercial story and a stronger conversion path.",
+      );
+      result.current.updateField("consent", true);
+    });
+
+    act(() => {
+      result.current.handleSubmit({
+        preventDefault,
+      } as unknown as FormEvent<HTMLFormElement>);
+    });
+
+    expect(preventDefault).toHaveBeenCalled();
+    expect(result.current.captchaError).toBe(
+      "Complete the hCaptcha check before submitting.",
+    );
+  });
 });

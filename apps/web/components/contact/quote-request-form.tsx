@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -11,19 +12,24 @@ import {
 import {
   QuoteRequestFooter,
   QuoteRequestHiddenFields,
-  QuoteRequestHoneypot,
   QuoteRequestServerMessage,
   QuoteRequestStepTabs,
   QuoteRequestSuccessState,
 } from "./quote-request-form/chrome";
 import { QuoteRequestActiveStep } from "./quote-request-form/active-step";
+import { QuoteRequestCaptcha } from "./quote-request-form/captcha";
 import { useQuoteRequestForm } from "@/hooks/contact/use-quote-request-form";
 
 export function QuoteRequestForm() {
   const router = useRouter();
+  const captchaRef = useRef<HCaptcha | null>(null);
   const {
     activeStep,
+    captchaError,
     formAction,
+    handleCaptchaError,
+    handleCaptchaExpire,
+    handleCaptchaVerify,
     handleNextStep,
     handlePreviousStep,
     handleSubmit,
@@ -36,12 +42,19 @@ export function QuoteRequestForm() {
     utmValues,
     values,
   } = useQuoteRequestForm();
+  const hcaptchaSiteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
   useEffect(() => {
     if (serverState.status === "success") {
       router.replace("/contact/thank-you");
     }
   }, [router, serverState.status]);
+
+  useEffect(() => {
+    if (serverState.status === "error") {
+      captchaRef.current?.resetCaptcha();
+    }
+  }, [serverState.status]);
 
   if (serverState.status === "success") {
     return <QuoteRequestSuccessState />;
@@ -76,10 +89,6 @@ export function QuoteRequestForm() {
           utmValues={utmValues}
           values={values}
         />
-        <QuoteRequestHoneypot
-          value={values.honeypot}
-          onChange={(nextValue) => updateField("honeypot", nextValue)}
-        />
         <QuoteRequestServerMessage message={serverState.message} />
 
         <QuoteRequestActiveStep
@@ -89,9 +98,21 @@ export function QuoteRequestForm() {
           values={values}
         />
 
+        {activeStep === contactFormSteps.length - 1 ? (
+          <QuoteRequestCaptcha
+            captchaError={captchaError}
+            captchaRef={captchaRef}
+            onError={handleCaptchaError}
+            onExpire={handleCaptchaExpire}
+            onVerify={handleCaptchaVerify}
+            siteKey={hcaptchaSiteKey}
+          />
+        ) : null}
+
         <QuoteRequestFooter
           activeStep={activeStep}
           isPending={isPending}
+          isSubmitDisabled={!hcaptchaSiteKey}
           onNext={() => handleNextStep(contactFormSteps.length)}
           onPrevious={handlePreviousStep}
           totalSteps={contactFormSteps.length}

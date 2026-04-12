@@ -7,13 +7,10 @@ import {
 import type {
   QuoteRequestFooterProps,
   QuoteRequestHiddenFieldsProps,
-  QuoteRequestHoneypotProps,
   QuoteRequestServerMessageProps,
   QuoteRequestStepTabsProps,
 } from "@/interfaces/contact/component-props";
 import { Button } from "@ui/components/ui/button";
-import { Input } from "@ui/components/ui/input";
-import { Label } from "@ui/components/ui/label";
 
 import { QuoteRequestStepButton } from "./step-button";
 import { QuoteRequestSubmitButton } from "./submit-button";
@@ -91,6 +88,7 @@ export function QuoteRequestHiddenFields({
       <input type="hidden" name="budgetBand" value={values.budgetBand} />
       <input type="hidden" name="timelineBand" value={values.timelineBand} />
       <input type="hidden" name="message" value={values.message} />
+      <input type="hidden" name="hCaptchaToken" value={values.captchaToken} />
       <input
         type="hidden"
         name="consent"
@@ -113,25 +111,6 @@ export function QuoteRequestHiddenFields({
   );
 }
 
-export function QuoteRequestHoneypot({
-  value,
-  onChange,
-}: QuoteRequestHoneypotProps) {
-  return (
-    <div className="sr-only" aria-hidden="true">
-      <Label htmlFor="companyWebsite">Company website</Label>
-      <Input
-        id="companyWebsite"
-        name="companyWebsite"
-        autoComplete="off"
-        tabIndex={-1}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
-    </div>
-  );
-}
-
 export function QuoteRequestServerMessage({
   message,
 }: QuoteRequestServerMessageProps) {
@@ -149,6 +128,7 @@ export function QuoteRequestServerMessage({
 export function QuoteRequestFooter({
   activeStep,
   isPending,
+  isSubmitDisabled = false,
   onNext,
   onPrevious,
   totalSteps,
@@ -184,7 +164,9 @@ export function QuoteRequestFooter({
         ) : null}
       </div>
 
-      {isLastStep ? <QuoteRequestSubmitButton disabled={isPending} /> : null}
+      {isLastStep ? (
+        <QuoteRequestSubmitButton disabled={isPending || isSubmitDisabled} />
+      ) : null}
 
       {isPending ? (
         <p className="w-full text-sm text-muted-foreground sm:w-auto">

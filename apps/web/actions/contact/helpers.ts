@@ -101,7 +101,7 @@ export function readLeadFormData(formData: FormData) {
     company: formData.get("company"),
     consent: formData.get("consent"),
     email: formData.get("email"),
-    honeypot: formData.get("companyWebsite"),
+    hCaptchaToken: formData.get("hCaptchaToken"),
     location: formData.get("location"),
     message: formData.get("message"),
     name: formData.get("name"),

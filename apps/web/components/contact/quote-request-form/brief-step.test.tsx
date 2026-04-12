@@ -13,10 +13,10 @@ describe("BriefStep", () => {
         updateField={updateField}
         values={{
           budgetBand: "1000-3000",
+          captchaToken: "",
           company: "Scalzo",
           consent: true,
           email: "hello@example.com",
-          honeypot: "",
           location: "uk-europe",
           message:
             "We need a clearer commercial story and a stronger conversion path.",

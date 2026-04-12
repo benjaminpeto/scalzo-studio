@@ -23,7 +23,7 @@ const publicEnvSchema = z
       analyticsProviderSchema.optional(),
     ),
     NEXT_PUBLIC_CAL_BOOKING_URL: optionalUrl(),
-    NEXT_PUBLIC_TURNSTILE_SITE_KEY: optionalString(),
+    NEXT_PUBLIC_HCAPTCHA_SITE_KEY: optionalString(),
   })
   .superRefine((value, ctx) => {
     if (
@@ -59,7 +59,7 @@ function parsePublicEnv() {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_ANALYTICS_PROVIDER: process.env.NEXT_PUBLIC_ANALYTICS_PROVIDER,
     NEXT_PUBLIC_CAL_BOOKING_URL: process.env.NEXT_PUBLIC_CAL_BOOKING_URL,
-    NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+    NEXT_PUBLIC_HCAPTCHA_SITE_KEY: process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
   });
 
   if (!result.success) {
@@ -79,11 +79,11 @@ export const publicEnv = {
     rawPublicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   analyticsProvider: rawPublicEnv.NEXT_PUBLIC_ANALYTICS_PROVIDER,
   calBookingUrl: rawPublicEnv.NEXT_PUBLIC_CAL_BOOKING_URL,
-  turnstileSiteKey: rawPublicEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+  hcaptchaSiteKey: rawPublicEnv.NEXT_PUBLIC_HCAPTCHA_SITE_KEY,
 } as const;
 
 export const publicFeatureFlags = {
   analyticsEnabled: Boolean(publicEnv.analyticsProvider),
   calBookingEnabled: Boolean(publicEnv.calBookingUrl),
-  turnstileEnabled: Boolean(publicEnv.turnstileSiteKey),
+  hcaptchaEnabled: Boolean(publicEnv.hcaptchaSiteKey),
 } as const;

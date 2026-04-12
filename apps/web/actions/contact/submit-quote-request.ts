@@ -18,6 +18,7 @@ import {
   readLeadFormData,
   serializeErrorForLog,
 } from "./helpers";
+import { verifyHCaptchaToken } from "./verify-hcaptcha";
 import {
   buildQuoteRequestEmailLogContext,
   buildQuoteRequestEmailPayload,
@@ -48,14 +49,6 @@ export async function submitQuoteRequest(
     utmTerm: normalizeString(rawInput.utmTerm),
     website: normalizeString(rawInput.website),
   });
-
-  if (normalizeString(rawInput.honeypot).trim()) {
-    return {
-      status: "success",
-      message: "Thanks. The request is in and will be reviewed shortly.",
-      fieldErrors: {},
-    };
-  }
 
   const parsedInput = contactLeadSchema.safeParse({
     budgetBand: normalizeString(rawInput.budgetBand),
@@ -90,6 +83,7 @@ export async function submitQuoteRequest(
     });
 
     return {
+      captchaError: null,
       status: "error",
       message: "Check the highlighted fields and try again.",
       fieldErrors,
@@ -103,9 +97,71 @@ export async function submitQuoteRequest(
     );
 
     return {
+      captchaError: null,
       status: "error",
       message:
         "The contact form is temporarily unavailable. Email hello@scalzostudio.com instead.",
+      fieldErrors: {},
+    };
+  }
+
+  if (!serverFeatureFlags.hcaptchaEnabled) {
+    console.error(
+      "Quote request submission skipped because hCaptcha is disabled",
+      logContext,
+    );
+
+    return {
+      captchaError: null,
+      status: "error",
+      message:
+        "The contact form is temporarily unavailable. Email hello@scalzostudio.com instead.",
+      fieldErrors: {},
+    };
+  }
+
+  const hCaptchaToken = normalizeString(rawInput.hCaptchaToken).trim();
+
+  if (!hCaptchaToken) {
+    return {
+      captchaError: "Complete the hCaptcha check before submitting.",
+      status: "error",
+      message: "Complete the anti-spam check and try again.",
+      fieldErrors: {},
+    };
+  }
+
+  try {
+    const verification = await verifyHCaptchaToken(hCaptchaToken);
+
+    if (!verification.success) {
+      console.error("Quote request hCaptcha verification failed", {
+        ...logContext,
+        challengeTimestamp: verification.challengeTimestamp,
+        errorCodes: verification.errorCodes,
+        hasHostname: verification.hasHostname,
+        hasRemoteIp: verification.hasRemoteIp,
+        hasUserAgent: verification.hasUserAgent,
+      });
+
+      return {
+        captchaError: "Complete the hCaptcha check before submitting.",
+        status: "error",
+        message: "Complete the anti-spam check and try again.",
+        fieldErrors: {},
+      };
+    }
+  } catch (error) {
+    console.error("Quote request hCaptcha verification errored", {
+      ...logContext,
+      error: serializeErrorForLog(error),
+    });
+
+    return {
+      captchaError: "The anti-spam check could not be verified. Try again.",
+      status: "error",
+      message:
+        "The request could not be verified right now. Please try again or email hello@scalzostudio.com.",
       fieldErrors: {},
     };
   }
@@ -152,6 +208,7 @@ export async function submitQuoteRequest(
       });
 
       return {
+        captchaError: null,
         status: "error",
         message:
           "The request could not be saved right now. Please try again or email hello@scalzostudio.com.",
@@ -209,6 +266,7 @@ export async function submitQuoteRequest(
     }
 
     return {
+      captchaError: null,
       status: "success",
       message: "Thanks. The request is in and will be reviewed shortly.",
       fieldErrors: {},
@@ -220,6 +278,7 @@ export async function submitQuoteRequest(
     });
 
     return {
+      captchaError: null,
       status: "error",
       message:
         "The request could not be saved right now. Please try again or email hello@scalzostudio.com.",

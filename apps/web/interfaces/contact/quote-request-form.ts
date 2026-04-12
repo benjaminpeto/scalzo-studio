@@ -14,7 +14,7 @@ export type QuoteFormValues = {
   message: string;
   consent: boolean;
   newsletterOptIn: boolean;
-  honeypot: string;
+  captchaToken: string;
 };
 
 export type UTMValues = {

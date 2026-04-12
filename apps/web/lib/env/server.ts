@@ -41,8 +41,7 @@ const serverEnvSchema = z
     CONTACT_TO_EMAIL: optionalEmail(),
     CONTACT_EMAIL: optionalEmail(),
     CONTACT_FROM_EMAIL: optionalMailbox(),
-    TURNSTILE_SECRET_KEY: optionalString(),
-    TURNSTILE_SITE_KEY: optionalString(),
+    HCAPTCHA_SECRET_KEY: optionalString(),
   })
   .superRefine((value, ctx) => {
     if (
@@ -75,16 +74,12 @@ const serverEnvSchema = z
       });
     }
 
-    if (
-      value.TURNSTILE_SECRET_KEY &&
-      !value.TURNSTILE_SITE_KEY &&
-      !publicEnv.turnstileSiteKey
-    ) {
+    if (value.HCAPTCHA_SECRET_KEY && !publicEnv.hcaptchaSiteKey) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message:
-          "Set NEXT_PUBLIC_TURNSTILE_SITE_KEY or TURNSTILE_SITE_KEY when TURNSTILE_SECRET_KEY is configured.",
-        path: ["TURNSTILE_SECRET_KEY"],
+          "Set NEXT_PUBLIC_HCAPTCHA_SITE_KEY when HCAPTCHA_SECRET_KEY is configured.",
+        path: ["HCAPTCHA_SECRET_KEY"],
       });
     }
   });
@@ -109,8 +104,7 @@ function parseServerEnv() {
     CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL,
     CONTACT_EMAIL: process.env.CONTACT_EMAIL,
     CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL,
-    TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
-    TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY,
+    HCAPTCHA_SECRET_KEY: process.env.HCAPTCHA_SECRET_KEY,
   });
 
   if (!result.success) {
@@ -130,9 +124,8 @@ export const serverEnv = {
   calWebhookSecret: rawServerEnv.CAL_WEBHOOK_SECRET,
   contactToEmail: rawServerEnv.CONTACT_TO_EMAIL ?? rawServerEnv.CONTACT_EMAIL,
   contactFromEmail: rawServerEnv.CONTACT_FROM_EMAIL,
-  turnstileSecretKey: rawServerEnv.TURNSTILE_SECRET_KEY,
-  turnstileSiteKey:
-    publicEnv.turnstileSiteKey ?? rawServerEnv.TURNSTILE_SITE_KEY,
+  hcaptchaSecretKey: rawServerEnv.HCAPTCHA_SECRET_KEY,
+  hcaptchaSiteKey: publicEnv.hcaptchaSiteKey,
 } as const;
 
 export const serverFeatureFlags = {
@@ -154,7 +147,7 @@ export const serverFeatureFlags = {
     serverEnv.calBookingUrl,
   ),
   serviceRoleEnabled: Boolean(serverEnv.supabaseServiceRoleKey),
-  turnstileEnabled: Boolean(
-    serverEnv.turnstileSecretKey && serverEnv.turnstileSiteKey,
+  hcaptchaEnabled: Boolean(
+    serverEnv.hcaptchaSecretKey && serverEnv.hcaptchaSiteKey,
   ),
 } as const;

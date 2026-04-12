@@ -10,10 +10,10 @@ const emailPattern = /\S+@\S+\.\S+/;
 
 export const initialQuoteFormValues: QuoteFormValues = {
   budgetBand: "",
+  captchaToken: "",
   company: "",
   consent: false,
   email: "",
-  honeypot: "",
   location: "",
   message: "",
   name: "",

@@ -29,6 +29,7 @@ describe("QuoteRequestForm", () => {
       isPending: false,
       referrer: "",
       serverState: {
+        captchaError: null,
         fieldErrors: {},
         message: "Thanks. The request is in and will be reviewed shortly.",
         status: "success",
@@ -45,10 +46,10 @@ describe("QuoteRequestForm", () => {
       },
       values: {
         budgetBand: "",
+        captchaToken: "",
         company: "",
         consent: false,
         email: "",
-        honeypot: "",
         location: "",
         message: "",
         name: "",
@@ -67,5 +68,60 @@ describe("QuoteRequestForm", () => {
     await waitFor(() => {
       expect(mocks.replace).toHaveBeenCalledWith("/contact/thank-you");
     });
+  });
+
+  it("does not render the old hidden bot field", () => {
+    mocks.useQuoteRequestForm.mockReturnValue({
+      activeStep: 3,
+      captchaError: null,
+      formAction: vi.fn(),
+      handleCaptchaError: vi.fn(),
+      handleCaptchaExpire: vi.fn(),
+      handleCaptchaVerify: vi.fn(),
+      handleNextStep: vi.fn(),
+      handlePreviousStep: vi.fn(),
+      handleSubmit: vi.fn(),
+      isPending: false,
+      referrer: "",
+      serverState: {
+        captchaError: null,
+        fieldErrors: {},
+        message: null,
+        status: "idle",
+      },
+      setActiveStep: vi.fn(),
+      stepErrors: {},
+      updateField: vi.fn(),
+      utmValues: {
+        utmCampaign: "",
+        utmContent: "",
+        utmMedium: "",
+        utmSource: "",
+        utmTerm: "",
+      },
+      values: {
+        budgetBand: "",
+        captchaToken: "",
+        company: "",
+        consent: false,
+        email: "",
+        location: "",
+        message: "",
+        name: "",
+        newsletterOptIn: true,
+        primaryGoal: "",
+        projectType: "",
+        servicesInterest: [],
+        timelineBand: "",
+        website: "",
+      },
+    });
+
+    render(<QuoteRequestForm />);
+
+    expect(screen.queryByLabelText(/company website/i)).toBeNull();
+    expect(
+      screen.queryByRole("textbox", { name: /company website/i }),
+    ).toBeNull();
   });
 });

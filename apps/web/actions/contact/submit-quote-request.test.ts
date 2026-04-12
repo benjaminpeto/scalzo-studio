@@ -1,8 +1,10 @@
 // @vitest-environment node
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { submitQuoteRequest } from "./submit-quote-request";
+
+vi.mock("server-only", () => ({}));
 
 const mocks = vi.hoisted(() => ({
   createOrRefreshPendingNewsletterSignupMock: vi.fn(),
@@ -14,15 +16,25 @@ const mocks = vi.hoisted(() => ({
   sendQuoteRequestEmailsMock: vi.fn(),
   serializeNewsletterErrorForLogMock: vi.fn(),
   serializeQuoteRequestEmailErrorForLogMock: vi.fn(),
+  headersMock: vi.fn(),
   serverFeatureFlags: {
     contactNotificationsEnabled: false,
+    hcaptchaEnabled: true,
     serviceRoleEnabled: true,
+  },
+  serverEnv: {
+    hcaptchaSecretKey: "secret-key",
   },
   singleMock: vi.fn(),
 }));
 
 vi.mock("@/lib/env/server", () => ({
   serverFeatureFlags: mocks.serverFeatureFlags,
+  serverEnv: mocks.serverEnv,
+}));
+
+vi.mock("next/headers", () => ({
+  headers: mocks.headersMock,
 }));
 
 vi.mock("@/lib/supabase/service-role", () => ({
@@ -72,6 +84,7 @@ function buildValidFormData() {
   formData.set("company", "Scalzo");
   formData.set("consent", "true");
   formData.set("email", "hello@example.com");
+  formData.set("hCaptchaToken", "hcaptcha-token");
   formData.set("location", "uk-europe");
   formData.set(
     "message",
@@ -156,6 +169,7 @@ describe("submitQuoteRequest", () => {
     mocks.serializeNewsletterErrorForLogMock.mockReset();
     mocks.serializeQuoteRequestEmailErrorForLogMock.mockReset();
     mocks.singleMock.mockReset();
+    mocks.headersMock.mockReset();
     mocks.fromMock.mockReturnValue({
       insert: mocks.insertMock,
     });
@@ -166,7 +180,14 @@ describe("submitQuoteRequest", () => {
       single: mocks.singleMock,
     });
     mocks.serverFeatureFlags.contactNotificationsEnabled = false;
+    mocks.serverFeatureFlags.hcaptchaEnabled = true;
     mocks.serverFeatureFlags.serviceRoleEnabled = true;
+    mocks.headersMock.mockResolvedValue(
+      new Headers({
+        "user-agent": "Vitest",
+        "x-forwarded-for": "203.0.113.10",
+      }),
+    );
     mocks.createOrRefreshPendingNewsletterSignupMock.mockResolvedValue(
       "pending",
     );
@@ -200,23 +221,80 @@ describe("submitQuoteRequest", () => {
       name: error instanceof Error ? error.name : "UnknownError",
       statusCode: null,
     }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ success: true }),
+      }),
+    );
   });
 
-  it("short-circuits honeypot submissions without touching the database", async () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("rejects submissions with a missing hCaptcha token before touching the database", async () => {
     const formData = buildValidFormData();
-    formData.set("companyWebsite", "bot-fill");
+    formData.delete("hCaptchaToken");
 
     const result = await submitQuoteRequest(
       { fieldErrors: {}, message: null, status: "idle" },
       formData,
     );
 
-    expect(result.status).toBe("success");
+    expect(result.status).toBe("error");
+    expect(result.captchaError).toBe(
+      "Complete the hCaptcha check before submitting.",
+    );
     expect(mocks.fromMock).not.toHaveBeenCalled();
     expect(mocks.sendQuoteRequestEmailsMock).not.toHaveBeenCalled();
     expect(
       mocks.createOrRefreshPendingNewsletterSignupMock,
     ).not.toHaveBeenCalled();
+  });
+
+  it("rejects submissions when hCaptcha verification fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          "error-codes": ["invalid-input-response"],
+          success: false,
+        }),
+      }),
+    );
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("error");
+    expect(result.captchaError).toBe(
+      "Complete the hCaptcha check before submitting.",
+    );
+    expect(mocks.fromMock).not.toHaveBeenCalled();
+  });
+
+  it("returns a retryable error when hCaptcha verification throws", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new Error("hcaptcha down")),
+    );
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("error");
+    expect(result.message).toContain("could not be verified");
+    expect(result.captchaError).toBe(
+      "The anti-spam check could not be verified. Try again.",
+    );
+    expect(mocks.fromMock).not.toHaveBeenCalled();
   });
 
   it("logs sanitized validation failures and returns field errors for invalid submissions", async () => {
@@ -294,6 +372,35 @@ describe("submitQuoteRequest", () => {
     expect(
       mocks.createOrRefreshPendingNewsletterSignupMock,
     ).not.toHaveBeenCalled();
+  });
+
+  it("logs hCaptcha-disabled mode and returns the temporary-unavailable state", async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    mocks.serverFeatureFlags.hcaptchaEnabled = false;
+
+    const result = await submitQuoteRequest(
+      { fieldErrors: {}, message: null, status: "idle" },
+      buildValidFormData(),
+    );
+
+    expect(result.status).toBe("error");
+    expect(result.message).toContain("temporarily unavailable");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Quote request submission skipped because hCaptcha is disabled",
+      expect.objectContaining({
+        budgetBand: "1000-3000",
+        hasReferrer: true,
+        hasUtm: false,
+        hasWebsite: true,
+        pagePath: "/contact",
+        projectType: "homepage",
+        servicesInterest: ["strategic-framing"],
+        timelineBand: "2-4-weeks",
+      }),
+    );
+    expect(mocks.fromMock).not.toHaveBeenCalled();
   });
 
   it("logs insert failures and returns the generic save error", async () => {

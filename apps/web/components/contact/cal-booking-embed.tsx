@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import Cal, { getCalApi } from "@calcom/embed-react";
+import { useEffect, useState } from "react";
 
 import type { BookingProviderConfig } from "@/lib/booking/config";
 
-const CAL_EMBED_SCRIPT_SRC = "https://app.cal.com/embed/embed.js";
 const CAL_LINK_FAILED_MESSAGE =
   "The inline scheduler could not load right now. Use the direct booking link instead.";
 
@@ -20,86 +20,10 @@ interface BookingSuccessData {
   uid?: string;
 }
 
-interface CalEventPayload {
+interface BookingSuccessEvent {
   detail?: {
     data?: BookingSuccessData;
-    namespace?: string;
-    type?: string;
   };
-}
-
-type CalNamespaceApi = (action: string, payload?: unknown) => void;
-type CalApi = ((
-  action: string,
-  payload?: unknown,
-  options?: unknown,
-) => void) & {
-  config?: {
-    forwardQueryParams?: boolean;
-  };
-  ns?: Record<string, CalNamespaceApi>;
-};
-
-declare global {
-  interface Window {
-    Cal?: CalApi;
-  }
-}
-
-let calEmbedScriptPromise: Promise<CalApi> | null = null;
-
-function loadCalEmbedScript() {
-  if (typeof window === "undefined") {
-    return Promise.reject(new Error("Cal embed can only load in the browser."));
-  }
-
-  if (typeof window.Cal === "function") {
-    return Promise.resolve(window.Cal);
-  }
-
-  if (calEmbedScriptPromise) {
-    return calEmbedScriptPromise;
-  }
-
-  calEmbedScriptPromise = new Promise<CalApi>((resolve, reject) => {
-    const existingScript = document.querySelector<HTMLScriptElement>(
-      'script[data-cal-embed="true"]',
-    );
-
-    if (existingScript) {
-      existingScript.addEventListener("load", () => {
-        if (typeof window.Cal === "function") {
-          resolve(window.Cal);
-          return;
-        }
-
-        reject(new Error("Cal embed loaded without exposing window.Cal."));
-      });
-      existingScript.addEventListener("error", () => {
-        reject(new Error("Cal embed failed to load."));
-      });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.async = true;
-    script.dataset.calEmbed = "true";
-    script.src = CAL_EMBED_SCRIPT_SRC;
-    script.addEventListener("load", () => {
-      if (typeof window.Cal === "function") {
-        resolve(window.Cal);
-        return;
-      }
-
-      reject(new Error("Cal embed loaded without exposing window.Cal."));
-    });
-    script.addEventListener("error", () => {
-      reject(new Error("Cal embed failed to load."));
-    });
-    document.head.appendChild(script);
-  });
-
-  return calEmbedScriptPromise;
 }
 
 function formatBookingStartTime(value?: string) {
@@ -124,78 +48,81 @@ export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
   const [isReady, setIsReady] = useState(false);
   const [bookingSuccess, setBookingSuccess] =
     useState<BookingSuccessData | null>(null);
-  const rawEmbedId = useId();
-  const embedId = useMemo(
-    () => `cal-booking-${rawEmbedId.replace(/:/g, "")}`,
-    [rawEmbedId],
-  );
+  const calLink = bookingConfig.calLink;
 
   useEffect(() => {
     if (!bookingConfig.embedEnabled || !bookingConfig.namespace) {
       return;
     }
 
-    const namespace = bookingConfig.namespace;
     let isActive = true;
+    let readyOrFailed = false;
+    let loadTimeoutId: number | null = null;
 
     async function initializeEmbed() {
       try {
-        const cal = await loadCalEmbedScript();
+        const cal = await getCalApi({
+          namespace: bookingConfig.namespace ?? undefined,
+        });
 
         if (!isActive) {
           return;
         }
 
-        cal.config = cal.config || {};
-        cal.config.forwardQueryParams = true;
-        cal("init", namespace, {
-          origin: bookingConfig.origin,
+        cal("ui", {
+          hideEventTypeDetails: false,
+          layout: "month_view",
         });
 
-        const namespaceApi = cal.ns?.[namespace];
-
-        if (!namespaceApi) {
-          throw new Error("Cal namespace API was not initialized.");
-        }
-
-        namespaceApi("on", {
+        cal("on", {
           action: "linkReady",
           callback: () => {
             if (!isActive) {
               return;
             }
 
+            readyOrFailed = true;
             setErrorMessage(null);
             setIsReady(true);
           },
         });
-        namespaceApi("on", {
+
+        cal("on", {
           action: "linkFailed",
           callback: () => {
             if (!isActive) {
               return;
             }
 
+            readyOrFailed = true;
             setErrorMessage(CAL_LINK_FAILED_MESSAGE);
             setIsReady(false);
           },
         });
-        namespaceApi("on", {
+
+        cal("on", {
           action: "bookingSuccessfulV2",
-          callback: (event: CalEventPayload) => {
+          callback: (event: BookingSuccessEvent) => {
             if (!isActive) {
               return;
             }
 
+            readyOrFailed = true;
             setBookingSuccess(event.detail?.data ?? {});
             setErrorMessage(null);
             setIsReady(true);
           },
         });
-        namespaceApi("inline", {
-          calLink: bookingConfig.calLink,
-          elementOrSelector: `#${embedId}`,
-        });
+
+        loadTimeoutId = window.setTimeout(() => {
+          if (!isActive || readyOrFailed) {
+            return;
+          }
+
+          readyOrFailed = true;
+          setErrorMessage(CAL_LINK_FAILED_MESSAGE);
+          setIsReady(false);
+        }, 12000);
       } catch (error) {
         if (!isActive) {
           return;
@@ -216,10 +143,14 @@ export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
 
     return () => {
       isActive = false;
-    };
-  }, [bookingConfig, embedId]);
 
-  if (!bookingConfig.embedEnabled) {
+      if (loadTimeoutId) {
+        window.clearTimeout(loadTimeoutId);
+      }
+    };
+  }, [bookingConfig.embedEnabled, bookingConfig.namespace]);
+
+  if (!bookingConfig.embedEnabled || !calLink) {
     return (
       <div className="p-6 sm:p-7">
         <div className="rounded-[1.2rem] border border-dashed border-white/14 bg-black/18 p-5">
@@ -284,11 +215,17 @@ export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
         </div>
       ) : null}
 
-      <div
-        id={embedId}
-        data-testid="cal-booking-embed"
-        aria-label="Discovery call booking"
+      <Cal
+        namespace={bookingConfig.namespace ?? undefined}
+        calLink={calLink}
+        calOrigin={bookingConfig.origin ?? undefined}
+        config={{
+          layout: "month_view",
+          useSlotsViewOnSmallScreen: "true",
+        }}
         className="min-h-168 bg-white"
+        data-testid="cal-booking-embed"
+        style={{ width: "100%", height: "100%", overflow: "scroll" }}
       />
 
       {errorMessage ? (

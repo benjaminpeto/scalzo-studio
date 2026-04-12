@@ -95,6 +95,7 @@ export const contactFieldStepMap = {
 } as const;
 
 export const initialSubmitQuoteRequestState: SubmitQuoteRequestState = {
+  captchaError: null,
   status: "idle",
   message: null,
   fieldErrors: {},

@@ -113,14 +113,14 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_ANALYTICS_PROVIDER=
 NEXT_PUBLIC_CAL_BOOKING_URL=
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+NEXT_PUBLIC_HCAPTCHA_SITE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 RESEND_API_KEY=
 RESEND_NEWSLETTER_TOPIC_ID=
 CAL_WEBHOOK_SECRET=
 CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
-TURNSTILE_SECRET_KEY=
+HCAPTCHA_SECRET_KEY=
 ```
 
 Runtime validation is implemented in:
@@ -136,7 +136,7 @@ Notes:
 
 - Public Supabase auth supports either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Local Supabase connection values should be taken from `npm run supabase:status`; `npm run dev:local` syncs `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` from that live status before Next starts.
-- Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
+- Optional integrations like analytics, Resend, and hCaptcha are validated only when configured.
 - Cal.com booking uses `NEXT_PUBLIC_CAL_BOOKING_URL` for the embedded scheduler and `CAL_WEBHOOK_SECRET` for signed webhook ingestion.
 - Contact notifications require `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.
 - Newsletter signup requires `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, and `RESEND_NEWSLETTER_TOPIC_ID`.

@@ -40,6 +40,7 @@ export function useQuoteRequestForm() {
     ContactFieldName[]
   >([]);
   const [values, setValues] = useState<QuoteFormValues>(initialQuoteFormValues);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [referrer, setReferrer] = useState("");
   const [utmValues, setUtmValues] = useState<UTMValues>(initialQuoteUtmValues);
 
@@ -60,6 +61,20 @@ export function useQuoteRequestForm() {
   useEffect(() => {
     setDismissedServerErrors([]);
   }, [serverState.fieldErrors, serverState.status]);
+
+  useEffect(() => {
+    setCaptchaError(serverState.captchaError ?? null);
+  }, [serverState.captchaError]);
+
+  useEffect(() => {
+    if (serverState.status === "error") {
+      setValues((currentValues) =>
+        currentValues.captchaToken
+          ? { ...currentValues, captchaToken: "" }
+          : currentValues,
+      );
+    }
+  }, [serverState.status]);
 
   const visibleServerErrors = useMemo(
     () =>
@@ -93,6 +108,10 @@ export function useQuoteRequestForm() {
       ...currentValues,
       [field]: nextValue,
     }));
+
+    if (field === "captchaToken") {
+      setCaptchaError(null);
+    }
 
     if (field in contactFieldStepMap) {
       setDismissedServerErrors((currentFields) =>
@@ -140,12 +159,37 @@ export function useQuoteRequestForm() {
       event.preventDefault();
       setClientErrors(errors);
       setActiveStep(getFirstErrorStep(errors));
+      return;
     }
+
+    if (!values.captchaToken.trim()) {
+      event.preventDefault();
+      setCaptchaError("Complete the hCaptcha check before submitting.");
+    }
+  }
+
+  function handleCaptchaVerify(token: string) {
+    updateField("captchaToken", token);
+    setCaptchaError(null);
+  }
+
+  function handleCaptchaExpire() {
+    updateField("captchaToken", "");
+    setCaptchaError("Complete the hCaptcha check before submitting.");
+  }
+
+  function handleCaptchaError(message: string) {
+    updateField("captchaToken", "");
+    setCaptchaError(message);
   }
 
   return {
     activeStep,
+    captchaError,
     formAction,
+    handleCaptchaError,
+    handleCaptchaExpire,
+    handleCaptchaVerify,
     handleNextStep,
     handlePreviousStep,
     handleSubmit,

@@ -12,14 +12,13 @@ const baseEnv = {
   NEXT_PUBLIC_ANALYTICS_PROVIDER: "",
   NEXT_PUBLIC_CAL_BOOKING_URL: "",
   NEXT_PUBLIC_SITE_URL: "https://scalzostudio.com",
+  NEXT_PUBLIC_HCAPTCHA_SITE_KEY: "",
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "test-publishable-key",
   NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
-  NEXT_PUBLIC_TURNSTILE_SITE_KEY: "",
   RESEND_API_KEY: "",
   RESEND_NEWSLETTER_TOPIC_ID: "",
   SUPABASE_SERVICE_ROLE_KEY: "test-service-role-key",
-  TURNSTILE_SECRET_KEY: "",
-  TURNSTILE_SITE_KEY: "",
+  HCAPTCHA_SECRET_KEY: "",
 } as const;
 
 const originalEnv = { ...process.env };
@@ -72,5 +71,28 @@ describe("Cal.com environment support", () => {
 
     expect(serverEnv.calWebhookSecret).toBe("super-secret");
     expect(serverFeatureFlags.calWebhookEnabled).toBe(true);
+  });
+
+  it("keeps hCaptcha disabled when no keys are configured", async () => {
+    const { publicFeatureFlags } = await import("./public");
+    const { serverFeatureFlags } = await import("./server");
+
+    expect(publicFeatureFlags.hcaptchaEnabled).toBe(false);
+    expect(serverFeatureFlags.hcaptchaEnabled).toBe(false);
+  });
+
+  it("enables hCaptcha only when both the public and secret keys are present", async () => {
+    applyEnv({
+      HCAPTCHA_SECRET_KEY: "secret",
+      NEXT_PUBLIC_HCAPTCHA_SITE_KEY: "site-key",
+    });
+
+    const { publicEnv, publicFeatureFlags } = await import("./public");
+    const { serverEnv, serverFeatureFlags } = await import("./server");
+
+    expect(publicEnv.hcaptchaSiteKey).toBe("site-key");
+    expect(serverEnv.hcaptchaSecretKey).toBe("secret");
+    expect(serverFeatureFlags.hcaptchaEnabled).toBe(true);
+    expect(publicFeatureFlags.hcaptchaEnabled).toBe(true);
   });
 });

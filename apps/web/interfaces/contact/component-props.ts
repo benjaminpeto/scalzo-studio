@@ -1,3 +1,6 @@
+import type HCaptcha from "@hcaptcha/react-hcaptcha";
+import type { RefObject } from "react";
+
 import type {
   QuoteFormValues,
   QuoteRequestFieldErrors,
@@ -24,9 +27,13 @@ export interface QuoteRequestHiddenFieldsProps {
   values: QuoteFormValues;
 }
 
-export interface QuoteRequestHoneypotProps {
-  onChange: (nextValue: string) => void;
-  value: string;
+export interface QuoteRequestCaptchaProps {
+  captchaError: string | null;
+  captchaRef: RefObject<HCaptcha | null>;
+  onError: (message: string) => void;
+  onExpire: () => void;
+  onVerify: (token: string) => void;
+  siteKey?: string;
 }
 
 export interface QuoteRequestServerMessageProps {
@@ -36,6 +43,7 @@ export interface QuoteRequestServerMessageProps {
 export interface QuoteRequestFooterProps {
   activeStep: number;
   isPending: boolean;
+  isSubmitDisabled?: boolean;
   onNext: () => void;
   onPrevious: () => void;
   totalSteps: number;

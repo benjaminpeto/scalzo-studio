@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import type { BookingProviderConfig } from "@/lib/booking/config";
 
 const mocks = vi.hoisted(() => ({
-  getBookingActionMock: vi.fn(),
   bookingProviderConfig: {
     provider: null,
     bookingUrl: null,
@@ -12,11 +12,23 @@ const mocks = vi.hoisted(() => ({
     namespace: null,
     origin: null,
   } as BookingProviderConfig,
+  calComponentMock: vi.fn(),
+  getBookingActionMock: vi.fn(),
+  getCalApiMock: vi.fn(),
 }));
 
 vi.mock("@/lib/booking/config", () => ({
   bookingProviderConfig: mocks.bookingProviderConfig,
   getBookingAction: mocks.getBookingActionMock,
+}));
+
+vi.mock("@calcom/embed-react", () => ({
+  __esModule: true,
+  default: (props: Record<string, unknown>) => {
+    mocks.calComponentMock(props);
+    return <div data-testid="cal-booking-embed" />;
+  },
+  getCalApi: mocks.getCalApiMock,
 }));
 
 describe("BookingPanel", () => {
@@ -27,12 +39,14 @@ describe("BookingPanel", () => {
     mocks.bookingProviderConfig.embedEnabled = false;
     mocks.bookingProviderConfig.namespace = null;
     mocks.bookingProviderConfig.origin = null;
+    mocks.calComponentMock.mockReset();
     mocks.getBookingActionMock.mockReset();
+    mocks.getCalApiMock.mockReset();
     mocks.getBookingActionMock.mockReturnValue({
       href: "mailto:hello@scalzostudio.com?subject=Discovery%20call%20request",
       label: "Arrange a call by email",
     });
-    delete window.Cal;
+    mocks.getCalApiMock.mockResolvedValue(vi.fn());
   });
 
   it("renders the email fallback state when Cal.com is not configured", async () => {
@@ -56,8 +70,7 @@ describe("BookingPanel", () => {
   });
 
   it("renders the Cal.com embed surface and direct booking CTA when configured", async () => {
-    const calNamespaceApi = vi.fn();
-    const calMock = vi.fn() as unknown as NonNullable<typeof window.Cal>;
+    const calMock = vi.fn();
 
     mocks.bookingProviderConfig.provider = "cal";
     mocks.bookingProviderConfig.bookingUrl =
@@ -70,11 +83,7 @@ describe("BookingPanel", () => {
       href: "https://cal.eu/scalzostudio/discovery-call",
       label: "Book a discovery call",
     });
-
-    calMock.ns = {
-      "discovery-call": calNamespaceApi,
-    };
-    window.Cal = calMock;
+    mocks.getCalApiMock.mockResolvedValue(calMock);
 
     const { BookingPanel } = await import("./booking-panel");
 
@@ -91,17 +100,20 @@ describe("BookingPanel", () => {
         .getByRole("link", { name: "Book a discovery call" })
         .getAttribute("href"),
     ).toBe("https://cal.eu/scalzostudio/discovery-call");
-    expect(calNamespaceApi).toHaveBeenCalledWith(
-      "inline",
+    expect(mocks.getCalApiMock).toHaveBeenCalledWith({
+      namespace: "discovery-call",
+    });
+    expect(mocks.calComponentMock).toHaveBeenCalledWith(
       expect.objectContaining({
         calLink: "scalzostudio/discovery-call",
+        namespace: "discovery-call",
       }),
     );
   });
 
   it("replaces the embed with a success state after bookingSuccessfulV2", async () => {
     const handlers: Record<string, (event: unknown) => void> = {};
-    const calNamespaceApi = vi.fn((action: string, payload?: unknown) => {
+    const calMock = vi.fn((action: string, payload?: unknown) => {
       if (
         action === "on" &&
         payload &&
@@ -114,7 +126,6 @@ describe("BookingPanel", () => {
         ) => void;
       }
     });
-    const calMock = vi.fn() as unknown as NonNullable<typeof window.Cal>;
 
     mocks.bookingProviderConfig.provider = "cal";
     mocks.bookingProviderConfig.bookingUrl =
@@ -127,11 +138,7 @@ describe("BookingPanel", () => {
       href: "https://cal.eu/scalzostudio/discovery-call",
       label: "Book a discovery call",
     });
-
-    calMock.ns = {
-      "discovery-call": calNamespaceApi,
-    };
-    window.Cal = calMock;
+    mocks.getCalApiMock.mockResolvedValue(calMock);
 
     const { BookingPanel } = await import("./booking-panel");
 

@@ -5,5 +5,6 @@ export type ContactFieldName = keyof typeof contactFieldStepMap;
 export interface SubmitQuoteRequestState {
   status: "idle" | "error" | "success";
   message: string | null;
+  captchaError?: string | null;
   fieldErrors: Partial<Record<ContactFieldName, string>>;
 }
