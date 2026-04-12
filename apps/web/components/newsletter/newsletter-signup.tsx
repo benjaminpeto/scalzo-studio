@@ -1,6 +1,7 @@
 "use client";
 
-import { useId } from "react";
+import { usePathname } from "next/navigation";
+import { Suspense, useId } from "react";
 
 import { Reveal } from "@/components/home/motion";
 import { newsletterSignupContent } from "@/constants/newsletter/content";
@@ -55,8 +56,7 @@ function NewsletterSignupForm({
   variant: "compact" | "editorial" | "inline";
 }) {
   const emailId = useId();
-  const { formAction, isPending, pagePath, serverState } =
-    useNewsletterSignupForm();
+  const { formAction, isPending, serverState } = useNewsletterSignupForm();
 
   if (serverState.status === "success") {
     return (
@@ -71,7 +71,9 @@ function NewsletterSignupForm({
   return (
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="placement" value={placement} />
-      <input type="hidden" name="pagePath" value={pagePath} />
+      <Suspense fallback={<NewsletterSignupPagePathInputFallback />}>
+        <NewsletterSignupPagePathInput />
+      </Suspense>
 
       <div className={variant === "compact" ? "space-y-2" : "space-y-3"}>
         <label
@@ -141,6 +143,16 @@ function NewsletterSignupForm({
       />
     </form>
   );
+}
+
+function NewsletterSignupPagePathInput() {
+  const pathname = usePathname() || "/";
+
+  return <input type="hidden" name="pagePath" value={pathname} />;
+}
+
+function NewsletterSignupPagePathInputFallback() {
+  return <input type="hidden" name="pagePath" value="/" />;
 }
 
 export function NewsletterSignup({ placement }: NewsletterSignupProps) {

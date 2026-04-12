@@ -1,6 +1,6 @@
 // @vitest-environment node
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { hashNewsletterToken } from "./helpers";
 
@@ -40,6 +40,9 @@ import { handleNewsletterConfirmRequest } from "./confirm-newsletter-signup";
 
 describe("handleNewsletterConfirmRequest", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
+
     mocks.createOrUpdateResendContactWithTopicMock.mockReset();
     mocks.eqMock.mockReset();
     mocks.fromMock.mockReset();
@@ -62,6 +65,10 @@ describe("handleNewsletterConfirmRequest", () => {
     mocks.createOrUpdateResendContactWithTopicMock.mockResolvedValue(
       "contact_123",
     );
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("confirms a valid subscriber and syncs the contact to the configured Resend topic", async () => {

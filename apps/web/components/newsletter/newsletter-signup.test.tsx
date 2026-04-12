@@ -6,10 +6,15 @@ import { NewsletterSignup } from "./newsletter-signup";
 
 const mocks = vi.hoisted(() => ({
   useNewsletterSignupForm: vi.fn(),
+  usePathname: vi.fn(),
 }));
 
 vi.mock("@/components/home/motion", () => ({
   Reveal: ({ children }: { children: ReactNode }) => children,
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: mocks.usePathname,
 }));
 
 vi.mock("@/hooks/newsletter/use-newsletter-signup-form", () => ({
@@ -18,10 +23,10 @@ vi.mock("@/hooks/newsletter/use-newsletter-signup-form", () => ({
 
 describe("NewsletterSignup", () => {
   it("renders the editorial variant for the homepage with the placement payload", () => {
+    mocks.usePathname.mockReturnValue("/");
     mocks.useNewsletterSignupForm.mockReturnValue({
       formAction: vi.fn(),
       isPending: false,
-      pagePath: "/",
       serverState: {
         fieldErrors: {},
         message: null,
@@ -45,10 +50,10 @@ describe("NewsletterSignup", () => {
   });
 
   it("renders the footer variant with an accessible email label", () => {
+    mocks.usePathname.mockReturnValue("/");
     mocks.useNewsletterSignupForm.mockReturnValue({
       formAction: vi.fn(),
       isPending: false,
-      pagePath: "/",
       serverState: {
         fieldErrors: {},
         message: null,
@@ -70,10 +75,10 @@ describe("NewsletterSignup", () => {
   });
 
   it("renders the inline insights-detail variant and shows the success message when submitted", () => {
+    mocks.usePathname.mockReturnValue("/insights/clarity");
     mocks.useNewsletterSignupForm.mockReturnValue({
       formAction: vi.fn(),
       isPending: false,
-      pagePath: "/insights/clarity",
       serverState: {
         fieldErrors: {},
         message:

@@ -8,8 +8,6 @@ import {
 import { serverEnv, serverFeatureFlags } from "@/lib/env/server";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 
-export const runtime = "nodejs";
-
 export async function POST(request: NextRequest) {
   if (!serverFeatureFlags.calWebhookEnabled) {
     console.error(
