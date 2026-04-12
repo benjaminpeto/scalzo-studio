@@ -9,13 +9,13 @@ const optionalString = () =>
 const optionalUrl = () =>
   z.preprocess(
     (value) => (value === "" ? undefined : value),
-    z.string().url().optional(),
+    z.url().optional(),
   );
 
 const publicEnvSchema = z
   .object({
-    NEXT_PUBLIC_SITE_URL: z.string().url(),
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+    NEXT_PUBLIC_SITE_URL: z.url(),
+    NEXT_PUBLIC_SUPABASE_URL: z.url(),
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: optionalString(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString(),
     NEXT_PUBLIC_ANALYTICS_PROVIDER: z.preprocess(

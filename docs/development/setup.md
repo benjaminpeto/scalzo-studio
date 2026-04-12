@@ -17,9 +17,13 @@ From the repository root:
 ```bash
 npm install
 cp apps/web/.env.example apps/web/.env.local
+npm run dev:local
+npm run supabase:status
 ```
 
-Then update [`apps/web/.env.local`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/.env.local) with real values for any integrations you need locally.
+Then copy the local Supabase URL and keys from `npm run supabase:status` into
+[`apps/web/.env.local`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/.env.local),
+and add real values for any optional integrations you need locally.
 
 ## Running the app
 
@@ -28,10 +32,12 @@ Use:
 ```bash
 npm run dev
 npm run dev:local
+npm run dev:local:stop
 ```
 
 The root script delegates to the `@scalzo/web` workspace and starts the Next.js App Router app in [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/web).
-`npm run dev:local` starts Supabase first, then launches the web app.
+`npm run dev:local` starts Supabase, syncs the live local Supabase URL and keys into the tracked `.env.local` files, launches the web app, and keeps the Next.js server logs attached to that terminal.
+Use `npm run dev:local:stop` to stop both the Next.js and Supabase local processes from any terminal.
 
 ## Validation commands
 
@@ -114,9 +120,9 @@ npm run supabase:types:local
 
 Typical local cycle:
 
-1. Start the local stack with `npm run supabase:start`.
-2. Copy the local Supabase URL and keys from `npm run supabase:status` into `apps/web/.env.local`.
+1. Start both local servers with `npm run dev:local`.
+2. Copy the local Supabase URL and keys from `npm run supabase:status` into `apps/web/.env.local` if you need them outside the combined startup flow. `npm run dev:local` will sync the main Supabase URL and keys automatically before Next starts.
 3. Run `npm run supabase:db:reset` whenever you want to replay migrations and seeds deterministically.
 4. Create your first auth user, then promote it with `npm run supabase:admin:bootstrap:local -- you@example.com`.
 5. After schema changes, regenerate app types with `npm run supabase:types:local`.
-6. Run `npm run dev` for the web app.
+6. Stop both local servers with `npm run dev:local:stop`, or use `Ctrl+C` in the terminal running `npm run dev:local`.

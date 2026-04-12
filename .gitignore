@@ -27,6 +27,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.scalzo-dev-servers.json
 
 # env files
 .env*.local

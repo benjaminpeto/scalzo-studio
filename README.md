@@ -15,8 +15,12 @@ Install and run from the repository root:
 ```bash
 npm install
 cp apps/web/.env.example apps/web/.env.local
-npm run dev
+npm run dev:local
+npm run supabase:status
 ```
+
+Copy the local Supabase URL and keys from `npm run supabase:status` into
+[`apps/web/.env.local`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/.env.local).
 
 The site runs from [`apps/web`](/Users/benji/WORK/Projects/scalzo-studio/apps/web).
 
@@ -50,6 +54,7 @@ Run all commands from the repository root:
 ```bash
 npm run dev
 npm run dev:local
+npm run dev:local:stop
 npm run build
 npm run lint
 npm run lint:fix
@@ -72,7 +77,8 @@ npm run supabase:types:linked
 What they do:
 
 - `npm run dev`: starts the Next.js app in `apps/web`
-- `npm run dev:local`: starts local Supabase first, then starts the Next.js app
+- `npm run dev:local`: starts local Supabase, syncs the live Supabase URL and keys into the local env files, then runs the Next.js app in the foreground and streams the Next server logs in that terminal
+- `npm run dev:local:stop`: stops the shared local dev manager, the Next.js dev server, and the local Supabase stack
 - `npm run build`: creates a production build
 - `npm run lint`: runs workspace ESLint checks
 - `npm run lint:fix`: applies ESLint autofixes
@@ -129,6 +135,7 @@ and should be regenerated with the Supabase CLI instead of edited by hand.
 Notes:
 
 - Public Supabase auth supports either `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or the legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Local Supabase connection values should be taken from `npm run supabase:status`; `npm run dev:local` syncs `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` from that live status before Next starts.
 - Optional integrations like analytics, Resend, and Turnstile are validated only when configured.
 - Cal.com booking uses `NEXT_PUBLIC_CAL_BOOKING_URL` for the embedded scheduler and `CAL_WEBHOOK_SECRET` for signed webhook ingestion.
 - Contact notifications require `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.

@@ -32,6 +32,8 @@ npm run supabase:db:diff
 npm run supabase:types:local
 npm run supabase:types:linked
 npm run supabase:stop
+npm run dev:local
+npm run dev:local:stop
 ```
 
 What they do:
@@ -45,13 +47,15 @@ What they do:
 - `supabase:types:local`: regenerates [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts) from the local database
 - `supabase:types:linked`: regenerates [`database.types.ts`](/Users/benji/WORK/Projects/scalzo-studio/apps/web/lib/supabase/database.types.ts) from the linked hosted database
 - `supabase:stop`: stops the local stack
+- `dev:local`: starts local Supabase, syncs the live local Supabase URL and keys into the repo `.env.local` files, and starts the Next.js app with those values
+- `dev:local:stop`: stops the shared local dev manager, Next.js dev server, and local Supabase stack
 
 Local app setup:
 
-1. Start Supabase with `npm run supabase:start`.
+1. Start both local services with `npm run dev:local`.
 2. Read the local URL and keys with `npm run supabase:status`.
-3. Copy those values into `apps/web/.env.local`.
-4. Run `npm run dev`.
+3. Copy those values into `apps/web/.env.local` when you need them manually. `npm run dev:local` already syncs the main Supabase URL and keys before Next starts.
+4. Use `npm run dev:local:stop` or `Ctrl+C` in the active dev terminal when you want to stop both services.
 
 If your local env file is already configured, you can use one command for the normal startup flow:
 
@@ -214,9 +218,8 @@ These are validated in:
 
 ## Local service defaults
 
-- Local Supabase Studio runs on `http://127.0.0.1:54323`
-- Local API runs on `http://127.0.0.1:54321`
-- Local database listens on port `54322`
+- Local service URLs and keys should be read from `npm run supabase:status`.
+- `npm run dev:local` syncs `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` from that live status before the Next.js app starts.
 - Seed files are loaded from `supabase/seed/*.sql`
 
 Future follow-up work can still extend this setup with:

@@ -12,7 +12,8 @@
   "scripts": {
     "prepare": "husky",
     "dev": "npm run dev --workspace @scalzo/web",
-    "dev:local": "npm run supabase:start && npm run dev",
+    "dev:local": "node scripts/dev-servers.mjs start",
+    "dev:local:stop": "node scripts/dev-servers.mjs stop",
     "build": "npm run build --workspace @scalzo/web",
     "start": "npm run start --workspace @scalzo/web",
     "supabase:start": "npx supabase start",
