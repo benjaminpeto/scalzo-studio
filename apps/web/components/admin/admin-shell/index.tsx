@@ -33,10 +33,12 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
   const currentRoute = getAdminRouteMetadata(pathname);
   const breadcrumbItems = currentRoute?.breadcrumb ?? ["Admin"];
   const heading = currentRoute?.heading ?? "Operational dashboard";
+  const isDashboard = pathname === "/admin";
   const sectionNavigationLabel =
     currentRoute?.sectionNavigationLabel ?? "Dashboard sections";
-  const sectionNavigationItems =
-    currentRoute?.sectionNavigationItems ?? adminDashboardSections;
+  const sectionNavigationItems = isDashboard
+    ? adminDashboardSections
+    : (currentRoute?.sectionNavigationItems ?? []);
 
   return (
     <main className="h-svh overflow-hidden bg-[linear-gradient(180deg,rgba(241,239,234,0.96),rgba(255,255,255,0.92))]">
@@ -117,31 +119,34 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                 </nav>
               </div>
 
-              <div className="space-y-2">
-                <p
-                  className={cn(
-                    "px-2 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground",
-                    isSidebarCollapsed && "lg:hidden",
-                  )}
-                >
-                  {sectionNavigationLabel}
-                </p>
-                <nav
-                  aria-label={sectionNavigationLabel}
-                  className={cn(
-                    "space-y-2",
-                    isSidebarCollapsed && "lg:flex lg:flex-col lg:items-center",
-                  )}
-                >
-                  {sectionNavigationItems.map((item) => (
-                    <SidebarSectionLink
-                      key={item.href}
-                      collapsed={isSidebarCollapsed}
-                      item={item}
-                    />
-                  ))}
-                </nav>
-              </div>
+              {sectionNavigationItems.length > 0 ? (
+                <div className="space-y-2">
+                  <p
+                    className={cn(
+                      "px-2 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground",
+                      isSidebarCollapsed && "lg:hidden",
+                    )}
+                  >
+                    {sectionNavigationLabel}
+                  </p>
+                  <nav
+                    aria-label={sectionNavigationLabel}
+                    className={cn(
+                      "space-y-2",
+                      isSidebarCollapsed &&
+                        "lg:flex lg:flex-col lg:items-center",
+                    )}
+                  >
+                    {sectionNavigationItems.map((item) => (
+                      <SidebarSectionLink
+                        key={item.href}
+                        collapsed={isSidebarCollapsed}
+                        item={item}
+                      />
+                    ))}
+                  </nav>
+                </div>
+              ) : null}
             </div>
 
             <div
@@ -205,20 +210,22 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
                 </div>
               </div>
 
-              <nav
-                aria-label={sectionNavigationLabel}
-                className="flex flex-wrap gap-2"
-              >
-                {sectionNavigationItems.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    className="rounded-full border border-border/70 bg-surface-container-low px-3 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
+              {sectionNavigationItems.length > 0 ? (
+                <nav
+                  aria-label={sectionNavigationLabel}
+                  className="flex flex-wrap gap-2"
+                >
+                  {sectionNavigationItems.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className="rounded-full border border-border/70 bg-surface-container-low px-3 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </nav>
+              ) : null}
             </div>
           </header>
 

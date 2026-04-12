@@ -7,6 +7,7 @@ import {
 } from "@/lib/booking/cal-webhook";
 import { serverEnv, serverFeatureFlags } from "@/lib/env/server";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 export async function POST(request: NextRequest) {
   if (!serverFeatureFlags.calWebhookEnabled) {
@@ -75,6 +76,23 @@ export async function POST(request: NextRequest) {
 
   const supabase = createServiceRoleSupabaseClient();
   const { error } = await supabase.from("events").insert(eventInsert);
+
+  if (!error) {
+    const props = eventInsert.properties as Record<string, unknown>;
+    getPostHogClient().capture({
+      distinctId: (props.bookingUid as string) ?? "booking-webhook",
+      event: "booking_created",
+      properties: {
+        booking_uid: props.bookingUid ?? null,
+        booking_title: props.eventTitle ?? null,
+        start_time: props.startTime ?? null,
+        end_time: props.endTime ?? null,
+        status: props.status ?? null,
+        event_type_id: props.eventTypeId ?? null,
+        booking_surface: props.bookingSurface ?? null,
+      },
+    });
+  }
 
   if (error) {
     console.error("Cal webhook event insert failed", {

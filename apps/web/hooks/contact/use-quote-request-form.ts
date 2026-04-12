@@ -28,6 +28,7 @@ import {
   readUtmValues,
   validateQuoteValues,
 } from "@/lib/contact/quote-request-form";
+import posthog from "posthog-js";
 
 export function useQuoteRequestForm() {
   const [serverState, formAction, isPending] = useActionState(
@@ -144,7 +145,13 @@ export function useQuoteRequestForm() {
 
   function handleNextStep(totalSteps: number) {
     if (validateCurrentStep(activeStep)) {
-      setActiveStep((currentStep) => Math.min(currentStep + 1, totalSteps - 1));
+      const nextStep = Math.min(activeStep + 1, totalSteps - 1);
+      posthog.capture("quote_request_step_advanced", {
+        from_step: activeStep,
+        to_step: nextStep,
+        total_steps: totalSteps,
+      });
+      setActiveStep(nextStep);
     }
   }
 

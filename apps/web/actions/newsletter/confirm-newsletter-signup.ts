@@ -3,6 +3,7 @@ import "server-only";
 import { serverEnv, serverFeatureFlags } from "@/lib/env/server";
 import { createOrUpdateResendContactWithTopic } from "@/lib/resend/client";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 import {
   buildNewsletterSignupLogContext,
@@ -135,6 +136,15 @@ export async function handleNewsletterConfirmRequest(input: {
 
       return buildNewsletterConfirmedPath("error");
     }
+
+    getPostHogClient().capture({
+      distinctId: subscriber.email,
+      event: "newsletter_confirmed",
+      properties: {
+        placement: subscriber.placement,
+        page_path: subscriber.page_path,
+      },
+    });
 
     return buildNewsletterConfirmedPath("confirmed");
   } catch (error) {

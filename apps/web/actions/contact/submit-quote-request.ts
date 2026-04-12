@@ -5,6 +5,7 @@ import type { Database } from "@/lib/supabase/database.types";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import type { SubmitQuoteRequestState } from "@/interfaces/contact/form";
 import { createOrRefreshPendingNewsletterSignup } from "@/actions/newsletter/create-or-refresh-pending-newsletter-signup";
+import { getPostHogClient } from "@/lib/posthog-server";
 import {
   buildNewsletterSignupLogContext,
   serializeNewsletterErrorForLog,
@@ -215,6 +216,23 @@ export async function submitQuoteRequest(
         fieldErrors: {},
       };
     }
+
+    getPostHogClient().capture({
+      distinctId: input.email,
+      event: "quote_request_submitted",
+      properties: {
+        lead_id: data.id,
+        budget_band: input.budgetBand,
+        project_type: input.projectType,
+        services_interest: input.servicesInterest,
+        timeline_band: input.timelineBand,
+        page_path: input.pagePath,
+        utm_source: input.utmSource ?? null,
+        utm_medium: input.utmMedium ?? null,
+        utm_campaign: input.utmCampaign ?? null,
+        newsletter_opt_in: newsletterOptIn,
+      },
+    });
 
     if (serverFeatureFlags.contactNotificationsEnabled) {
       const emailPayload = buildQuoteRequestEmailPayload(input, {

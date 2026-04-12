@@ -8,6 +8,7 @@ import {
   signInAdminWithPassword,
 } from "@/actions/auth/client";
 import { normalizeAuthRedirectPath } from "@/lib/supabase/auth-flow";
+import posthog from "posthog-js";
 
 export function useLoginForm() {
   const [email, setEmail] = useState("");
@@ -41,6 +42,8 @@ export function useLoginForm() {
         email,
         password,
       });
+      posthog.identify(email, { email });
+      posthog.capture("admin_login_succeeded", { method: "password" });
       router.replace(next);
     } catch (nextError: unknown) {
       setError(

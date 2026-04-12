@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Suspense, useId } from "react";
+import { Suspense, useEffect, useId, useRef } from "react";
+import posthog from "posthog-js";
 
 import { Reveal } from "@/components/home/motion";
 import { newsletterSignupContent } from "@/constants/newsletter/content";
@@ -57,6 +58,14 @@ function NewsletterSignupForm({
 }) {
   const emailId = useId();
   const { formAction, isPending, serverState } = useNewsletterSignupForm();
+  const capturedRef = useRef(false);
+
+  useEffect(() => {
+    if (serverState.status === "success" && !capturedRef.current) {
+      capturedRef.current = true;
+      posthog.capture("newsletter_signup_submitted", { placement });
+    }
+  }, [serverState.status, placement]);
 
   if (serverState.status === "success") {
     return (

@@ -63,96 +63,6 @@ const adminLeadsRoute: AdminNavigationItem = {
   matchStrategy: "prefix",
 };
 
-const adminServicesSectionNavigation: AdminNavigationItem[] = [
-  {
-    description: "Search, counts, and route-level admin context.",
-    href: "/admin/services#overview",
-    icon: "overview",
-    label: "Overview",
-  },
-  {
-    description: "Current services list with ordering and publish controls.",
-    href: "/admin/services#service-list",
-    icon: "list",
-    label: "List view",
-  },
-];
-
-const adminWorkSectionNavigation: AdminNavigationItem[] = [
-  {
-    description: "Filter state, counts, and route-level admin context.",
-    href: "/admin/work#overview",
-    icon: "overview",
-    label: "Overview",
-  },
-  {
-    description: "Current case-study list with publish controls.",
-    href: "/admin/work#case-study-list",
-    icon: "list",
-    label: "List view",
-  },
-];
-
-const adminInsightsSectionNavigation: AdminNavigationItem[] = [
-  {
-    description: "Filter state, counts, and route-level admin context.",
-    href: "/admin/insights#overview",
-    icon: "overview",
-    label: "Overview",
-  },
-  {
-    description: "Current posts list with publish controls.",
-    href: "/admin/insights#post-list",
-    icon: "list",
-    label: "List view",
-  },
-];
-
-const adminTestimonialsSectionNavigation: AdminNavigationItem[] = [
-  {
-    description: "Filter state, counts, and route-level admin context.",
-    href: "/admin/testimonials#overview",
-    icon: "overview",
-    label: "Overview",
-  },
-  {
-    description: "Current testimonial list with publish and feature controls.",
-    href: "/admin/testimonials#testimonial-list",
-    icon: "list",
-    label: "List view",
-  },
-];
-
-const adminRedirectsSectionNavigation: AdminNavigationItem[] = [
-  {
-    description: "Filter state, counts, and route-level admin context.",
-    href: "/admin/redirects#overview",
-    icon: "overview",
-    label: "Overview",
-  },
-  {
-    description: "Current redirect list with validation-backed edit links.",
-    href: "/admin/redirects#redirect-list",
-    icon: "list",
-    label: "List view",
-  },
-];
-
-const adminLeadsSectionNavigation: AdminNavigationItem[] = [
-  {
-    description: "Filter state, counts, and route-level admin context.",
-    href: "/admin/leads#overview",
-    icon: "overview",
-    label: "Overview",
-  },
-  {
-    description: "Current lead list with search and filter controls.",
-    href: "/admin/leads#lead-list",
-    icon: "list",
-    label: "List view",
-  },
-];
-
 export const adminPrimaryNavigation: AdminNavigationItem[] = [
   adminDashboardRoute,
   adminServicesRoute,
@@ -198,42 +108,30 @@ export const adminRouteMetadata: AdminRouteMetadata[] = [
     breadcrumb: ["Admin", "Services"],
     heading: "Services management",
     navigation: adminServicesRoute,
-    sectionNavigationItems: adminServicesSectionNavigation,
-    sectionNavigationLabel: "Service list sections",
   },
   {
     breadcrumb: ["Admin", "Work"],
     heading: "Case studies management",
     navigation: adminWorkRoute,
-    sectionNavigationItems: adminWorkSectionNavigation,
-    sectionNavigationLabel: "Work list sections",
   },
   {
     breadcrumb: ["Admin", "Insights"],
     heading: "Insights management",
     navigation: adminInsightsRoute,
-    sectionNavigationItems: adminInsightsSectionNavigation,
-    sectionNavigationLabel: "Insights list sections",
   },
   {
     breadcrumb: ["Admin", "Testimonials"],
     heading: "Testimonials management",
     navigation: adminTestimonialsRoute,
-    sectionNavigationItems: adminTestimonialsSectionNavigation,
-    sectionNavigationLabel: "Testimonials list sections",
   },
   {
     breadcrumb: ["Admin", "Redirects"],
     heading: "Redirects management",
     navigation: adminRedirectsRoute,
-    sectionNavigationItems: adminRedirectsSectionNavigation,
-    sectionNavigationLabel: "Redirects list sections",
   },
   {
     breadcrumb: ["Admin", "Leads"],
     heading: "Leads management",
     navigation: adminLeadsRoute,
-    sectionNavigationItems: adminLeadsSectionNavigation,
-    sectionNavigationLabel: "Leads list sections",
   },
 ];

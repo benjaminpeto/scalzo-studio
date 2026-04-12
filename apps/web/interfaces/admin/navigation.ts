@@ -25,5 +25,5 @@ export interface AdminRouteMetadata {
   heading: string;
   navigation: AdminNavigationItem;
   sectionNavigationItems?: AdminNavigationItem[];
-  sectionNavigationLabel: string;
+  sectionNavigationLabel?: string;
 }
