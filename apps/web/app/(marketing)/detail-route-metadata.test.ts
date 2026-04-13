@@ -15,6 +15,7 @@ function buildServiceDetail(
     slug: string;
     summary: string;
     title: string;
+    updatedAt: string | null;
   }>,
 ) {
   return {
@@ -24,6 +25,7 @@ function buildServiceDetail(
     slug: "strategy-sprints",
     summary: "A structured service for tighter positioning and page clarity.",
     title: "Strategy Sprints",
+    updatedAt: "2026-04-01T09:00:00.000Z",
     ...overrides,
   };
 }
@@ -31,20 +33,26 @@ function buildServiceDetail(
 function buildWorkDetail(
   overrides?: Partial<{
     description: string;
+    image: string | null;
     outcomes: string;
+    publishedAt: string | null;
     seoDescription: string | null;
     seoTitle: string | null;
     slug: string;
     title: string;
+    updatedAt: string | null;
   }>,
 ) {
   return {
     description: "Case study description",
+    image: "/work-cover.jpg",
     outcomes: "Commercial outcomes",
+    publishedAt: "2026-04-01T09:00:00.000Z",
     seoDescription: null,
     seoTitle: null,
     slug: "featured-1",
     title: "Featured Case Study",
+    updatedAt: "2026-04-02T09:00:00.000Z",
     ...overrides,
   };
 }
@@ -53,19 +61,25 @@ function buildInsightDetail(
   overrides?: Partial<{
     content: string;
     excerpt: string;
+    image: string | null;
+    publishedAt: string | null;
     seoDescription: string | null;
     seoTitle: string | null;
     slug: string;
     title: string;
+    updatedAt: string | null;
   }>,
 ) {
   return {
     content: "A longer editorial article body.",
     excerpt: "A shorter editorial summary.",
+    image: "/insight-cover.jpg",
+    publishedAt: "2026-04-01T09:00:00.000Z",
     seoDescription: null,
     seoTitle: null,
     slug: "editorial-systems",
     title: "Editorial Systems",
+    updatedAt: "2026-04-02T09:00:00.000Z",
     ...overrides,
   };
 }
@@ -97,6 +111,16 @@ async function loadWorkPageModule({
       detailPageData,
       isPreview,
     }),
+  }));
+  vi.doMock("@/lib/env/public", () => ({
+    publicEnv: {
+      siteUrl: "https://scalzostudio.com",
+    },
+    publicFeatureFlags: {
+      analyticsEnabled: false,
+      calBookingEnabled: false,
+      hcaptchaEnabled: false,
+    },
   }));
 
   return import("./work/[slug]/page");
@@ -147,12 +171,22 @@ describe("service detail metadata", () => {
       pageModule.generateMetadata({
         params: Promise.resolve({ slug: "strategy-sprints" }),
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       alternates: {
         canonical: "/services/strategy-sprints",
       },
       description: "Custom CMS description",
+      openGraph: {
+        images: [
+          {
+            url: "/services/strategy-sprints/opengraph-image",
+          },
+        ],
+      },
       title: "Custom CMS title",
+      twitter: {
+        images: ["/services/strategy-sprints/opengraph-image"],
+      },
     });
   });
 
@@ -168,11 +202,18 @@ describe("service detail metadata", () => {
       pageModule.generateMetadata({
         params: Promise.resolve({ slug: "strategy-sprints" }),
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       alternates: {
         canonical: "/services/strategy-sprints",
       },
       description: "Fallback summary copy",
+      openGraph: {
+        images: [
+          {
+            url: "/services/strategy-sprints/opengraph-image",
+          },
+        ],
+      },
       title: "Strategy Sprints | Services | Scalzo Studio",
     });
   });
@@ -209,12 +250,22 @@ describe("work detail metadata", () => {
       pageModule.generateMetadata({
         params: Promise.resolve({ slug: "featured-1" }),
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       alternates: {
         canonical: "/work/featured-1",
       },
       description: "Case study SEO description",
+      openGraph: {
+        images: [
+          {
+            url: "/work-cover.jpg",
+          },
+        ],
+      },
       title: "Case study SEO title",
+      twitter: {
+        images: ["/work-cover.jpg"],
+      },
     });
   });
 
@@ -228,16 +279,49 @@ describe("work detail metadata", () => {
       pageModule.generateMetadata({
         params: Promise.resolve({ slug: "featured-1" }),
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       alternates: {
         canonical: "/work/featured-1",
       },
       description: "Case study description",
+      openGraph: {
+        images: [
+          {
+            url: "/work-cover.jpg",
+          },
+        ],
+      },
       robots: {
         follow: false,
         index: false,
       },
       title: "Featured Case Study | Work | Scalzo Studio",
+    });
+  });
+
+  it("falls back to a generated social card when work imagery is missing", async () => {
+    const pageModule = await loadWorkPageModule({
+      detailPageData: buildWorkDetail({
+        image: null,
+      }),
+      isPreview: false,
+    });
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ slug: "featured-1" }),
+      }),
+    ).resolves.toMatchObject({
+      openGraph: {
+        images: [
+          {
+            url: "/work/featured-1/opengraph-image",
+          },
+        ],
+      },
+      twitter: {
+        images: ["/work/featured-1/opengraph-image"],
+      },
     });
   });
 
@@ -276,12 +360,23 @@ describe("insight detail metadata", () => {
       pageModule.generateMetadata({
         params: Promise.resolve({ slug: "editorial-systems" }),
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       alternates: {
         canonical: "/insights/editorial-systems",
       },
       description: "Insight SEO description",
+      openGraph: {
+        images: [
+          {
+            url: "/insight-cover.jpg",
+          },
+        ],
+        type: "article",
+      },
       title: "Insight SEO title",
+      twitter: {
+        images: ["/insight-cover.jpg"],
+      },
     });
   });
 
@@ -295,16 +390,50 @@ describe("insight detail metadata", () => {
       pageModule.generateMetadata({
         params: Promise.resolve({ slug: "editorial-systems" }),
       }),
-    ).resolves.toEqual({
+    ).resolves.toMatchObject({
       alternates: {
         canonical: "/insights/editorial-systems",
       },
       description: "A shorter editorial summary.",
+      openGraph: {
+        images: [
+          {
+            url: "/insight-cover.jpg",
+          },
+        ],
+        type: "article",
+      },
       robots: {
         follow: false,
         index: false,
       },
       title: "Editorial Systems | Insights | Scalzo Studio",
+    });
+  });
+
+  it("falls back to a generated social card when article imagery is missing", async () => {
+    const pageModule = await loadInsightPageModule({
+      detailPageData: buildInsightDetail({
+        image: null,
+      }),
+      isPreview: false,
+    });
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ slug: "editorial-systems" }),
+      }),
+    ).resolves.toMatchObject({
+      openGraph: {
+        images: [
+          {
+            url: "/insights/editorial-systems/opengraph-image",
+          },
+        ],
+      },
+      twitter: {
+        images: ["/insights/editorial-systems/opengraph-image"],
+      },
     });
   });
 

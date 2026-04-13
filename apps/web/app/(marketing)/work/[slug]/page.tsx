@@ -17,10 +17,12 @@ import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { CaseStudyViewTracker } from "@/components/tracking/case-study-view-tracker";
+import { JsonLd } from "@/lib/seo/json-ld";
 import {
   buildNotFoundRouteMetadata,
   buildRouteMetadata,
 } from "@/lib/seo/route-metadata";
+import { buildCreativeWorkSchema } from "@/lib/seo/schema";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { TestimonialCard } from "@ui/components/marketing/testimonial-card";
 
@@ -48,9 +50,14 @@ export async function generateMetadata({
       detailPageData.description ??
       detailPageData.outcomes,
     noIndex: isPreview,
+    publishedTime: detailPageData.publishedAt,
+    socialFallbackPath: `/work/${detailPageData.slug}/opengraph-image`,
+    socialImage: detailPageData.image,
+    socialImageAlt: `Case study cover for ${detailPageData.title}`,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Work | Scalzo Studio`,
+    updatedTime: detailPageData.updatedAt,
   });
 }
 
@@ -92,6 +99,17 @@ function WorkDetailLayout({
 
   return (
     <>
+      <JsonLd
+        data={buildCreativeWorkSchema({
+          description: detailPageData.description,
+          image: detailPageData.image,
+          modifiedTime: detailPageData.updatedAt,
+          publishedTime: detailPageData.publishedAt,
+          services: detailPageData.services,
+          slug: detailPageData.slug,
+          title: detailPageData.title,
+        })}
+      />
       <CaseStudyViewTracker
         slug={detailPageData.slug}
         title={detailPageData.title}

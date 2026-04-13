@@ -15,4 +15,6 @@ export interface InsightDetailPageData extends InsightIndexEntry {
   content: string;
   headings: readonly InsightHeading[];
   published: boolean;
+  publishedAt: string | null;
+  updatedAt: string | null;
 }

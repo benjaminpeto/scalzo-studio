@@ -25,7 +25,7 @@ export async function getWorkDetailPageData(
   let query = supabase
     .from("case_studies")
     .select(
-      "approach, challenge, client_name, cover_image_url, gallery_urls, industry, outcomes, outcomes_metrics, published, seo_description, seo_title, services, slug, title",
+      "approach, challenge, client_name, cover_image_url, gallery_urls, industry, outcomes, outcomes_metrics, published, published_at, seo_description, seo_title, services, slug, title, updated_at",
     )
     .eq("slug", slug);
 
@@ -105,6 +105,8 @@ export async function getWorkDetailPageData(
     slug,
     testimonial: fallbackDetail?.testimonial ?? genericFallback.testimonial,
     title: resolvedTitle,
+    publishedAt: caseStudy?.published_at ?? null,
+    updatedAt: caseStudy?.updated_at ?? caseStudy?.published_at ?? null,
     visuals: resolveWorkVisuals(
       resolvedTitle,
       caseStudy?.cover_image_url ?? null,

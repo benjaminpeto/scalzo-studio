@@ -19,6 +19,7 @@ const marketingRouteMetadataEntries = {
     canonical: "/contact/thank-you",
     description:
       "Thanks for contacting Scalzo Studio. Review the next steps or book a discovery call while your quote request is being reviewed.",
+    noIndex: true,
     title: "Thanks | Scalzo Studio",
   },
   cookies: {

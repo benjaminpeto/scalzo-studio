@@ -40,4 +40,5 @@ export interface ServiceDetailPageData extends ServicesIndexEntry {
   seoDescription: string | null;
   seoTitle: string | null;
   timeline: readonly ServiceDetailProcessStep[];
+  updatedAt: string | null;
 }

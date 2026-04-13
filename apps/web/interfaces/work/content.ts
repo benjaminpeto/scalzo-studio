@@ -33,9 +33,11 @@ export interface WorkDetailPageData extends WorkIndexEntry {
   metrics: readonly WorkOutcomeMetric[];
   outcomes: string;
   published: boolean;
+  publishedAt: string | null;
   seoDescription: string | null;
   seoTitle: string | null;
   services: readonly string[];
   testimonial: WorkDetailTestimonial;
+  updatedAt: string | null;
   visuals: readonly WorkDetailVisual[];
 }

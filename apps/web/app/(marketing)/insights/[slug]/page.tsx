@@ -10,10 +10,12 @@ import { Reveal, ScrollFloat, TextReveal } from "@/components/home/motion";
 import { InsightMarkdown } from "@/components/insights/insight-markdown";
 import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 import { publicEnv } from "@/lib/env/public";
+import { JsonLd } from "@/lib/seo/json-ld";
 import {
   buildNotFoundRouteMetadata,
   buildRouteMetadata,
 } from "@/lib/seo/route-metadata";
+import { buildArticleSchema } from "@/lib/seo/schema";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -43,9 +45,15 @@ export async function generateMetadata({
       detailPageData.excerpt ??
       detailPageData.content,
     noIndex: isPreview,
+    openGraphType: "article",
+    publishedTime: detailPageData.publishedAt,
+    socialFallbackPath: `/insights/${detailPageData.slug}/opengraph-image`,
+    socialImage: detailPageData.image,
+    socialImageAlt: `Cover image for ${detailPageData.title}`,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Insights | Scalzo Studio`,
+    updatedTime: detailPageData.updatedAt,
   });
 }
 
@@ -144,6 +152,16 @@ function InsightDetailLayout({
 
   return (
     <>
+      <JsonLd
+        data={buildArticleSchema({
+          description: detailPageData.excerpt,
+          image: detailPageData.image,
+          modifiedTime: detailPageData.updatedAt,
+          publishedTime: detailPageData.publishedAt,
+          slug: detailPageData.slug,
+          title: detailPageData.title,
+        })}
+      />
       {isPreview ? (
         <Section spacing="tight" className="pb-0">
           <div className="rounded-[1.35rem] border border-[#735c00]/20 bg-[linear-gradient(135deg,rgba(252,205,3,0.18),rgba(255,255,255,0.94))] px-5 py-4 shadow-[0_12px_30px_rgba(115,92,0,0.08)]">

@@ -137,5 +137,6 @@ export function getFallbackServiceDetailPageData(
     summary: fallbackService.summary,
     timeline: fallbackDetail.timeline,
     title: fallbackService.title,
+    updatedAt: null,
   };
 }

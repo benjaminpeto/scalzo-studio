@@ -69,7 +69,9 @@ export function getFallbackInsightDetailPageData(
       ...fallbackEntry,
       headings: extractInsightHeadings(fallbackEntry.content),
       published: true,
+      publishedAt: fallbackEntry.publishedAt,
       tags: [...fallbackEntry.tags],
+      updatedAt: fallbackEntry.updatedAt,
     };
   }
 
@@ -84,10 +86,12 @@ export function getFallbackInsightDetailPageData(
     headings: extractInsightHeadings(content),
     image: fallbackInsightImage,
     published: true,
+    publishedAt: null,
     seoDescription: null,
     seoTitle: null,
     slug,
     tags: ["Editorial"],
     title,
+    updatedAt: null,
   };
 }

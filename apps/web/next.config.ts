@@ -71,32 +71,6 @@ const deploymentAssetHeaders = [
       },
     ],
   },
-  {
-    source: "/opengraph-image.png",
-    headers: [
-      {
-        key: "Cache-Control",
-        value: "public, max-age=0, must-revalidate",
-      },
-      {
-        key: "Vercel-CDN-Cache-Control",
-        value: "s-maxage=86400, stale-while-revalidate=604800",
-      },
-    ],
-  },
-  {
-    source: "/twitter-image.png",
-    headers: [
-      {
-        key: "Cache-Control",
-        value: "public, max-age=0, must-revalidate",
-      },
-      {
-        key: "Vercel-CDN-Cache-Control",
-        value: "s-maxage=86400, stale-while-revalidate=604800",
-      },
-    ],
-  },
 ];
 
 const nextConfig: NextConfig = {

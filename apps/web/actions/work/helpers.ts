@@ -187,12 +187,14 @@ export function buildGenericWorkDetailData({
       description ||
       "The final direction made the page easier to trust, easier to scan, and more commercially useful once live.",
     published: true,
+    publishedAt: null,
     seoDescription: null,
     seoTitle: null,
     services: ["Positioning", "Design direction", "Commercial clarity"],
     slug,
     testimonial: buildGenericWorkTestimonial(title, null),
     title,
+    updatedAt: null,
     visuals: buildGenericWorkVisuals(title, image),
   };
 }
@@ -227,12 +229,14 @@ export function getFallbackWorkDetailPageData(
     metrics: [{ label: "Key outcome", value: fallbackIndexEntry.metric }],
     outcomes: fallbackDetail?.outcomes ?? genericFallback.outcomes,
     published: true,
+    publishedAt: null,
     seoDescription: null,
     seoTitle: null,
     services: fallbackDetail?.services ?? genericFallback.services,
     slug: fallbackIndexEntry.slug,
     testimonial: fallbackDetail?.testimonial ?? genericFallback.testimonial,
     title: fallbackIndexEntry.title,
+    updatedAt: null,
     visuals: buildGenericWorkVisuals(
       fallbackIndexEntry.title,
       fallbackIndexEntry.image,

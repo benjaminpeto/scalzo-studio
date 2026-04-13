@@ -244,7 +244,7 @@ Practical rule:
 ## Contact page boundary
 
 - `/contact` is a static in-repo marketing route composed through `apps/web/constants/contact/content.ts`.
-- `/contact/thank-you` is a static in-repo confirmation route that reuses the contact success and booking components for the post-submit handoff.
+- `/contact/thank-you` is a static in-repo confirmation route that reuses the contact success and booking components for the post-submit handoff and is intentionally non-indexable.
 - Quote submissions run through the server action in `apps/web/actions/contact/server.ts`, which validates inputs and writes public lead records through the Supabase service-role client.
 - The server action is the canonical lead-ingestion boundary for the quote form; no public client-side secret handling or direct browser database writes are part of the flow.
 - The final quote-form step includes a newsletter opt-in checkbox that is checked by default but can be turned off before submit.
@@ -282,6 +282,13 @@ Use this checklist when validating the current quote-request flow in local or pr
 - Failure observability: inspect the server logs for structured `console.error` entries on validation failures, disabled service-role mode, insert failures, and unexpected submission errors.
 - Email outage: keep lead persistence enabled but break Resend delivery and verify the lead still saves, the form still returns success, and the log only includes lead id, page path, service/budget/timeline context, and email-kind metadata.
 - Log hygiene: verify the error metadata includes only operational context such as page path, project type, budget/timeline bands, service selections, and boolean source flags, with no name, email, company, website, message, raw referrer, or raw UTM values.
+
+## SEO foundation
+
+- `apps/web/lib/seo/route-metadata.ts` is the canonical page metadata helper for canonical URLs, robots, Open Graph, and Twitter cards.
+- `apps/web/lib/seo/schema.ts` owns JSON-LD builders for the shared organization entity plus detail-route article and creative-work schema.
+- `apps/web/app/sitemap.ts` is the source of truth for `sitemap.xml` and only includes indexable marketing routes plus published public detail routes.
+- Utility and confirmation pages such as `/contact/thank-you` and `/newsletter/confirmed` should stay out of the sitemap and remain `noindex`.
 
 ## Cal.com booking verification
 

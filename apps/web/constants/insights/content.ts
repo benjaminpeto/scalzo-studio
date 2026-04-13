@@ -39,11 +39,13 @@ Longer copy still matters. It just performs better after the page has already ma
     excerpt:
       "The first screen should reduce doubt quickly. Case signals, tone, and hierarchy matter before a long paragraph ever gets read.",
     image: "/placeholders/hero-editorial.svg",
+    publishedAt: null,
     seoDescription: null,
     seoTitle: null,
     slug: "why-premium-service-brands-need-proof-before-explanation",
     tags: ["Positioning", "Trust", "Homepage strategy"],
     title: "Why premium service brands need proof before explanation",
+    updatedAt: null,
   },
   {
     content: `A small studio site rarely needs to look bigger. It needs to feel more deliberate. Authority usually comes from restraint, from stronger spacing, and from a page structure that knows what to emphasise first.
@@ -71,11 +73,13 @@ A studio site can feel more expensive before anything in the portfolio changes. 
     excerpt:
       "A more mature homepage usually comes from restraint: fewer competing actions, stronger spacing, and clearer content bands.",
     image: "/placeholders/case-product.svg",
+    publishedAt: null,
     seoDescription: null,
     seoTitle: null,
     slug: "how-to-make-a-small-studio-site-feel-more-established",
     tags: ["Design systems", "Authority", "Web design"],
     title: "How to make a small studio site feel more established",
+    updatedAt: null,
   },
   {
     content: `Founders often treat content like the final layer, something to be dropped into the design once everything else is done. That usually leads to strained layouts, generic writing, and a publishing rhythm that never stabilises.
@@ -103,11 +107,13 @@ Once content has a real system underneath it, it stops feeling like a burden. It
     excerpt:
       "Content stops feeling secondary when the visual system gives it structure. That changes how often it gets used and maintained.",
     image: "/placeholders/case-editorial.svg",
+    publishedAt: null,
     seoDescription: null,
     seoTitle: null,
     slug: "what-founders-miss-when-they-treat-content-like-leftovers",
     tags: ["Editorial", "Content systems", "Strategy"],
     title: "What founders miss when they treat content like leftovers",
+    updatedAt: null,
   },
   {
     content: `A service page often fails by trying to sound comprehensive too early. The page starts with abstract claims, feature-like copy, and long explanations before it has created enough belief.
@@ -135,11 +141,13 @@ The useful move is usually not adding more copy. It is reorganising the copy, sh
     excerpt:
       "Most service pages do not need more copy. They need a better sequence for proof, offer clarity, and the next step.",
     image: "/placeholders/case-coastal.svg",
+    publishedAt: null,
     seoDescription: null,
     seoTitle: null,
     slug: "when-a-service-page-says-too-much-before-it-proves-anything",
     tags: ["Service pages", "Conversion", "Messaging"],
     title: "When a service page says too much before it proves anything",
+    updatedAt: null,
   },
 ] as const satisfies readonly FallbackInsightArticle[];
 

@@ -49,9 +49,12 @@ export async function generateMetadata({
       detailPageData.seoDescription ??
       detailPageData.summary ??
       detailPageData.problem,
+    socialFallbackPath: `/services/${detailPageData.slug}/opengraph-image`,
+    socialImageAlt: `${detailPageData.title} service | Scalzo Studio`,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Services | Scalzo Studio`,
+    updatedTime: detailPageData.updatedAt,
   });
 }
 

@@ -19,7 +19,7 @@ export async function getServiceDetailPageData(slug: string) {
   const { data: service, error } = await supabase
     .from("services")
     .select(
-      "content_md, deliverables, seo_description, seo_title, slug, summary, title",
+      "content_md, deliverables, seo_description, seo_title, slug, summary, title, updated_at",
     )
     .eq("published", true)
     .eq("slug", slug)
@@ -85,5 +85,6 @@ export async function getServiceDetailPageData(slug: string) {
     summary: resolvedSummary,
     timeline: serviceFallback.timeline,
     title: resolvedTitle,
+    updatedAt: service?.updated_at ?? null,
   };
 }

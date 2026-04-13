@@ -20,7 +20,7 @@ export async function getInsightDetailPageData(
   let query = supabase
     .from("posts")
     .select(
-      "content_md, cover_image_url, created_at, excerpt, published, published_at, seo_description, seo_title, slug, tags, title",
+      "content_md, cover_image_url, created_at, excerpt, published, published_at, seo_description, seo_title, slug, tags, title, updated_at",
     )
     .eq("slug", slug);
 
@@ -60,6 +60,7 @@ export async function getInsightDetailPageData(
     headings: extractInsightHeadings(resolvedContent),
     image: resolvedImage,
     published: post?.published ?? true,
+    publishedAt: post?.published_at ?? null,
     seoDescription:
       post?.seo_description ?? fallbackEntry?.seoDescription ?? null,
     seoTitle: post?.seo_title ?? fallbackEntry?.seoTitle ?? null,
@@ -68,5 +69,7 @@ export async function getInsightDetailPageData(
       ...(fallbackEntry?.tags ?? ["Editorial"]),
     ],
     title: resolvedTitle,
+    updatedAt:
+      post?.updated_at ?? post?.published_at ?? post?.created_at ?? null,
   };
 }
