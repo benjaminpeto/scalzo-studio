@@ -80,14 +80,14 @@ export function InsightEditorMediaHelper({
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto]">
             <AdminEditorField
               htmlFor="content-image-alt"
-              hint="Optional alt text for the inserted markdown snippet."
+              hint="Required alt text for the inserted markdown snippet."
               label="Image alt text"
-              optionalLabel="Optional"
             >
               <Input
                 id="content-image-alt"
                 name="contentImageAlt"
                 placeholder="Describe what the image shows"
+                required
               />
             </AdminEditorField>
 

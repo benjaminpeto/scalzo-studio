@@ -6,6 +6,7 @@ import { cn } from "../../lib/utils";
 type TestimonialImage = {
   src: string;
   alt: string;
+  blurDataUrl?: string;
 };
 
 export interface TestimonialCardProps extends Omit<
@@ -44,8 +45,10 @@ export function TestimonialCard({
           <div className="relative size-14 overflow-hidden rounded-full bg-muted">
             <Image
               alt={image.alt}
+              blurDataURL={image.blurDataUrl}
               className="h-full w-full object-cover"
               fill
+              placeholder={image.blurDataUrl ? "blur" : "empty"}
               sizes="56px"
               src={image.src}
             />

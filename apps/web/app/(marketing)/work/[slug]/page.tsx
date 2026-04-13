@@ -23,6 +23,7 @@ import {
   buildRouteMetadata,
 } from "@/lib/seo/route-metadata";
 import { buildCreativeWorkSchema } from "@/lib/seo/schema";
+import { buildCmsImageProps, cmsImageSizes } from "@/lib/media-assets/shared";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { TestimonialCard } from "@ui/components/marketing/testimonial-card";
 
@@ -52,8 +53,8 @@ export async function generateMetadata({
     noIndex: isPreview,
     publishedTime: detailPageData.publishedAt,
     socialFallbackPath: `/work/${detailPageData.slug}/opengraph-image`,
-    socialImage: detailPageData.image,
-    socialImageAlt: `Case study cover for ${detailPageData.title}`,
+    socialImage: detailPageData.image.src,
+    socialImageAlt: detailPageData.image.alt,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Work | Scalzo Studio`,
@@ -102,7 +103,7 @@ function WorkDetailLayout({
       <JsonLd
         data={buildCreativeWorkSchema({
           description: detailPageData.description,
-          image: detailPageData.image,
+          image: detailPageData.image.src,
           modifiedTime: detailPageData.updatedAt,
           publishedTime: detailPageData.publishedAt,
           services: detailPageData.services,
@@ -301,9 +302,10 @@ function WorkDetailLayout({
                   <Image
                     src={leadVisual.src}
                     alt={leadVisual.alt}
-                    width={1600}
-                    height={1200}
-                    sizes="(min-width: 1024px) 60vw, 100vw"
+                    width={leadVisual.width}
+                    height={leadVisual.height}
+                    sizes={cmsImageSizes.caseStudyDetailLead}
+                    {...buildCmsImageProps(leadVisual)}
                     className="aspect-[1.18] w-full object-cover"
                   />
                   <figcaption className="border-t border-white/12 px-5 py-4 text-sm leading-6 text-white/72 sm:px-6">
@@ -321,9 +323,10 @@ function WorkDetailLayout({
                     <Image
                       src={visual.src}
                       alt={visual.alt}
-                      width={1200}
-                      height={900}
-                      sizes="(min-width: 1024px) 40vw, 100vw"
+                      width={visual.width}
+                      height={visual.height}
+                      sizes={cmsImageSizes.caseStudyDetailSecondary}
+                      {...buildCmsImageProps(visual)}
                       className="aspect-[1.2] w-full object-cover"
                     />
                     <figcaption className="border-t border-white/12 px-5 py-4 text-sm leading-6 text-white/72 sm:px-6">

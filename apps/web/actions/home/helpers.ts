@@ -4,6 +4,7 @@ import {
   serviceGroups as fallbackServiceGroups,
   testimonials as fallbackTestimonials,
 } from "@/constants/home/content";
+import { createCmsImageAsset } from "@/lib/media-assets/shared";
 import type {
   FeaturedProject,
   JournalEntry,
@@ -11,8 +12,14 @@ import type {
   Testimonial,
 } from "@/interfaces/home/content";
 
-export const fallbackHomeProjectImage = "/placeholders/hero-editorial.svg";
-export const fallbackHomeJournalImage = "/placeholders/hero-editorial.svg";
+export const fallbackHomeProjectImage = createCmsImageAsset({
+  alt: "Generic featured project placeholder artwork",
+  src: "/placeholders/hero-editorial.svg",
+});
+export const fallbackHomeJournalImage = createCmsImageAsset({
+  alt: "Generic journal placeholder artwork",
+  src: "/placeholders/hero-editorial.svg",
+});
 
 export function cloneFallbackServiceGroups(): ServiceGroup[] {
   return fallbackServiceGroups.map((service) => ({
@@ -47,6 +54,7 @@ export function cloneFallbackJournalEntries(): JournalEntry[] {
 export function cloneFallbackTestimonials(): Testimonial[] {
   return fallbackTestimonials.map((testimonial) => ({
     company: testimonial.company,
+    image: testimonial.image,
     name: testimonial.name,
     quote: testimonial.quote,
     role: testimonial.role,

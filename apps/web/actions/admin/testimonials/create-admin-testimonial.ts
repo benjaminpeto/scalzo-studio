@@ -20,7 +20,10 @@ import {
   revalidateTestimonialRoutes,
   uploadTestimonialAvatar,
 } from "./helpers";
-import { testimonialEditorSchema } from "./schemas";
+import {
+  TESTIMONIAL_IMAGE_ALT_MAX_LENGTH,
+  testimonialEditorSchema,
+} from "./schemas";
 
 export async function createAdminTestimonial(
   _prevState: AdminTestimonialEditorState,
@@ -47,14 +50,34 @@ export async function createAdminTestimonial(
 
   const normalizedInput = buildNormalizedTestimonialPayload(parsedInput.data);
   const avatarFile = isFileEntry(rawInput.avatar) ? rawInput.avatar : null;
+  const avatarAlt = normalizeStringEntry(rawInput.avatarAlt).trim();
   const uploadedObjectPaths: string[] = [];
   const testimonialId = crypto.randomUUID();
+
+  if (avatarAlt.length > TESTIMONIAL_IMAGE_ALT_MAX_LENGTH) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        avatarAlt: `Keep alt text under ${TESTIMONIAL_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
+  if (avatarFile && !avatarAlt) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        avatarAlt: "Enter alt text for the avatar image.",
+      },
+    );
+  }
 
   try {
     let avatarUrl: string | null = null;
 
     if (avatarFile) {
       const uploadResult = await uploadTestimonialAvatar({
+        altText: avatarAlt,
         file: avatarFile,
         testimonialId,
       });

@@ -4,6 +4,7 @@ import { Input } from "@ui/components/ui/input";
 
 import type { TestimonialEditorFormSectionsProps } from "@/interfaces/admin/component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
+import { buildCmsImageProps, cmsImageSizes } from "@/lib/media-assets/shared";
 
 import { AdminEditorField } from "../shared/admin-editor-field";
 import { AdminEditorTextarea } from "../shared/admin-editor-textarea";
@@ -121,15 +122,16 @@ export function TestimonialEditorFormSections({
           optionalLabel="Optional"
         >
           <div className="space-y-4">
-            {testimonial?.avatarUrl ? (
+            {testimonial?.avatar ? (
               <div className="flex items-center gap-4 overflow-hidden rounded-[1.35rem] border border-border/70 bg-white/75 p-4">
                 <div className="relative size-20 overflow-hidden rounded-full border border-border/70 bg-surface-container-highest">
                   <Image
-                    src={testimonial.avatarUrl}
-                    alt={`${testimonial.name} avatar`}
+                    src={testimonial.avatar.src}
+                    alt={testimonial.avatar.alt || `${testimonial.name} avatar`}
                     fill
+                    sizes={cmsImageSizes.testimonialAvatarAdmin}
+                    {...buildCmsImageProps(testimonial.avatar)}
                     className="object-cover"
-                    sizes="80px"
                   />
                 </div>
                 <div className="min-w-0">
@@ -147,7 +149,30 @@ export function TestimonialEditorFormSections({
               </div>
             )}
 
-            {testimonial?.avatarUrl ? (
+            <AdminEditorField
+              error={errors.avatarAlt}
+              hint="Describe the avatar image for screen readers and SEO."
+              htmlFor={`${avatarId}-alt`}
+              label="Avatar alt text"
+              optionalLabel={
+                testimonial?.avatar ? undefined : "Required with upload"
+              }
+            >
+              <Input
+                id={`${avatarId}-alt`}
+                name="avatarAlt"
+                defaultValue={testimonial?.avatar?.alt ?? ""}
+                aria-describedby={buildDescribedBy({
+                  error: errors.avatarAlt,
+                  hint: "Describe the avatar image for screen readers and SEO.",
+                  id: `${avatarId}-alt`,
+                })}
+                aria-invalid={Boolean(errors.avatarAlt)}
+                placeholder="Describe the person in the avatar"
+              />
+            </AdminEditorField>
+
+            {testimonial?.avatar ? (
               <label className="flex items-start gap-3 rounded-[1.15rem] border border-border/70 bg-white/70 px-4 py-3">
                 <input
                   type="checkbox"

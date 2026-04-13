@@ -6,6 +6,7 @@ import {
   fallbackWorkImage,
   fallbackWorkIndexEntries,
 } from "@/constants/work/content";
+import { createCmsImageAsset } from "@/lib/media-assets/shared";
 import type {
   WorkDetailPageData,
   WorkDetailTestimonial,
@@ -117,13 +118,13 @@ export function buildGenericWorkTestimonial(
 
 export function buildGenericWorkVisuals(
   title: string,
-  leadImage: string,
+  leadImage: WorkIndexEntry["image"],
 ): WorkDetailVisual[] {
   const imagePool = [
     leadImage,
     ...fallbackWorkIndexEntries
       .map((project) => project.image)
-      .filter((image) => image !== leadImage),
+      .filter((image) => image.src !== leadImage.src),
   ].slice(0, 3);
 
   const captions = [
@@ -132,22 +133,41 @@ export function buildGenericWorkVisuals(
     "Detail view of the visual system as it starts carrying more authority.",
   ];
 
-  return imagePool.map((src, index) => ({
-    alt: `${title} visual ${index + 1}`,
+  return imagePool.map((image, index) => ({
+    ...createCmsImageAsset({
+      alt: image.alt || `${title} visual ${index + 1}`,
+      blurDataUrl: image.blurDataUrl,
+      height: image.height,
+      src: image.src,
+      width: image.width,
+    }),
     caption: captions[index] ?? "Selected project visual.",
-    src,
   }));
 }
 
 export function resolveWorkVisuals(
   title: string,
-  coverImageUrl: string | null,
-  galleryUrls: string[] | null,
+  coverImage: WorkIndexEntry["image"] | null,
+  galleryImages: WorkDetailVisual[] | null,
   fallbackVisuals: readonly WorkDetailVisual[],
 ): WorkDetailVisual[] {
-  const sources = Array.from(
-    new Set([coverImageUrl, ...(galleryUrls ?? [])].filter(Boolean)),
-  ).slice(0, 3) as string[];
+  const sourceMap = new Map<string, WorkDetailVisual>();
+
+  for (const image of [coverImage, ...(galleryImages ?? [])]) {
+    if (!image) {
+      continue;
+    }
+
+    sourceMap.set(image.src, {
+      ...image,
+      alt: image.alt || title,
+      caption:
+        (image as Partial<WorkDetailVisual>).caption ??
+        "Selected project visual.",
+    });
+  }
+
+  const sources = Array.from(sourceMap.values()).slice(0, 3);
 
   if (!sources.length) {
     return [...fallbackVisuals];
@@ -159,10 +179,10 @@ export function resolveWorkVisuals(
     "Closer detail of the page language and visual rhythm in context.",
   ];
 
-  return sources.map((src, index) => ({
-    alt: `${title} visual ${index + 1}`,
+  return sources.map((image, index) => ({
+    ...image,
+    alt: image.alt || `${title} visual ${index + 1}`,
     caption: captions[index] ?? "Selected project visual.",
-    src,
   }));
 }
 

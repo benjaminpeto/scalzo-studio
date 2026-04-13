@@ -5,6 +5,7 @@ import {
   fallbackServicesIndexEntries,
 } from "@/constants/services/content";
 import type { ServicesFaqItem } from "@/interfaces/services/content";
+import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import {
@@ -54,15 +55,32 @@ export async function getServiceDetailPageData(slug: string) {
     .limit(2);
 
   const relatedWork = relatedCaseStudies?.length
-    ? relatedCaseStudies.map((item) => ({
-        description:
-          item.outcomes ??
-          "Published case study showing how strategic clarity translates into a stronger page or launch outcome.",
-        image: item.cover_image_url ?? "/placeholders/hero-editorial.svg",
-        metadata: item.industry ?? item.services?.[0] ?? "Selected case study",
-        outcome: item.services?.[0] ?? "Related studio work",
-        title: item.title,
-      }))
+    ? await (async () => {
+        const imageAssets = await resolveCmsImageAssetMap(
+          relatedCaseStudies.map((item) => ({
+            fallbackAlt: `Related work cover for ${item.title}`,
+            url: item.cover_image_url,
+          })),
+        );
+
+        return relatedCaseStudies.map((item) => ({
+          description:
+            item.outcomes ??
+            "Published case study showing how strategic clarity translates into a stronger page or launch outcome.",
+          image: (item.cover_image_url
+            ? imageAssets[item.cover_image_url]
+            : undefined) ?? {
+            alt: `Related work cover for ${item.title}`,
+            height: 1200,
+            src: "/placeholders/hero-editorial.svg",
+            width: 1600,
+          },
+          metadata:
+            item.industry ?? item.services?.[0] ?? "Selected case study",
+          outcome: item.services?.[0] ?? "Related studio work",
+          title: item.title,
+        }));
+      })()
     : buildFallbackRelatedWork();
 
   return {

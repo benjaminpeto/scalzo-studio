@@ -21,7 +21,7 @@ import {
   revalidateInsightRoutes,
   uploadBlogImage,
 } from "./helpers";
-import { insightEditorSchema } from "./schemas";
+import { insightEditorSchema, POST_IMAGE_ALT_MAX_LENGTH } from "./schemas";
 
 export async function createAdminInsight(
   _prevState: AdminInsightEditorState,
@@ -57,7 +57,26 @@ export async function createAdminInsight(
   const coverImageFile = isFileEntry(rawInput.coverImage)
     ? rawInput.coverImage
     : null;
+  const coverImageAlt = normalizeStringEntry(rawInput.coverImageAlt).trim();
   const uploadedObjectPaths: string[] = [];
+
+  if (coverImageAlt.length > POST_IMAGE_ALT_MAX_LENGTH) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        coverImageAlt: `Keep alt text under ${POST_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
+  if (coverImageFile && !coverImageAlt) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        coverImageAlt: "Enter alt text for the cover image.",
+      },
+    );
+  }
 
   try {
     const slugExists = await ensureUniqueInsightSlug({
@@ -77,6 +96,7 @@ export async function createAdminInsight(
 
     if (coverImageFile) {
       const uploadResult = await uploadBlogImage({
+        altText: coverImageAlt,
         file: coverImageFile,
         kind: "cover",
         slug: normalizedInput.payload.slug,

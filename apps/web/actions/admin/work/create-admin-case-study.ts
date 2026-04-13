@@ -23,7 +23,10 @@ import {
   revalidateWorkRoutes,
   uploadCaseStudyImage,
 } from "./helpers";
-import { caseStudyCreateSchema } from "./schemas";
+import {
+  CASE_STUDY_IMAGE_ALT_MAX_LENGTH,
+  caseStudyCreateSchema,
+} from "./schemas";
 
 export async function createAdminCaseStudy(
   _prevState: AdminCaseStudyEditorState,
@@ -69,8 +72,56 @@ export async function createAdminCaseStudy(
   const coverImageFile = isFileEntry(rawInput.coverImage)
     ? rawInput.coverImage
     : null;
-  const galleryImageFiles = rawInput.galleryImages.filter(isFileEntry);
+  const coverImageAlt = normalizeStringEntry(rawInput.coverImageAlt).trim();
+  const galleryImageUploads = rawInput.galleryImages
+    .map((entry, index) => ({
+      alt: normalizeStringEntry(rawInput.galleryImageAlts[index]).trim(),
+      file: isFileEntry(entry) ? entry : null,
+    }))
+    .filter((entry): entry is { alt: string; file: File } =>
+      Boolean(entry.file),
+    );
   const uploadedObjectPaths: string[] = [];
+
+  if (coverImageAlt.length > CASE_STUDY_IMAGE_ALT_MAX_LENGTH) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        coverImageAlt: `Keep alt text under ${CASE_STUDY_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
+  if (coverImageFile && !coverImageAlt) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        coverImageAlt: "Enter alt text for the cover image.",
+      },
+    );
+  }
+
+  if (
+    galleryImageUploads.some(
+      (entry) => entry.alt.length > CASE_STUDY_IMAGE_ALT_MAX_LENGTH,
+    )
+  ) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        galleryImageAlts: `Keep each gallery alt text entry under ${CASE_STUDY_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
+  if (galleryImageUploads.some((entry) => !entry.alt)) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        galleryImageAlts: "Enter alt text for each gallery image upload.",
+      },
+    );
+  }
 
   try {
     const slugExists = await ensureUniqueCaseStudySlug({
@@ -90,6 +141,7 @@ export async function createAdminCaseStudy(
 
     if (coverImageFile) {
       const uploadResult = await uploadCaseStudyImage({
+        altText: coverImageAlt,
         file: coverImageFile,
         kind: "cover",
         slug: normalizedInput.payload.slug,
@@ -101,9 +153,10 @@ export async function createAdminCaseStudy(
 
     const uploadedGalleryUrls: string[] = [];
 
-    for (const file of galleryImageFiles) {
+    for (const entry of galleryImageUploads) {
       const uploadResult = await uploadCaseStudyImage({
-        file,
+        altText: entry.alt,
+        file: entry.file,
         kind: "gallery",
         slug: normalizedInput.payload.slug,
       });

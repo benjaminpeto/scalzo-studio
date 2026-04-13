@@ -78,7 +78,12 @@ const nextConfig: NextConfig = {
   experimental: {
     externalDir: true,
   },
-  images: getSupabaseImageConfig(),
+  images: {
+    ...getSupabaseImageConfig(),
+    deviceSizes: [640, 768, 1024, 1280, 1536, 1920],
+    formats: ["image/avif", "image/webp"],
+    imageSizes: [56, 80, 160, 320, 480],
+  },
   skipTrailingSlashRedirect: true,
   turbopack: {
     root: path.resolve(__dirname, "../.."),

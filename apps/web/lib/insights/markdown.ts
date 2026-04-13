@@ -39,3 +39,13 @@ export function extractInsightHeadings(content: string): InsightHeading[] {
     })
     .filter((heading) => Boolean(heading.id) && Boolean(heading.text));
 }
+
+export function extractInsightImageUrls(content: string) {
+  return Array.from(
+    new Set(
+      [...content.matchAll(/!\[[^\]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)]
+        .map((match) => match[1]?.trim())
+        .filter(Boolean) as string[],
+    ),
+  );
+}

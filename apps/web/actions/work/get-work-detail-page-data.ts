@@ -6,6 +6,7 @@ import {
   fallbackWorkIndexEntries,
 } from "@/constants/work/content";
 import { titleCaseFromSlug } from "@/lib/content/format";
+import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import {
@@ -45,8 +46,22 @@ export async function getWorkDetailPageData(
 
   const resolvedTitle =
     caseStudy?.title ?? fallbackIndexEntry?.title ?? titleCaseFromSlug(slug);
+  const imageAssets = await resolveCmsImageAssetMap([
+    {
+      fallbackAlt:
+        fallbackIndexEntry?.image.alt ??
+        `Case study cover for ${resolvedTitle}`,
+      url: caseStudy?.cover_image_url,
+    },
+    ...((caseStudy?.gallery_urls ?? []).map((url, index) => ({
+      fallbackAlt: `Case study gallery image ${index + 1} for ${resolvedTitle}`,
+      url,
+    })) ?? []),
+  ]);
   const resolvedImage =
-    caseStudy?.cover_image_url ??
+    (caseStudy?.cover_image_url
+      ? imageAssets[caseStudy.cover_image_url]
+      : undefined) ??
     fallbackIndexEntry?.image ??
     fallbackWorkImage;
   const resolvedMetric = resolveWorkMetric(
@@ -109,8 +124,16 @@ export async function getWorkDetailPageData(
     updatedAt: caseStudy?.updated_at ?? caseStudy?.published_at ?? null,
     visuals: resolveWorkVisuals(
       resolvedTitle,
-      caseStudy?.cover_image_url ?? null,
-      caseStudy?.gallery_urls ?? null,
+      caseStudy?.cover_image_url
+        ? imageAssets[caseStudy.cover_image_url]
+        : null,
+      (caseStudy?.gallery_urls ?? [])
+        .map((url) => imageAssets[url])
+        .filter(Boolean)
+        .map((image) => ({
+          ...image,
+          caption: "Selected project visual.",
+        })),
       genericFallback.visuals,
     ),
   };

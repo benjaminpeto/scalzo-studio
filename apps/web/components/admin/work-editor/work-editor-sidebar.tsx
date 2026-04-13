@@ -62,8 +62,8 @@ export function WorkEditorSidebar({
           Asset status
         </p>
         <div className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
-          <p>Cover image: {caseStudy?.coverImageUrl ? "Present" : "Missing"}</p>
-          <p>Gallery items: {caseStudy?.galleryUrls.length ?? 0}</p>
+          <p>Cover image: {caseStudy?.coverImage ? "Present" : "Missing"}</p>
+          <p>Gallery items: {caseStudy?.galleryImages.length ?? 0}</p>
           <p>Metrics rows: {caseStudy?.metrics.length ?? metricRows.length}</p>
         </div>
       </section>

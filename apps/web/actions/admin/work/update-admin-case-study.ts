@@ -11,6 +11,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getAdminCaseStudyBySlug } from "./get-admin-case-study-by-slug";
 import {
   buildCaseStudyEditorFieldErrors,
+  buildExistingGalleryImageAltEntries,
   buildNormalizedCaseStudyPayload,
   buildPublishedAtValue,
   createActionErrorState,
@@ -23,9 +24,13 @@ import {
   normalizeStringEntry,
   readCaseStudyEditorFormData,
   revalidateWorkRoutes,
+  syncCaseStudyImageAltText,
   uploadCaseStudyImage,
 } from "./helpers";
-import { caseStudyUpdateSchema } from "./schemas";
+import {
+  CASE_STUDY_IMAGE_ALT_MAX_LENGTH,
+  caseStudyUpdateSchema,
+} from "./schemas";
 
 export async function updateAdminCaseStudy(
   _prevState: AdminCaseStudyEditorState,
@@ -111,20 +116,98 @@ export async function updateAdminCaseStudy(
   const coverImageFile = isFileEntry(rawInput.coverImage)
     ? rawInput.coverImage
     : null;
-  const galleryImageFiles = rawInput.galleryImages.filter(isFileEntry);
-  const keptExistingGalleryUrls = rawInput.existingGalleryUrls
-    .map((entry) => normalizeStringEntry(entry).trim())
-    .filter(Boolean);
+  const coverImageAlt = normalizeStringEntry(rawInput.coverImageAlt).trim();
+  const existingGalleryEntries = buildExistingGalleryImageAltEntries({
+    alts: rawInput.existingGalleryAlts,
+    urls: rawInput.existingGalleryUrls,
+  });
+  const keptExistingGalleryUrlSet = new Set(
+    rawInput.keptGalleryUrls
+      .map((entry) => normalizeStringEntry(entry).trim())
+      .filter(Boolean),
+  );
+  const keptExistingGalleryEntries = existingGalleryEntries.filter((entry) =>
+    keptExistingGalleryUrlSet.has(entry.url),
+  );
+  const galleryImageUploads = rawInput.galleryImages
+    .map((entry, index) => ({
+      alt: normalizeStringEntry(rawInput.galleryImageAlts[index]).trim(),
+      file: isFileEntry(entry) ? entry : null,
+    }))
+    .filter((entry): entry is { alt: string; file: File } =>
+      Boolean(entry.file),
+    );
   const uploadedObjectPaths: string[] = [];
 
+  if (coverImageAlt.length > CASE_STUDY_IMAGE_ALT_MAX_LENGTH) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        coverImageAlt: `Keep alt text under ${CASE_STUDY_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
+  if (
+    existingGalleryEntries.some(
+      (entry) => entry.alt.length > CASE_STUDY_IMAGE_ALT_MAX_LENGTH,
+    ) ||
+    galleryImageUploads.some(
+      (entry) => entry.alt.length > CASE_STUDY_IMAGE_ALT_MAX_LENGTH,
+    )
+  ) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        galleryImageAlts: `Keep each gallery alt text entry under ${CASE_STUDY_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
   try {
+    const keepsExistingCoverImage =
+      Boolean(existingCaseStudy.coverImage) &&
+      !parsedInput.data.removeCoverImage &&
+      !coverImageFile;
+
+    if ((coverImageFile || keepsExistingCoverImage) && !coverImageAlt) {
+      return createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          coverImageAlt: coverImageFile
+            ? "Enter alt text for the cover image."
+            : "Enter alt text before keeping the current cover image.",
+        },
+      );
+    }
+
+    if (keptExistingGalleryEntries.some((entry) => !entry.alt)) {
+      return createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          galleryImageAlts:
+            "Enter alt text for each gallery image you keep attached.",
+        },
+      );
+    }
+
+    if (galleryImageUploads.some((entry) => !entry.alt)) {
+      return createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          galleryImageAlts: "Enter alt text for each gallery image upload.",
+        },
+      );
+    }
+
     let nextCoverImageUrl =
       parsedInput.data.removeCoverImage && !coverImageFile
         ? null
-        : existingCaseStudy.coverImageUrl;
+        : (existingCaseStudy.coverImage?.src ?? null);
 
     if (coverImageFile) {
       const uploadResult = await uploadCaseStudyImage({
+        altText: coverImageAlt,
         file: coverImageFile,
         kind: "cover",
         slug: normalizedInput.payload.slug,
@@ -136,9 +219,10 @@ export async function updateAdminCaseStudy(
 
     const uploadedGalleryUrls: string[] = [];
 
-    for (const file of galleryImageFiles) {
+    for (const entry of galleryImageUploads) {
       const uploadResult = await uploadCaseStudyImage({
-        file,
+        altText: entry.alt,
+        file: entry.file,
         kind: "gallery",
         slug: normalizedInput.payload.slug,
       });
@@ -147,8 +231,24 @@ export async function updateAdminCaseStudy(
       uploadedGalleryUrls.push(uploadResult.publicUrl);
     }
 
+    if (keepsExistingCoverImage && existingCaseStudy.coverImage?.src) {
+      await syncCaseStudyImageAltText({
+        altText: coverImageAlt,
+        publicUrl: existingCaseStudy.coverImage.src,
+      });
+    }
+
+    await Promise.all(
+      keptExistingGalleryEntries.map((entry) =>
+        syncCaseStudyImageAltText({
+          altText: entry.alt,
+          publicUrl: entry.url,
+        }),
+      ),
+    );
+
     const nextGalleryUrls = [
-      ...keptExistingGalleryUrls,
+      ...keptExistingGalleryEntries.map((entry) => entry.url),
       ...uploadedGalleryUrls,
     ];
     const nextPublishedAt = buildPublishedAtValue({
@@ -208,15 +308,16 @@ export async function updateAdminCaseStudy(
       );
     }
 
-    const galleryUrlsToDelete = existingCaseStudy.galleryUrls
-      .filter((url) => !keptExistingGalleryUrls.includes(url))
+    const galleryUrlsToDelete = existingCaseStudy.galleryImages
+      .map((image) => image.src)
+      .filter((url) => !keptExistingGalleryUrlSet.has(url))
       .map(extractManagedCaseStudyObjectPathFromUrl)
       .filter((value): value is string => Boolean(value));
     const coverUrlToDelete =
-      existingCaseStudy.coverImageUrl &&
+      existingCaseStudy.coverImage?.src &&
       (parsedInput.data.removeCoverImage || Boolean(coverImageFile))
         ? extractManagedCaseStudyObjectPathFromUrl(
-            existingCaseStudy.coverImageUrl,
+            existingCaseStudy.coverImage.src,
           )
         : null;
     const objectPathsToDelete = [

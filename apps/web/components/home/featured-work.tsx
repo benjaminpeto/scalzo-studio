@@ -72,10 +72,7 @@ export function FeaturedWork({
                             {project.category} / {project.accent}
                           </>
                         }
-                        image={{
-                          src: project.image,
-                          alt: `Abstract placeholder artwork for ${project.title}`,
-                        }}
+                        image={project.image}
                         footerAccessory={
                           <span className="inline-flex size-8 items-center justify-center rounded-full border border-border text-foreground transition-colors duration-300 group-hover:border-primary group-hover:text-primary">
                             <ArrowUpRight

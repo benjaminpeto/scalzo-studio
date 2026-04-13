@@ -4,6 +4,8 @@ import "server-only";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type { AdminCaseStudyEditorRecord } from "@/interfaces/admin/work-editor";
+import { getMediaAssetRecordMap } from "@/lib/media-assets/server";
+import { createCmsImageAsset } from "@/lib/media-assets/shared";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import { buildEditorMetricsRows } from "./helpers";
@@ -26,12 +28,39 @@ export async function getAdminCaseStudyBySlug(
     return null;
   }
 
+  const imageAssets = await getMediaAssetRecordMap([
+    ...(data.cover_image_url ? [data.cover_image_url] : []),
+    ...(data.gallery_urls ?? []),
+  ]);
+
   return {
     approach: data.approach ?? "",
     challenge: data.challenge ?? "",
     clientName: data.client_name ?? "",
-    coverImageUrl: data.cover_image_url,
-    galleryUrls: data.gallery_urls ?? [],
+    coverImage: data.cover_image_url
+      ? (() => {
+          const image = imageAssets.get(data.cover_image_url);
+
+          return createCmsImageAsset({
+            alt: image?.alt_text ?? "",
+            blurDataUrl: image?.blur_data_url,
+            height: image?.height,
+            src: data.cover_image_url,
+            width: image?.width,
+          });
+        })()
+      : null,
+    galleryImages: (data.gallery_urls ?? []).map((url) => {
+      const image = imageAssets.get(url);
+
+      return createCmsImageAsset({
+        alt: image?.alt_text ?? "",
+        blurDataUrl: image?.blur_data_url,
+        height: image?.height,
+        src: url,
+        width: image?.width,
+      });
+    }),
     id: data.id,
     industry: data.industry ?? "",
     metrics: buildEditorMetricsRows(data.outcomes_metrics),

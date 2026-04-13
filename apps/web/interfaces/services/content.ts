@@ -1,3 +1,5 @@
+import type { CmsImageAsset } from "@/lib/media-assets/shared";
+
 export interface ServicesIndexEntry {
   deliverables: readonly string[];
   outcome: string;
@@ -26,7 +28,7 @@ export interface ServiceDetailProcessStep {
 
 export interface ServiceRelatedWorkItem {
   description: string;
-  image: string;
+  image: CmsImageAsset;
   metadata: string;
   outcome: string;
   title: string;

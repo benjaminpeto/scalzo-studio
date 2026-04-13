@@ -250,10 +250,7 @@ function ServiceDetailLayout({
                   <CaseStudyCard
                     title={item.title}
                     description={item.description}
-                    image={{
-                      alt: `Related work preview for ${item.title}`,
-                      src: item.image,
-                    }}
+                    image={item.image}
                     metadata={item.metadata}
                     outcome={item.outcome}
                     footerAccessory={

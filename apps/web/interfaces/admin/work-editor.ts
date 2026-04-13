@@ -1,3 +1,5 @@
+import type { CmsImageAsset } from "@/lib/media-assets/shared";
+
 export interface AdminCaseStudyMetricRow {
   label: string;
   value: string;
@@ -7,12 +9,19 @@ export interface MetricRowState extends AdminCaseStudyMetricRow {
   id: string;
 }
 
+export interface GalleryUploadRowState {
+  alt: string;
+  id: string;
+}
+
 export interface AdminCaseStudyEditorFieldErrors {
   approach?: string;
   challenge?: string;
   clientName?: string;
   coverImage?: string;
+  coverImageAlt?: string;
   galleryImages?: string;
+  galleryImageAlts?: string;
   industry?: string;
   metrics?: string;
   outcomes?: string;
@@ -34,8 +43,8 @@ export interface AdminCaseStudyEditorRecord {
   approach: string;
   challenge: string;
   clientName: string;
-  coverImageUrl: string | null;
-  galleryUrls: string[];
+  coverImage: CmsImageAsset | null;
+  galleryImages: CmsImageAsset[];
   id: string;
   industry: string;
   metrics: AdminCaseStudyMetricRow[];

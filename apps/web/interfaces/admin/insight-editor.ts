@@ -1,6 +1,9 @@
+import type { CmsImageAsset } from "@/lib/media-assets/shared";
+
 export interface AdminInsightEditorFieldErrors {
   contentMd?: string;
   coverImage?: string;
+  coverImageAlt?: string;
   excerpt?: string;
   seoDescription?: string;
   seoTitle?: string;
@@ -25,7 +28,7 @@ export interface AdminInsightMediaState {
 
 export interface AdminInsightEditorRecord {
   contentMd: string;
-  coverImageUrl: string | null;
+  coverImage: CmsImageAsset | null;
   excerpt: string;
   id: string;
   published: boolean;

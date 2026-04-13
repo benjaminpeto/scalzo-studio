@@ -4,6 +4,8 @@ import "server-only";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type { AdminInsightEditorRecord } from "@/interfaces/admin/insight-editor";
+import { getMediaAssetRecordMap } from "@/lib/media-assets/server";
+import { createCmsImageAsset } from "@/lib/media-assets/shared";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function getAdminInsightBySlug(
@@ -24,9 +26,25 @@ export async function getAdminInsightBySlug(
     return null;
   }
 
+  const imageAssets = await getMediaAssetRecordMap(
+    data.cover_image_url ? [data.cover_image_url] : [],
+  );
+
   return {
     contentMd: data.content_md,
-    coverImageUrl: data.cover_image_url,
+    coverImage: data.cover_image_url
+      ? (() => {
+          const image = imageAssets.get(data.cover_image_url);
+
+          return createCmsImageAsset({
+            alt: image?.alt_text ?? "",
+            blurDataUrl: image?.blur_data_url,
+            height: image?.height,
+            src: data.cover_image_url,
+            width: image?.width,
+          });
+        })()
+      : null,
     excerpt: data.excerpt ?? "",
     id: data.id,
     published: data.published,

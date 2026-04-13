@@ -1,6 +1,8 @@
+import type { CmsImageAsset } from "@/lib/media-assets/shared";
+
 export interface WorkIndexEntry {
   description: string;
-  image: string;
+  image: CmsImageAsset;
   metadata: string;
   metric: string;
   slug: string;
@@ -12,10 +14,8 @@ export interface WorkOutcomeMetric {
   value: string;
 }
 
-export interface WorkDetailVisual {
-  alt: string;
+export interface WorkDetailVisual extends CmsImageAsset {
   caption: string;
-  src: string;
 }
 
 export interface WorkDetailTestimonial {

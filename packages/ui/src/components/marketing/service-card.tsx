@@ -8,8 +8,11 @@ import { cn } from "../../lib/utils";
 type ServiceCardImage = {
   src: string;
   alt: string;
+  blurDataUrl?: string;
+  height: number;
   priority?: boolean;
   sizes?: string;
+  width: number;
 };
 
 type ServiceCardCta = {
@@ -86,9 +89,11 @@ export function ServiceCard({
           <Image
             src={image.src}
             alt={image.alt}
-            width={900}
-            height={720}
+            width={image.width}
+            height={image.height}
             priority={image.priority}
+            placeholder={image.blurDataUrl ? "blur" : "empty"}
+            blurDataURL={image.blurDataUrl}
             sizes={image.sizes ?? "(min-width: 1024px) 33vw, 100vw"}
             className="aspect-[1.15] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />

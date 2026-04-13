@@ -1,5 +1,8 @@
+import type { CmsImageAsset } from "@/lib/media-assets/shared";
+
 export interface AdminTestimonialEditorFieldErrors {
   avatar?: string;
+  avatarAlt?: string;
   company?: string;
   name?: string;
   quote?: string;
@@ -14,7 +17,7 @@ export interface AdminTestimonialEditorState {
 }
 
 export interface AdminTestimonialEditorRecord {
-  avatarUrl: string | null;
+  avatar: CmsImageAsset | null;
   company: string;
   featured: boolean;
   id: string;

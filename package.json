@@ -28,6 +28,7 @@
     "supabase:admin:bootstrap:linked": "node scripts/bootstrap-first-admin.mjs --linked",
     "supabase:types:local": "npx supabase gen types --local --lang typescript --schema public > apps/web/lib/supabase/database.types.ts",
     "supabase:types:linked": "npx supabase gen types --linked --lang typescript --schema public > apps/web/lib/supabase/database.types.ts",
+    "media:backfill": "node scripts/backfill-media-assets.mjs",
     "lint": "npm run lint --workspaces --if-present",
     "lint:fix": "npm run lint:fix --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
@@ -52,6 +53,7 @@
     "react-markdown": "^10.1.0",
     "resend": "^6.9.4",
     "server-only": "^0.0.1",
+    "sharp": "^0.34.5",
     "tailwind-merge": "^3.3.0",
     "zod": "^4.3.6"
   },

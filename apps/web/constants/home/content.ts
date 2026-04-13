@@ -1,3 +1,4 @@
+import { createCmsImageAsset } from "@/lib/media-assets/shared";
 import type {
   CredibilityStat,
   FeaturedProject,
@@ -12,6 +13,10 @@ import type {
   Testimonial,
   TrustMark,
 } from "@/interfaces/home/content";
+
+function staticImage(src: string, alt: string) {
+  return createCmsImageAsset({ alt, src });
+}
 
 export const navigationLinks = [
   { href: "/about", label: "About" },
@@ -41,7 +46,10 @@ export const featuredProjects = [
     description:
       "Offer hierarchy, photography rhythm, and page pacing rebuilt so the business felt premium before the booking details even appeared.",
     metric: "+31% qualified enquiries",
-    image: "/placeholders/case-coastal.svg",
+    image: staticImage(
+      "/placeholders/case-coastal.svg",
+      "Coastal hospitality homepage concept artwork",
+    ),
     accent: "Clearer trust signals across the first scroll",
   },
   {
@@ -50,7 +58,10 @@ export const featuredProjects = [
     description:
       "Messaging, navigation, and key flows restructured around confidence instead of novelty so the MVP could present itself more decisively.",
     metric: "2-week interface reset",
-    image: "/placeholders/case-product.svg",
+    image: staticImage(
+      "/placeholders/case-product.svg",
+      "Product launch interface concept artwork",
+    ),
     accent: "Sharper onboarding and calmer decision points",
   },
   {
@@ -59,7 +70,10 @@ export const featuredProjects = [
     description:
       "A reusable content kit brought consistency to campaigns, launches, and social output without flattening the brand into templates.",
     metric: "4x faster campaign production",
-    image: "/placeholders/case-editorial.svg",
+    image: staticImage(
+      "/placeholders/case-editorial.svg",
+      "Editorial content system concept artwork",
+    ),
     accent: "A repeatable publishing rhythm for small teams",
   },
   {
@@ -68,7 +82,10 @@ export const featuredProjects = [
     description:
       "Sharper page order, quieter visuals, and stronger CTA framing made the business feel more established to first-time visitors.",
     metric: "Longer time on page",
-    image: "/placeholders/hero-editorial.svg",
+    image: staticImage(
+      "/placeholders/hero-editorial.svg",
+      "Homepage redesign concept artwork",
+    ),
     accent: "A calmer route from proof to contact",
   },
 ] as const satisfies readonly FeaturedProject[];
@@ -101,7 +118,10 @@ export const journalEntries = [
     category: "Positioning",
     excerpt:
       "The first screen should reduce doubt quickly. Case signals, tone, and hierarchy matter before a long paragraph ever gets read.",
-    image: "/placeholders/hero-editorial.svg",
+    image: staticImage(
+      "/placeholders/hero-editorial.svg",
+      "Editorial article cover artwork",
+    ),
     slug: "why-premium-service-brands-need-proof-before-explanation",
   },
   {
@@ -110,7 +130,10 @@ export const journalEntries = [
     category: "Design systems",
     excerpt:
       "A more mature homepage usually comes from restraint: fewer competing actions, stronger spacing, and clearer content bands.",
-    image: "/placeholders/case-product.svg",
+    image: staticImage(
+      "/placeholders/case-product.svg",
+      "Article artwork about product interface clarity",
+    ),
     slug: "how-to-make-a-small-studio-site-feel-more-established",
   },
   {
@@ -119,7 +142,10 @@ export const journalEntries = [
     category: "Editorial",
     excerpt:
       "Content stops feeling secondary when the visual system gives it structure. That changes how often it gets used and maintained.",
-    image: "/placeholders/case-editorial.svg",
+    image: staticImage(
+      "/placeholders/case-editorial.svg",
+      "Article artwork about editorial systems",
+    ),
     slug: "what-founders-miss-when-they-treat-content-like-leftovers",
   },
 ] as const satisfies readonly JournalEntry[];
@@ -178,6 +204,7 @@ export const testimonials = [
   {
     quote:
       "The homepage finally started sounding like the business we were already running behind the scenes.",
+    image: undefined,
     name: "Marta R.",
     role: "Founder",
     company: "Coastal hospitality brand",
@@ -185,6 +212,7 @@ export const testimonials = [
   {
     quote:
       "What changed most was clarity. Prospects understood the offer faster and the team had a clearer story to support.",
+    image: undefined,
     name: "Daniel V.",
     role: "Managing director",
     company: "Service-led growth studio",
@@ -192,6 +220,7 @@ export const testimonials = [
   {
     quote:
       "The new direction felt premium without becoming distant. It gave us a sharper first impression and a calmer sales conversation.",
+    image: undefined,
     name: "Lucia P.",
     role: "Brand lead",
     company: "Launch-stage product team",

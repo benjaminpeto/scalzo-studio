@@ -20,9 +20,13 @@ import {
   normalizeStringEntry,
   readTestimonialEditorFormData,
   revalidateTestimonialRoutes,
+  syncTestimonialAvatarAltText,
   uploadTestimonialAvatar,
 } from "./helpers";
-import { testimonialUpdateSchema } from "./schemas";
+import {
+  TESTIMONIAL_IMAGE_ALT_MAX_LENGTH,
+  testimonialUpdateSchema,
+} from "./schemas";
 
 export async function updateAdminTestimonial(
   _prevState: AdminTestimonialEditorState,
@@ -67,22 +71,56 @@ export async function updateAdminTestimonial(
   }
 
   const avatarFile = isFileEntry(rawInput.avatar) ? rawInput.avatar : null;
+  const avatarAlt = normalizeStringEntry(rawInput.avatarAlt).trim();
   const uploadedObjectPaths: string[] = [];
 
+  if (avatarAlt.length > TESTIMONIAL_IMAGE_ALT_MAX_LENGTH) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        avatarAlt: `Keep alt text under ${TESTIMONIAL_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
   try {
+    const keepsExistingAvatar =
+      Boolean(existingTestimonial.avatar) &&
+      !parsedInput.data.removeAvatar &&
+      !avatarFile;
+
+    if ((avatarFile || keepsExistingAvatar) && !avatarAlt) {
+      return createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          avatarAlt: avatarFile
+            ? "Enter alt text for the avatar image."
+            : "Enter alt text before keeping the current avatar.",
+        },
+      );
+    }
+
     let nextAvatarUrl =
       parsedInput.data.removeAvatar && !avatarFile
         ? null
-        : existingTestimonial.avatarUrl;
+        : (existingTestimonial.avatar?.src ?? null);
 
     if (avatarFile) {
       const uploadResult = await uploadTestimonialAvatar({
+        altText: avatarAlt,
         file: avatarFile,
         testimonialId: parsedInput.data.testimonialId,
       });
 
       uploadedObjectPaths.push(uploadResult.objectPath);
       nextAvatarUrl = uploadResult.publicUrl;
+    }
+
+    if (keepsExistingAvatar && existingTestimonial.avatar?.src) {
+      await syncTestimonialAvatarAltText({
+        altText: avatarAlt,
+        publicUrl: existingTestimonial.avatar.src,
+      });
     }
 
     const updatePayload: Database["public"]["Tables"]["testimonials"]["Update"] =
@@ -127,10 +165,10 @@ export async function updateAdminTestimonial(
     }
 
     const avatarObjectPathToDelete =
-      existingTestimonial.avatarUrl &&
+      existingTestimonial.avatar?.src &&
       (parsedInput.data.removeAvatar || Boolean(avatarFile))
         ? extractManagedTestimonialAvatarObjectPathFromUrl(
-            existingTestimonial.avatarUrl,
+            existingTestimonial.avatar.src,
           )
         : null;
 

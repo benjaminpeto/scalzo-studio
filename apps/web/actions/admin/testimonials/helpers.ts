@@ -25,6 +25,12 @@ import {
   storageBuckets,
   validateStorageUploadInput,
 } from "@/lib/supabase/storage";
+import {
+  deleteMediaAssetsByObjectPaths,
+  extractImageMetadata,
+  updateMediaAssetAltText,
+  upsertMediaAsset,
+} from "@/lib/media-assets/server";
 
 import type { TestimonialEditorInput, TestimonialUpdateInput } from "./schemas";
 import {
@@ -73,6 +79,7 @@ export function createActionSuccessState(input: {
 export function readTestimonialEditorFormData(formData: FormData) {
   return {
     avatar: formData.get("avatar"),
+    avatarAlt: formData.get("avatarAlt"),
     company: formData.get("company"),
     featured: formData.has("featured"),
     name: formData.get("name"),
@@ -266,9 +273,15 @@ export async function deleteManagedTestimonialAvatarObjects(
   if (error) {
     throw error;
   }
+
+  await deleteMediaAssetsByObjectPaths({
+    bucketId: testimonialAvatarBucketId,
+    objectPaths: uniquePaths,
+  });
 }
 
 export async function uploadTestimonialAvatar(input: {
+  altText: string;
   file: File;
   testimonialId: string;
 }) {
@@ -301,14 +314,41 @@ export async function uploadTestimonialAvatar(input: {
     throw error;
   }
 
+  const publicUrl = getPublicStorageObjectUrl(
+    supabase,
+    testimonialAvatarBucketId,
+    objectPath,
+  );
+
+  try {
+    const metadata = await extractImageMetadata(input.file);
+
+    await upsertMediaAsset({
+      altText: input.altText.trim(),
+      blurDataUrl: metadata.blurDataUrl,
+      bucketId: testimonialAvatarBucketId,
+      height: metadata.height,
+      kind: "testimonial-avatar",
+      objectPath,
+      publicUrl,
+      width: metadata.width,
+    });
+  } catch (metadataError) {
+    await supabase.storage.from(testimonialAvatarBucketId).remove([objectPath]);
+    throw metadataError;
+  }
+
   return {
     objectPath,
-    publicUrl: getPublicStorageObjectUrl(
-      supabase,
-      testimonialAvatarBucketId,
-      objectPath,
-    ),
+    publicUrl,
   };
+}
+
+export async function syncTestimonialAvatarAltText(input: {
+  altText: string;
+  publicUrl: string;
+}) {
+  await updateMediaAssetAltText(input);
 }
 
 export function buildNormalizedTestimonialPayload(

@@ -174,6 +174,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      media_assets: {
+        Row: {
+          alt_text: string | null;
+          blur_data_url: string | null;
+          bucket_id: string;
+          created_at: string;
+          height: number;
+          id: string;
+          kind: string;
+          object_path: string;
+          public_url: string;
+          updated_at: string;
+          width: number;
+        };
+        Insert: {
+          alt_text?: string | null;
+          blur_data_url?: string | null;
+          bucket_id: string;
+          created_at?: string;
+          height: number;
+          id?: string;
+          kind: string;
+          object_path: string;
+          public_url: string;
+          updated_at?: string;
+          width: number;
+        };
+        Update: {
+          alt_text?: string | null;
+          blur_data_url?: string | null;
+          bucket_id?: string;
+          created_at?: string;
+          height?: number;
+          id?: string;
+          kind?: string;
+          object_path?: string;
+          public_url?: string;
+          updated_at?: string;
+          width?: number;
+        };
+        Relationships: [];
+      };
       newsletter_subscribers: {
         Row: {
           confirmation_expires_at: string | null;

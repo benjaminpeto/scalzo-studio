@@ -16,6 +16,7 @@ import {
   buildRouteMetadata,
 } from "@/lib/seo/route-metadata";
 import { buildArticleSchema } from "@/lib/seo/schema";
+import { buildCmsImageProps, cmsImageSizes } from "@/lib/media-assets/shared";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -48,8 +49,8 @@ export async function generateMetadata({
     openGraphType: "article",
     publishedTime: detailPageData.publishedAt,
     socialFallbackPath: `/insights/${detailPageData.slug}/opengraph-image`,
-    socialImage: detailPageData.image,
-    socialImageAlt: `Cover image for ${detailPageData.title}`,
+    socialImage: detailPageData.image.src,
+    socialImageAlt: detailPageData.image.alt,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Insights | Scalzo Studio`,
@@ -155,7 +156,7 @@ function InsightDetailLayout({
       <JsonLd
         data={buildArticleSchema({
           description: detailPageData.excerpt,
-          image: detailPageData.image,
+          image: detailPageData.image.src,
           modifiedTime: detailPageData.updatedAt,
           publishedTime: detailPageData.publishedAt,
           slug: detailPageData.slug,
@@ -221,12 +222,13 @@ function InsightDetailLayout({
 
             <div className="overflow-hidden rounded-4xl border border-border/70 bg-[rgba(250,248,241,0.72)] p-3 shadow-[0_20px_60px_rgba(27,28,26,0.08)]">
               <Image
-                src={detailPageData.image}
-                alt={`Cover image for ${detailPageData.title}`}
-                width={1600}
-                height={1100}
+                src={detailPageData.image.src}
+                alt={detailPageData.image.alt}
+                width={detailPageData.image.width}
+                height={detailPageData.image.height}
                 priority
-                sizes="(min-width: 1024px) 45vw, 100vw"
+                sizes={cmsImageSizes.articleCover}
+                {...buildCmsImageProps(detailPageData.image)}
                 className="aspect-[1.1] w-full rounded-[1.35rem] object-cover"
               />
             </div>
@@ -287,7 +289,10 @@ function InsightDetailLayout({
                 </TextReveal>
 
                 <article className="space-y-8">
-                  <InsightMarkdown content={detailPageData.content} />
+                  <InsightMarkdown
+                    content={detailPageData.content}
+                    imageAssets={detailPageData.contentImages}
+                  />
                 </article>
               </div>
 

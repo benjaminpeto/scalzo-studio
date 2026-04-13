@@ -36,6 +36,7 @@ import type {
   AdminCaseStudyEditorRecord,
   AdminCaseStudiesListData,
   AdminCaseStudyEditorState,
+  GalleryUploadRowState,
   MetricRowState,
 } from "@/interfaces/admin/work-editor";
 
@@ -205,13 +206,16 @@ export interface WorkEditorMetricsSectionProps {
 }
 
 export interface WorkEditorAssetsSeoSectionsProps {
+  addGalleryUploadRow: () => void;
   caseStudy?: AdminCaseStudyEditorRecord;
   coverImageId: string;
+  coverImageAltId: string;
   errors: AdminCaseStudyEditorFieldErrors;
-  galleryImagesId: string;
-  keepAllGalleryImages: boolean;
+  galleryUploadRows: GalleryUploadRowState[];
+  removeGalleryUploadRow: (id: string) => void;
   seoDescriptionId: string;
   seoTitleId: string;
+  updateGalleryUploadRow: (id: string, value: string) => void;
 }
 
 export interface WorkEditorSidebarProps {

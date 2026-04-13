@@ -8,8 +8,11 @@ import { cn } from "../../lib/utils";
 type CaseStudyCardImage = {
   src: string;
   alt: string;
+  blurDataUrl?: string;
+  height: number;
   priority?: boolean;
   sizes?: string;
+  width: number;
 };
 
 type CaseStudyCardCta = {
@@ -60,9 +63,11 @@ export function CaseStudyCard({
         <Image
           src={image.src}
           alt={image.alt}
-          width={1200}
-          height={900}
+          width={image.width}
+          height={image.height}
           priority={image.priority}
+          placeholder={image.blurDataUrl ? "blur" : "empty"}
+          blurDataURL={image.blurDataUrl}
           sizes={image.sizes ?? "(min-width: 1024px) 50vw, 100vw"}
           className="aspect-[1.08] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
         />

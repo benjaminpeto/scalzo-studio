@@ -1,3 +1,4 @@
+import { createCmsImageAsset } from "@/lib/media-assets/shared";
 import type {
   InsightDetailPageData,
   InsightIndexEntry,
@@ -7,6 +8,10 @@ type FallbackInsightArticle = Omit<
   InsightDetailPageData,
   "headings" | "published"
 >;
+
+function staticImage(src: string, alt: string) {
+  return createCmsImageAsset({ alt, src });
+}
 
 export const fallbackInsightArticles = [
   {
@@ -38,7 +43,11 @@ Longer copy still matters. It just performs better after the page has already ma
     date: "March 18, 2026",
     excerpt:
       "The first screen should reduce doubt quickly. Case signals, tone, and hierarchy matter before a long paragraph ever gets read.",
-    image: "/placeholders/hero-editorial.svg",
+    contentImages: {},
+    image: staticImage(
+      "/placeholders/hero-editorial.svg",
+      "Editorial article cover artwork",
+    ),
     publishedAt: null,
     seoDescription: null,
     seoTitle: null,
@@ -72,7 +81,11 @@ A studio site can feel more expensive before anything in the portfolio changes. 
     date: "March 09, 2026",
     excerpt:
       "A more mature homepage usually comes from restraint: fewer competing actions, stronger spacing, and clearer content bands.",
-    image: "/placeholders/case-product.svg",
+    contentImages: {},
+    image: staticImage(
+      "/placeholders/case-product.svg",
+      "Article artwork about product-led clarity",
+    ),
     publishedAt: null,
     seoDescription: null,
     seoTitle: null,
@@ -106,7 +119,11 @@ Once content has a real system underneath it, it stops feeling like a burden. It
     date: "February 27, 2026",
     excerpt:
       "Content stops feeling secondary when the visual system gives it structure. That changes how often it gets used and maintained.",
-    image: "/placeholders/case-editorial.svg",
+    contentImages: {},
+    image: staticImage(
+      "/placeholders/case-editorial.svg",
+      "Article artwork about editorial systems",
+    ),
     publishedAt: null,
     seoDescription: null,
     seoTitle: null,
@@ -140,7 +157,11 @@ The useful move is usually not adding more copy. It is reorganising the copy, sh
     date: "February 11, 2026",
     excerpt:
       "Most service pages do not need more copy. They need a better sequence for proof, offer clarity, and the next step.",
-    image: "/placeholders/case-coastal.svg",
+    contentImages: {},
+    image: staticImage(
+      "/placeholders/case-coastal.svg",
+      "Article artwork about service-page proof",
+    ),
     publishedAt: null,
     seoDescription: null,
     seoTitle: null,
@@ -163,4 +184,7 @@ export const fallbackInsightIndexEntries: readonly InsightIndexEntry[] =
     title: entry.title,
   }));
 
-export const fallbackInsightImage = "/placeholders/hero-editorial.svg";
+export const fallbackInsightImage = staticImage(
+  "/placeholders/hero-editorial.svg",
+  "Generic insight placeholder artwork",
+);

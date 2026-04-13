@@ -45,11 +45,12 @@ export async function uploadAdminInsightContentImage(
 
   try {
     const uploadResult = await uploadBlogImage({
+      altText: parsedInput.data.contentImageAlt.trim(),
       file: contentImageFile,
       kind: "content",
       slug: parsedInput.data.currentSlug,
     });
-    const altText = parsedInput.data.contentImageAlt?.trim() || "Alt text";
+    const altText = parsedInput.data.contentImageAlt.trim();
 
     return createMediaSuccessState({
       message:

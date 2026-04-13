@@ -19,9 +19,10 @@ import {
   normalizeStringEntry,
   readInsightEditorFormData,
   revalidateInsightRoutes,
+  syncInsightImageAltText,
   uploadBlogImage,
 } from "./helpers";
-import { insightUpdateSchema } from "./schemas";
+import { insightUpdateSchema, POST_IMAGE_ALT_MAX_LENGTH } from "./schemas";
 
 export async function updateAdminInsight(
   _prevState: AdminInsightEditorState,
@@ -96,16 +97,43 @@ export async function updateAdminInsight(
   const coverImageFile = isFileEntry(rawInput.coverImage)
     ? rawInput.coverImage
     : null;
+  const coverImageAlt = normalizeStringEntry(rawInput.coverImageAlt).trim();
   const uploadedObjectPaths: string[] = [];
 
+  if (coverImageAlt.length > POST_IMAGE_ALT_MAX_LENGTH) {
+    return createActionErrorState(
+      "Check the highlighted fields and try again.",
+      {
+        coverImageAlt: `Keep alt text under ${POST_IMAGE_ALT_MAX_LENGTH} characters.`,
+      },
+    );
+  }
+
   try {
+    const keepsExistingCoverImage =
+      Boolean(existingPost.coverImage) &&
+      !parsedInput.data.removeCoverImage &&
+      !coverImageFile;
+
+    if ((coverImageFile || keepsExistingCoverImage) && !coverImageAlt) {
+      return createActionErrorState(
+        "Check the highlighted fields and try again.",
+        {
+          coverImageAlt: coverImageFile
+            ? "Enter alt text for the cover image."
+            : "Enter alt text before keeping the current cover image.",
+        },
+      );
+    }
+
     let nextCoverImageUrl =
       parsedInput.data.removeCoverImage && !coverImageFile
         ? null
-        : existingPost.coverImageUrl;
+        : (existingPost.coverImage?.src ?? null);
 
     if (coverImageFile) {
       const uploadResult = await uploadBlogImage({
+        altText: coverImageAlt,
         file: coverImageFile,
         kind: "cover",
         slug: normalizedInput.payload.slug,
@@ -113,6 +141,13 @@ export async function updateAdminInsight(
 
       uploadedObjectPaths.push(uploadResult.objectPath);
       nextCoverImageUrl = uploadResult.publicUrl;
+    }
+
+    if (keepsExistingCoverImage && existingPost.coverImage?.src) {
+      await syncInsightImageAltText({
+        altText: coverImageAlt,
+        publicUrl: existingPost.coverImage.src,
+      });
     }
 
     const nextPublishedAt = normalizedInput.payload.published
@@ -163,9 +198,9 @@ export async function updateAdminInsight(
     }
 
     const coverUrlToDelete =
-      existingPost.coverImageUrl &&
+      existingPost.coverImage?.src &&
       (parsedInput.data.removeCoverImage || Boolean(coverImageFile))
-        ? extractManagedBlogObjectPathFromUrl(existingPost.coverImageUrl)
+        ? extractManagedBlogObjectPathFromUrl(existingPost.coverImage.src)
         : null;
 
     if (coverUrlToDelete) {

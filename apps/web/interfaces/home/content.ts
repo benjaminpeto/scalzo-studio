@@ -1,3 +1,5 @@
+import type { CmsImageAsset } from "@/lib/media-assets/shared";
+
 export interface NavigationLink {
   href: string;
   label: string;
@@ -17,7 +19,7 @@ export interface FeaturedProject {
   accent: string;
   category: string;
   description: string;
-  image: string;
+  image: CmsImageAsset;
   metric: string;
   title: string;
 }
@@ -32,7 +34,7 @@ export interface JournalEntry {
   category: string;
   date: string;
   excerpt: string;
-  image: string;
+  image: CmsImageAsset;
   slug: string;
   title: string;
 }
@@ -57,6 +59,7 @@ export interface CredibilityStat {
 
 export interface Testimonial {
   company: string;
+  image?: CmsImageAsset;
   name: string;
   quote: string;
   role: string;

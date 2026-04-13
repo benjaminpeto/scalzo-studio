@@ -49,7 +49,7 @@ export function JournalPreview({
                   variant="featured"
                   metadata={featuredEntry.date}
                   excerpt={featuredEntry.excerpt}
-                  image={{ src: featuredEntry.image, alt: "" }}
+                  image={featuredEntry.image}
                   cta={{
                     href: `/insights/${featuredEntry.slug}`,
                     label: "Read article",
@@ -67,7 +67,7 @@ export function JournalPreview({
                     title={entry.title}
                     metadata={entry.date}
                     excerpt={entry.excerpt}
-                    image={{ src: entry.image, alt: "" }}
+                    image={entry.image}
                     cta={{
                       href: `/insights/${entry.slug}`,
                       label: (

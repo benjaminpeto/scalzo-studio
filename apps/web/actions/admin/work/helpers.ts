@@ -20,6 +20,12 @@ import type {
   AdminCaseStudyEditorState,
   AdminCaseStudyMetricRow,
 } from "@/interfaces/admin/work-editor";
+import {
+  deleteMediaAssetsByObjectPaths,
+  extractImageMetadata,
+  updateMediaAssetAltText,
+  upsertMediaAsset,
+} from "@/lib/media-assets/server";
 import { publicEnv } from "@/lib/env/public";
 import type { Json } from "@/lib/supabase/database.types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -220,10 +226,14 @@ export function readCaseStudyEditorFormData(formData: FormData) {
     challenge: formData.get("challenge"),
     clientName: formData.get("clientName"),
     coverImage: formData.get("coverImage"),
+    coverImageAlt: formData.get("coverImageAlt"),
     currentSlug: formData.get("currentSlug"),
     existingGalleryUrls: formData.getAll("existingGalleryUrl"),
-    galleryImages: formData.getAll("galleryImages"),
+    existingGalleryAlts: formData.getAll("existingGalleryAlt"),
+    galleryImageAlts: formData.getAll("galleryImageAlt"),
+    galleryImages: formData.getAll("galleryImage"),
     industry: formData.get("industry"),
+    keptGalleryUrls: formData.getAll("keptGalleryUrl"),
     metricLabels: formData.getAll("metricLabel"),
     metricValues: formData.getAll("metricValue"),
     outcomes: formData.get("outcomes"),
@@ -315,9 +325,15 @@ export async function deleteManagedCaseStudyObjects(objectPaths: string[]) {
   if (error) {
     throw error;
   }
+
+  await deleteMediaAssetsByObjectPaths({
+    bucketId: caseStudyBucketId,
+    objectPaths: uniquePaths,
+  });
 }
 
 export async function uploadCaseStudyImage(input: {
+  altText: string;
   file: File;
   kind: "cover" | "gallery";
   slug: string;
@@ -351,14 +367,51 @@ export async function uploadCaseStudyImage(input: {
     throw error;
   }
 
+  const publicUrl = getPublicStorageObjectUrl(
+    supabase,
+    caseStudyBucketId,
+    objectPath,
+  );
+
+  try {
+    const metadata = await extractImageMetadata(input.file);
+
+    await upsertMediaAsset({
+      altText: input.altText.trim(),
+      blurDataUrl: metadata.blurDataUrl,
+      bucketId: caseStudyBucketId,
+      height: metadata.height,
+      kind: input.kind === "cover" ? "case-study-cover" : "case-study-gallery",
+      objectPath,
+      publicUrl,
+      width: metadata.width,
+    });
+  } catch (metadataError) {
+    await supabase.storage.from(caseStudyBucketId).remove([objectPath]);
+    throw metadataError;
+  }
+
   return {
     objectPath,
-    publicUrl: getPublicStorageObjectUrl(
-      supabase,
-      caseStudyBucketId,
-      objectPath,
-    ),
+    publicUrl,
   };
+}
+
+export async function syncCaseStudyImageAltText(input: {
+  altText: string;
+  publicUrl: string;
+}) {
+  await updateMediaAssetAltText(input);
+}
+
+export function buildExistingGalleryImageAltEntries(input: {
+  alts: FormDataEntryValue[];
+  urls: FormDataEntryValue[];
+}) {
+  return input.urls.map((entry, index) => ({
+    alt: normalizeStringEntry(input.alts[index]).trim(),
+    url: normalizeStringEntry(entry).trim(),
+  }));
 }
 
 export function buildPublishedAtValue(input: {

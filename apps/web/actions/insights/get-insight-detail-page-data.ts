@@ -5,7 +5,11 @@ import {
   fallbackInsightImage,
 } from "@/constants/insights/content";
 import { formatPublishedDate, titleCaseFromSlug } from "@/lib/content/format";
-import { extractInsightHeadings } from "@/lib/insights/markdown";
+import {
+  extractInsightHeadings,
+  extractInsightImageUrls,
+} from "@/lib/insights/markdown";
+import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import { buildFallbackInsightContent } from "./helpers";
@@ -40,15 +44,31 @@ export async function getInsightDetailPageData(
 
   const resolvedTitle =
     post?.title ?? fallbackEntry?.title ?? titleCaseFromSlug(slug);
+  const imageAssets = await resolveCmsImageAssetMap([
+    {
+      fallbackAlt:
+        fallbackEntry?.image.alt ?? `Cover image for ${resolvedTitle}`,
+      url: post?.cover_image_url,
+    },
+  ]);
   const resolvedImage =
-    post?.cover_image_url ?? fallbackEntry?.image ?? fallbackInsightImage;
+    (post?.cover_image_url ? imageAssets[post.cover_image_url] : undefined) ??
+    fallbackEntry?.image ??
+    fallbackInsightImage;
   const resolvedContent =
     post?.content_md ??
     fallbackEntry?.content ??
-    buildFallbackInsightContent(resolvedTitle, resolvedImage);
+    buildFallbackInsightContent(resolvedTitle, resolvedImage.src);
+  const contentImages = await resolveCmsImageAssetMap(
+    extractInsightImageUrls(resolvedContent).map((url) => ({
+      fallbackAlt: "Article illustration",
+      url,
+    })),
+  );
 
   return {
     content: resolvedContent,
+    contentImages,
     date: formatPublishedDate(
       post?.published_at ?? post?.created_at ?? null,
       fallbackEntry?.date ?? "Editorial note",

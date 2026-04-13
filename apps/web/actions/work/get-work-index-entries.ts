@@ -4,6 +4,7 @@ import {
   fallbackWorkImage,
   fallbackWorkIndexEntries,
 } from "@/constants/work/content";
+import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import { cloneFallbackWorkEntries, resolveWorkMetric } from "./helpers";
@@ -23,13 +24,24 @@ export async function getWorkIndexEntries() {
     return cloneFallbackWorkEntries();
   }
 
+  const imageAssets = await resolveCmsImageAssetMap(
+    data.map((entry, index) => ({
+      fallbackAlt:
+        fallbackWorkIndexEntries[index]?.image.alt ??
+        `Case study cover for ${entry.title}`,
+      url: entry.cover_image_url,
+    })),
+  );
+
   return data.map((entry, index) => ({
     description:
       entry.outcomes ??
       fallbackWorkIndexEntries[index]?.description ??
       "Published case study showing how strategy and design direction translate into a stronger commercial result.",
     image:
-      entry.cover_image_url ??
+      (entry.cover_image_url
+        ? imageAssets[entry.cover_image_url]
+        : undefined) ??
       fallbackWorkIndexEntries[index]?.image ??
       fallbackWorkImage,
     metadata:

@@ -54,10 +54,7 @@ function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
           <CaseStudyCard
             title={entry.title}
             description={entry.description}
-            image={{
-              alt: `Case study cover for ${entry.title}`,
-              src: entry.image,
-            }}
+            image={entry.image}
             metadata={entry.metadata}
             outcome={entry.metric}
             cta={{ href: `/work/${entry.slug}`, label: "Read case study" }}

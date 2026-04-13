@@ -180,6 +180,12 @@ App-side helpers live in [`storage.ts`](/Users/benji/WORK/Projects/scalzo-studio
 - upload validation helpers
 - public and signed URL helpers for later editor flows
 
+Media metadata:
+
+- [`public.media_assets`](/Users/benji/WORK/Projects/scalzo-studio/supabase/migrations/20260413090450_media_assets.sql) stores alt text, intrinsic dimensions, and blur placeholders for CMS-managed public images.
+- New uploads persist media metadata automatically through the admin upload helpers before the editor save completes.
+- Existing media can be backfilled with `npm run media:backfill`, which reads the current content tables, fetches the public assets, and upserts missing dimensions/placeholders while preserving any existing alt text.
+
 Verification steps:
 
 1. Run `npm run supabase:db:reset`.

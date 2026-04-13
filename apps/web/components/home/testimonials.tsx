@@ -44,6 +44,7 @@ export function Testimonials({ items }: { items: ReadonlyArray<Testimonial> }) {
                 <ScrollFloat offset={18}>
                   <TestimonialCard
                     company={testimonial.company}
+                    image={testimonial.image}
                     name={testimonial.name}
                     quote={testimonial.quote}
                     role={testimonial.role}

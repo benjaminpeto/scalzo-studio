@@ -33,6 +33,7 @@ export const TESTIMONIAL_NAME_MAX_LENGTH = 120;
 export const TESTIMONIAL_COMPANY_MAX_LENGTH = 120;
 export const TESTIMONIAL_ROLE_MAX_LENGTH = 120;
 export const TESTIMONIAL_QUOTE_MAX_LENGTH = 2000;
+export const TESTIMONIAL_IMAGE_ALT_MAX_LENGTH = 160;
 
 const optionalTestimonialString = (maxLength: number) =>
   z.preprocess(

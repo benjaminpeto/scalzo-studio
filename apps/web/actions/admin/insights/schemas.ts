@@ -22,6 +22,7 @@ export const POST_EXCERPT_MAX_LENGTH = 320;
 export const POST_CONTENT_MAX_LENGTH = 32000;
 export const POST_TAG_LIMIT = 12;
 export const POST_TAG_MAX_LENGTH = 60;
+export const POST_IMAGE_ALT_MAX_LENGTH = 160;
 export const SEO_TITLE_MAX_LENGTH = 70;
 export const SEO_DESCRIPTION_MAX_LENGTH = 160;
 
@@ -68,7 +69,14 @@ export const insightUpdateSchema = insightEditorSchema.extend({
 });
 
 export const contentImageUploadSchema = z.object({
-  contentImageAlt: optionalInsightString(140),
+  contentImageAlt: z
+    .string()
+    .trim()
+    .min(1, "Enter alt text for the uploaded image.")
+    .max(
+      POST_IMAGE_ALT_MAX_LENGTH,
+      `Keep alt text under ${POST_IMAGE_ALT_MAX_LENGTH} characters.`,
+    ),
   currentSlug: z.string().trim().min(1).max(POST_SLUG_MAX_LENGTH),
 });
 

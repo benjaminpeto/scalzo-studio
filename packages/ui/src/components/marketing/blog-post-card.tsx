@@ -8,8 +8,11 @@ import { cn } from "../../lib/utils";
 type BlogPostCardImage = {
   src: string;
   alt: string;
+  blurDataUrl?: string;
+  height: number;
   priority?: boolean;
   sizes?: string;
+  width: number;
 };
 
 type BlogPostCardCta = {
@@ -62,6 +65,8 @@ export function BlogPostCard({
               alt={image.alt}
               fill
               priority={image.priority}
+              placeholder={image.blurDataUrl ? "blur" : "empty"}
+              blurDataURL={image.blurDataUrl}
               sizes={image.sizes ?? "(min-width: 1024px) 55vw, 100vw"}
               className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             />
@@ -111,9 +116,11 @@ export function BlogPostCard({
           <Image
             src={image.src}
             alt={image.alt}
-            width={640}
-            height={460}
+            width={image.width}
+            height={image.height}
             priority={image.priority}
+            placeholder={image.blurDataUrl ? "blur" : "empty"}
+            blurDataURL={image.blurDataUrl}
             sizes={image.sizes ?? "(min-width: 1024px) 25vw, 100vw"}
             className="aspect-square w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
           />

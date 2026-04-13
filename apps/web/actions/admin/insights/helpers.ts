@@ -21,6 +21,12 @@ import {
   collectDistinctInsightTags,
   normalizeInsightTag,
 } from "@/lib/insights/tags";
+import {
+  deleteMediaAssetsByObjectPaths,
+  extractImageMetadata,
+  updateMediaAssetAltText,
+  upsertMediaAsset,
+} from "@/lib/media-assets/server";
 import { publicEnv } from "@/lib/env/public";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { splitLineSeparatedEntries } from "@/lib/text/lines";
@@ -191,6 +197,7 @@ export function readInsightEditorFormData(formData: FormData) {
   return {
     contentMd: formData.get("contentMd"),
     coverImage: formData.get("coverImage"),
+    coverImageAlt: formData.get("coverImageAlt"),
     currentSlug: formData.get("currentSlug"),
     excerpt: formData.get("excerpt"),
     postId: formData.get("postId"),
@@ -278,9 +285,15 @@ export async function deleteManagedBlogObjects(objectPaths: string[]) {
   if (error) {
     throw error;
   }
+
+  await deleteMediaAssetsByObjectPaths({
+    bucketId: blogBucketId,
+    objectPaths: uniquePaths,
+  });
 }
 
 export async function uploadBlogImage(input: {
+  altText: string;
   file: File;
   kind: "content" | "cover";
   slug: string;
@@ -314,10 +327,41 @@ export async function uploadBlogImage(input: {
     throw error;
   }
 
+  const publicUrl = getPublicStorageObjectUrl(
+    supabase,
+    blogBucketId,
+    objectPath,
+  );
+
+  try {
+    const metadata = await extractImageMetadata(input.file);
+
+    await upsertMediaAsset({
+      altText: input.altText.trim(),
+      blurDataUrl: metadata.blurDataUrl,
+      bucketId: blogBucketId,
+      height: metadata.height,
+      kind: input.kind === "cover" ? "insight-cover" : "insight-content",
+      objectPath,
+      publicUrl,
+      width: metadata.width,
+    });
+  } catch (metadataError) {
+    await supabase.storage.from(blogBucketId).remove([objectPath]);
+    throw metadataError;
+  }
+
   return {
     objectPath,
-    publicUrl: getPublicStorageObjectUrl(supabase, blogBucketId, objectPath),
+    publicUrl,
   };
+}
+
+export async function syncInsightImageAltText(input: {
+  altText: string;
+  publicUrl: string;
+}) {
+  await updateMediaAssetAltText(input);
 }
 
 export function buildNormalizedInsightPayload(input: InsightEditorInput) {

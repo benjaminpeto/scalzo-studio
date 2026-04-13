@@ -67,6 +67,7 @@ export function getFallbackInsightDetailPageData(
   if (fallbackEntry) {
     return {
       ...fallbackEntry,
+      contentImages: {},
       headings: extractInsightHeadings(fallbackEntry.content),
       published: true,
       publishedAt: fallbackEntry.publishedAt,
@@ -76,10 +77,11 @@ export function getFallbackInsightDetailPageData(
   }
 
   const title = titleCaseFromSlug(slug);
-  const content = buildFallbackInsightContent(title, fallbackInsightImage);
+  const content = buildFallbackInsightContent(title, fallbackInsightImage.src);
 
   return {
     content,
+    contentImages: {},
     date: "Editorial note",
     excerpt:
       "A published note on how sharper positioning, stronger proof, and calmer page structure improve the first impression.",

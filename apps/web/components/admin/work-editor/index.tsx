@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useId, useMemo } from "react";
+import { useActionState, useId } from "react";
 
 import { adminWorkEditorStatusMessageByCode } from "@/constants/admin/editor";
+import { useAdminGalleryUploadRows } from "@/hooks/admin/use-admin-gallery-upload-rows";
 import { useAdminMetricRows } from "@/hooks/admin/use-admin-metric-rows";
 import { useAdminRedirect } from "@/hooks/admin/use-admin-redirect";
 import type { AdminWorkEditorProps } from "@/interfaces/admin/component-props";
@@ -43,7 +44,7 @@ export function AdminWorkEditor({
   const seoTitleId = useId();
   const seoDescriptionId = useId();
   const coverImageId = useId();
-  const galleryImagesId = useId();
+  const coverImageAltId = useId();
   const statusMessage =
     status && status in adminWorkEditorStatusMessageByCode
       ? adminWorkEditorStatusMessageByCode[
@@ -59,10 +60,12 @@ export function AdminWorkEditor({
     mode === "create"
       ? "/admin/work/new"
       : `/admin/work/${caseStudy?.slug ?? ""}`;
-  const keepAllGalleryImages = useMemo(
-    () => (caseStudy?.galleryUrls.length ?? 0) === 0,
-    [caseStudy?.galleryUrls.length],
-  );
+  const {
+    addGalleryUploadRow,
+    galleryUploadRows,
+    removeGalleryUploadRow,
+    updateGalleryUploadRow,
+  } = useAdminGalleryUploadRows();
 
   useAdminRedirect({
     redirectTo: serverState.redirectTo,
@@ -143,13 +146,16 @@ export function AdminWorkEditor({
           />
 
           <WorkEditorAssetsSeoSections
+            addGalleryUploadRow={addGalleryUploadRow}
             caseStudy={caseStudy}
             coverImageId={coverImageId}
+            coverImageAltId={coverImageAltId}
             errors={errors}
-            galleryImagesId={galleryImagesId}
-            keepAllGalleryImages={keepAllGalleryImages}
+            galleryUploadRows={galleryUploadRows}
+            removeGalleryUploadRow={removeGalleryUploadRow}
             seoDescriptionId={seoDescriptionId}
             seoTitleId={seoTitleId}
+            updateGalleryUploadRow={updateGalleryUploadRow}
           />
         </div>
 

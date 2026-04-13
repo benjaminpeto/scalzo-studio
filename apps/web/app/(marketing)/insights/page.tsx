@@ -152,11 +152,7 @@ function InsightsIndexLayout({
                 variant="featured"
                 metadata={getEntryMetadata(featuredEntry)}
                 excerpt={featuredEntry.excerpt}
-                image={{
-                  alt: `Cover image for ${featuredEntry.title}`,
-                  priority: true,
-                  src: featuredEntry.image,
-                }}
+                image={{ ...featuredEntry.image, priority: true }}
                 cta={{
                   href: `/insights/${featuredEntry.slug}`,
                   label: "Read article",
@@ -204,10 +200,7 @@ function InsightsIndexLayout({
                       title={entry.title}
                       metadata={getEntryMetadata(entry)}
                       excerpt={entry.excerpt}
-                      image={{
-                        alt: `Cover image for ${entry.title}`,
-                        src: entry.image,
-                      }}
+                      image={entry.image}
                       cta={{
                         href: `/insights/${entry.slug}`,
                         label: "Read article",

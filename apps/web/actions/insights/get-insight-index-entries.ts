@@ -6,6 +6,7 @@ import {
 } from "@/constants/insights/content";
 import { formatPublishedDate } from "@/lib/content/format";
 import { matchesSelectedInsightTag } from "@/lib/insights/tags";
+import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import { getFallbackInsightEntries } from "./helpers";
@@ -27,6 +28,15 @@ export async function getInsightIndexEntries(
     return getFallbackInsightEntries(selectedTag);
   }
 
+  const imageAssets = await resolveCmsImageAssetMap(
+    data.map((entry, index) => ({
+      fallbackAlt:
+        fallbackInsightIndexEntries[index]?.image.alt ??
+        `Cover image for ${entry.title}`,
+      url: entry.cover_image_url,
+    })),
+  );
+
   return data
     .map((entry, index) => ({
       date: formatPublishedDate(
@@ -38,7 +48,9 @@ export async function getInsightIndexEntries(
         fallbackInsightIndexEntries[index]?.excerpt ??
         "Editorial note on how positioning, content structure, and visual signals shape the quality of the first impression.",
       image:
-        entry.cover_image_url ??
+        (entry.cover_image_url
+          ? imageAssets[entry.cover_image_url]
+          : undefined) ??
         fallbackInsightIndexEntries[index]?.image ??
         fallbackInsightImage,
       seoDescription: entry.seo_description,

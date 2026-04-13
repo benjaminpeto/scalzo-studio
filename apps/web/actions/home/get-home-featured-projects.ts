@@ -1,6 +1,7 @@
 import "server-only";
 
 import { featuredProjects as fallbackFeaturedProjects } from "@/constants/home/content";
+import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import {
@@ -24,6 +25,15 @@ export async function getHomeFeaturedProjects() {
     return cloneFallbackFeaturedProjects();
   }
 
+  const imageAssets = await resolveCmsImageAssetMap(
+    data.map((project, index) => ({
+      fallbackAlt:
+        fallbackFeaturedProjects[index]?.image.alt ??
+        `Case study cover for ${project.title}`,
+      url: project.cover_image_url,
+    })),
+  );
+
   return data.map((project, index) => ({
     accent:
       project.services?.[0] ??
@@ -37,7 +47,9 @@ export async function getHomeFeaturedProjects() {
     description:
       project.outcomes ?? fallbackFeaturedProjects[index]?.description ?? "",
     image:
-      project.cover_image_url ??
+      (project.cover_image_url
+        ? imageAssets[project.cover_image_url]
+        : undefined) ??
       fallbackFeaturedProjects[index]?.image ??
       fallbackHomeProjectImage,
     metric:

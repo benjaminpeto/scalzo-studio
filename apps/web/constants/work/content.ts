@@ -1,3 +1,4 @@
+import { createCmsImageAsset } from "@/lib/media-assets/shared";
 import {
   featuredProjects as fallbackFeaturedProjects,
   testimonials as fallbackTestimonials,
@@ -7,7 +8,14 @@ import type {
   WorkIndexEntry,
 } from "@/interfaces/work/content";
 
-export const fallbackWorkImage = "/placeholders/hero-editorial.svg";
+function staticImage(src: string, alt: string) {
+  return createCmsImageAsset({ alt, src });
+}
+
+export const fallbackWorkImage = staticImage(
+  "/placeholders/hero-editorial.svg",
+  "Generic case study placeholder artwork",
+);
 
 export const fallbackWorkIndexEntries: readonly WorkIndexEntry[] =
   fallbackFeaturedProjects.map((project, index) => ({

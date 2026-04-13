@@ -4,6 +4,7 @@ import { InsightMarkdown } from "@/components/insights/insight-markdown";
 import type { InsightEditorContentSectionsProps } from "@/interfaces/admin/component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
 import { formatUpdatedAt } from "@/lib/admin/format";
+import { buildCmsImageProps, cmsImageSizes } from "@/lib/media-assets/shared";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 
@@ -168,14 +169,18 @@ export function InsightEditorContentSections({
             </div>
             <div className="rounded-[1.35rem] border border-border/70 bg-white/75 p-4 shadow-[0_16px_44px_rgba(27,28,26,0.04)]">
               <div className="rounded-[1.2rem] border border-border/60 bg-[rgba(250,248,241,0.72)] p-4">
-                {post?.coverImageUrl ? (
+                {post?.coverImage ? (
                   <div className="overflow-hidden rounded-[1.1rem] border border-border/60">
                     <Image
-                      src={post.coverImageUrl}
-                      alt={`Cover image for ${titleValue || post.title}`}
-                      width={1600}
-                      height={1100}
-                      sizes="(min-width: 1280px) 30vw, 100vw"
+                      src={post.coverImage.src}
+                      alt={
+                        post.coverImage.alt ||
+                        `Cover image for ${titleValue || post.title}`
+                      }
+                      width={post.coverImage.width}
+                      height={post.coverImage.height}
+                      sizes={cmsImageSizes.adminPreview}
+                      {...buildCmsImageProps(post.coverImage)}
                       className="aspect-[1.15] w-full object-cover"
                     />
                   </div>
@@ -234,19 +239,44 @@ export function InsightEditorContentSections({
           optionalLabel="Optional"
         >
           <div className="space-y-4">
-            {post?.coverImageUrl ? (
+            {post?.coverImage ? (
               <div className="overflow-hidden rounded-[1.35rem] border border-border/70 bg-white/70">
                 <Image
-                  src={post.coverImageUrl}
-                  alt={`${post.title} cover image`}
-                  width={1200}
-                  height={900}
+                  src={post.coverImage.src}
+                  alt={post.coverImage.alt || `${post.title} cover image`}
+                  width={post.coverImage.width}
+                  height={post.coverImage.height}
+                  sizes={cmsImageSizes.adminPreview}
+                  {...buildCmsImageProps(post.coverImage)}
                   className="aspect-[1.35] w-full object-cover"
                 />
               </div>
             ) : null}
 
-            {post?.coverImageUrl ? (
+            <AdminEditorField
+              error={errors.coverImageAlt}
+              hint="Describe the cover image for screen readers and SEO."
+              htmlFor={`${coverImageId}-alt`}
+              label="Cover image alt text"
+              optionalLabel={
+                post?.coverImage ? undefined : "Required with upload"
+              }
+            >
+              <Input
+                id={`${coverImageId}-alt`}
+                name="coverImageAlt"
+                defaultValue={post?.coverImage?.alt ?? ""}
+                aria-invalid={Boolean(errors.coverImageAlt)}
+                aria-describedby={buildDescribedBy({
+                  error: errors.coverImageAlt,
+                  hint: "Describe the cover image for screen readers and SEO.",
+                  id: `${coverImageId}-alt`,
+                })}
+                placeholder="Describe the cover image"
+              />
+            </AdminEditorField>
+
+            {post?.coverImage ? (
               <label className="flex items-start gap-3 rounded-[1.15rem] border border-border/70 bg-white/70 px-4 py-3">
                 <input
                   type="checkbox"
