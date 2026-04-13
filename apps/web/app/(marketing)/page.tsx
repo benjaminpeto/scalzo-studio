@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { CtaBand } from "@/components/home/cta-band";
@@ -10,15 +9,9 @@ import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 import { ProcessMethod } from "@/components/home/process-method";
 import { StudioCredibility } from "@/components/home/studio-credibility";
 import { TrustStrip } from "@/components/home/trust-strip";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/",
-  },
-  description:
-    "Editorial product, brand, and content design for growing businesses in the Canary Islands and beyond.",
-  title: "Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.home;
 
 export default function Home() {
   return (

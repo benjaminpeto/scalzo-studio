@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { draftMode } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { getFallbackInsightDetailPageData } from "@/actions/insights/helpers";
-import { getInsightDetailPageData } from "@/actions/insights/get-insight-detail-page-data";
+import { getResolvedInsightDetailRouteData } from "@/actions/insights/get-resolved-insight-detail-route-data";
 import { Reveal, ScrollFloat, TextReveal } from "@/components/home/motion";
 import { InsightMarkdown } from "@/components/insights/insight-markdown";
 import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 import { publicEnv } from "@/lib/env/public";
-import { getCurrentUserAdminState } from "@/lib/supabase/auth";
+import {
+  buildNotFoundRouteMetadata,
+  buildRouteMetadata,
+} from "@/lib/seo/route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -27,26 +29,24 @@ export async function generateMetadata({
   params,
 }: InsightDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const preview = await draftMode();
-  const { isAdmin } = await getCurrentUserAdminState();
-  const isPreview = preview.isEnabled && isAdmin;
-  const detailPageData =
-    (await getInsightDetailPageData(slug, { includeDraft: isPreview })) ??
-    getFallbackInsightDetailPageData(slug);
+  const { detailPageData, isPreview } =
+    await getResolvedInsightDetailRouteData(slug);
 
-  return {
-    alternates: {
-      canonical: `/insights/${detailPageData.slug}`,
-    },
+  if (!detailPageData) {
+    return buildNotFoundRouteMetadata();
+  }
+
+  return buildRouteMetadata({
+    canonical: `/insights/${detailPageData.slug}`,
     description:
       detailPageData.seoDescription ??
       detailPageData.excerpt ??
       detailPageData.content,
-    robots: isPreview ? { follow: false, index: false } : undefined,
+    noIndex: isPreview,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Insights | Scalzo Studio`,
-  };
+  });
 }
 
 function buildArticleUrl(slug: string) {
@@ -105,16 +105,9 @@ function InlineArticleCta({ title }: { title: string }) {
   );
 }
 
-async function InsightDetailContent({
-  isPreview,
-  slug,
-}: {
-  isPreview: boolean;
-  slug: string;
-}) {
-  const detailPageData = await getInsightDetailPageData(slug, {
-    includeDraft: isPreview,
-  });
+async function InsightDetailContent({ slug }: { slug: string }) {
+  const { detailPageData, isPreview } =
+    await getResolvedInsightDetailRouteData(slug);
 
   if (!detailPageData) {
     notFound();
@@ -384,13 +377,10 @@ function InsightDetailFallback({ slug }: { slug: string }) {
 
 async function ResolvedInsightDetailPage({ params }: InsightDetailPageProps) {
   const { slug } = await params;
-  const preview = await draftMode();
-  const { isAdmin } = await getCurrentUserAdminState();
-  const isPreview = preview.isEnabled && isAdmin;
 
   return (
     <Suspense fallback={<InsightDetailFallback slug={slug} />}>
-      <InsightDetailContent isPreview={isPreview} slug={slug} />
+      <InsightDetailContent slug={slug} />
     </Suspense>
   );
 }

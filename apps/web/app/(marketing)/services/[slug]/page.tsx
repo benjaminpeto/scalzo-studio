@@ -7,13 +7,17 @@ import {
   getFallbackServiceDetailPageData,
   getServiceDetailBodyCopy,
 } from "@/actions/services/helpers";
-import { getServiceDetailPageData } from "@/actions/services/get-service-detail-page-data";
+import { getResolvedServiceDetailRouteData } from "@/actions/services/get-resolved-service-detail-route-data";
 import {
   Reveal,
   RevealGroup,
   RevealItem,
   ScrollFloat,
 } from "@/components/home/motion";
+import {
+  buildNotFoundRouteMetadata,
+  buildRouteMetadata,
+} from "@/lib/seo/route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -33,12 +37,14 @@ export async function generateMetadata({
   params,
 }: ServiceDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const detailPageData = getFallbackServiceDetailPageData(slug);
+  const detailPageData = await getResolvedServiceDetailRouteData(slug);
 
-  return {
-    alternates: {
-      canonical: `/services/${detailPageData.slug}`,
-    },
+  if (!detailPageData) {
+    return buildNotFoundRouteMetadata();
+  }
+
+  return buildRouteMetadata({
+    canonical: `/services/${detailPageData.slug}`,
     description:
       detailPageData.seoDescription ??
       detailPageData.summary ??
@@ -46,11 +52,11 @@ export async function generateMetadata({
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Services | Scalzo Studio`,
-  };
+  });
 }
 
 async function ServiceDetailContent({ slug }: { slug: string }) {
-  const detailPageData = await getServiceDetailPageData(slug);
+  const detailPageData = await getResolvedServiceDetailRouteData(slug);
 
   if (!detailPageData) {
     notFound();

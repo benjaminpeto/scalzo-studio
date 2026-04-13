@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { draftMode } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { getFallbackWorkDetailPageData } from "@/actions/work/helpers";
-import { getWorkDetailPageData } from "@/actions/work/get-work-detail-page-data";
-import { getCurrentUserAdminState } from "@/lib/supabase/auth";
+import { getResolvedWorkDetailRouteData } from "@/actions/work/get-resolved-work-detail-route-data";
 import {
   Reveal,
   RevealGroup,
@@ -19,6 +17,10 @@ import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { CaseStudyViewTracker } from "@/components/tracking/case-study-view-tracker";
+import {
+  buildNotFoundRouteMetadata,
+  buildRouteMetadata,
+} from "@/lib/seo/route-metadata";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { TestimonialCard } from "@ui/components/marketing/testimonial-card";
 
@@ -32,38 +34,29 @@ export async function generateMetadata({
   params,
 }: WorkDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const preview = await draftMode();
-  const { isAdmin } = await getCurrentUserAdminState();
-  const isPreview = preview.isEnabled && isAdmin;
-  const detailPageData =
-    (await getWorkDetailPageData(slug, { includeDraft: isPreview })) ??
-    getFallbackWorkDetailPageData(slug);
+  const { detailPageData, isPreview } =
+    await getResolvedWorkDetailRouteData(slug);
 
-  return {
-    alternates: {
-      canonical: `/work/${detailPageData.slug}`,
-    },
+  if (!detailPageData) {
+    return buildNotFoundRouteMetadata();
+  }
+
+  return buildRouteMetadata({
+    canonical: `/work/${detailPageData.slug}`,
     description:
       detailPageData.seoDescription ??
       detailPageData.description ??
       detailPageData.outcomes,
-    robots: isPreview ? { follow: false, index: false } : undefined,
+    noIndex: isPreview,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Work | Scalzo Studio`,
-  };
+  });
 }
 
-async function WorkDetailContent({
-  isPreview,
-  slug,
-}: {
-  isPreview: boolean;
-  slug: string;
-}) {
-  const detailPageData = await getWorkDetailPageData(slug, {
-    includeDraft: isPreview,
-  });
+async function WorkDetailContent({ slug }: { slug: string }) {
+  const { detailPageData, isPreview } =
+    await getResolvedWorkDetailRouteData(slug);
 
   if (!detailPageData) {
     notFound();
@@ -525,13 +518,10 @@ function WorkDetailFallback({ slug }: { slug: string }) {
 
 async function ResolvedWorkDetailPage({ params }: WorkDetailPageProps) {
   const { slug } = await params;
-  const preview = await draftMode();
-  const { isAdmin } = await getCurrentUserAdminState();
-  const isPreview = preview.isEnabled && isAdmin;
 
   return (
     <Suspense fallback={<WorkDetailFallback slug={slug} />}>
-      <WorkDetailContent isPreview={isPreview} slug={slug} />
+      <WorkDetailContent slug={slug} />
     </Suspense>
   );
 }

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -13,6 +12,7 @@ import {
   TextReveal,
 } from "@/components/home/motion";
 import type { InsightIndexEntry } from "@/interfaces/insights/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -25,14 +25,7 @@ interface InsightsPageProps {
   }>;
 }
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/insights",
-  },
-  description:
-    "Editorial notes on positioning, page structure, design systems, and the visual signals that make service businesses easier to trust.",
-  title: "Insights | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.insights;
 
 function buildTagHref(tag: string) {
   const params = new URLSearchParams({ tag });

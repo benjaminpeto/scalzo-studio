@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import {
@@ -12,17 +11,11 @@ import {
   legalControllerDetails,
   privacyPageContent,
 } from "@/constants/legal/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/privacy",
-  },
-  description:
-    "Privacy notice for Scalzo Studio covering contact requests, admin authentication, conditional future processors, and the current essential-only EU launch posture.",
-  title: "Privacy | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.privacy;
 
 export default function PrivacyPage() {
   const { activities, intro, processors, sections } = privacyPageContent;

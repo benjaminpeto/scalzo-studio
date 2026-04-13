@@ -1,23 +1,15 @@
-import type { Metadata } from "next";
-
 import { Reveal, ScrollFloat } from "@/components/home/motion";
 import { BookingPanel } from "@/components/contact/booking-panel";
 import { QuoteRequestForm } from "@/components/contact/quote-request-form";
 import { contactPageContent } from "@/constants/contact/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { Button } from "@ui/components/ui/button";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/contact",
-  },
-  description:
-    "Contact Scalzo Studio to request a quote or book a discovery call for positioning, design systems, and digital rollout work.",
-  title: "Contact | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.contact;
 
 export default function ContactPage() {
   return (

@@ -1,21 +1,13 @@
-import type { Metadata } from "next";
-
 import { BookingPanel } from "@/components/contact/booking-panel";
 import { QuoteRequestSuccessState } from "@/components/contact/quote-request-form/chrome";
 import { Reveal } from "@/components/home/motion";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/contact/thank-you",
-  },
-  description:
-    "Thanks for contacting Scalzo Studio. Review the next steps or book a discovery call while your quote request is being reviewed.",
-  title: "Thanks | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.contactThankYou;
 
 export default function ContactThankYouPage() {
   return (

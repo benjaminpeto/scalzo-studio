@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
 import { newsletterSignupContent } from "@/constants/newsletter/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -34,18 +34,7 @@ const statusContent = {
   },
 } as const;
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/newsletter/confirmed",
-  },
-  description:
-    "Newsletter confirmation state for Scalzo Studio editorial updates.",
-  robots: {
-    follow: false,
-    index: false,
-  },
-  title: "Newsletter confirmation | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.newsletterConfirmed;
 
 function NewsletterConfirmedContent({
   status,

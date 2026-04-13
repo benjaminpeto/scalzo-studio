@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -14,6 +13,7 @@ import { getHomeTestimonials } from "@/actions/home/get-home-testimonials";
 import { getServicesIndexEntries } from "@/actions/services/get-services-index-entries";
 import { aboutPageContent } from "@/constants/about/content";
 import type { ServicesIndexEntry } from "@/interfaces/services/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -22,14 +22,7 @@ import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { ServiceCard } from "@ui/components/marketing/service-card";
 import { TestimonialCard } from "@ui/components/marketing/testimonial-card";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/about",
-  },
-  description:
-    "About Scalzo Studio: a Canary Islands-based editorial design studio focused on clearer positioning, stronger digital surfaces, and calmer commercial decisions.",
-  title: "About | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.about;
 
 async function AboutCapabilitiesContent() {
   const services = await getServicesIndexEntries();

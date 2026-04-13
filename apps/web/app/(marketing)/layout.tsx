@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { MobileCtaBar } from "@/components/layout/mobile-cta-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -17,7 +19,9 @@ export default function MarketingLayout({
         Skip to content
       </a>
       <div className="flex min-h-svh flex-col">
-        <MarketingPageViewTracker />
+        <Suspense fallback={null}>
+          <MarketingPageViewTracker />
+        </Suspense>
         <SiteHeader />
         <main id="main-content" className="flex-1">
           {children}

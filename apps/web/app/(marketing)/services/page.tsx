@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { getServicesIndexEntries } from "@/actions/services/get-services-index-entries";
@@ -13,6 +12,7 @@ import {
   servicesFaqItems,
 } from "@/constants/services/content";
 import type { ServicesIndexEntry } from "@/interfaces/services/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -21,14 +21,7 @@ import { FaqAccordion } from "@ui/components/marketing/faq-accordion";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { ServiceCard } from "@ui/components/marketing/service-card";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/services",
-  },
-  description:
-    "Outcome-focused strategy, design, and rollout services for businesses that need clearer positioning and stronger page confidence.",
-  title: "Services | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.services;
 
 async function ServicesGridContent() {
   const services = await getServicesIndexEntries();

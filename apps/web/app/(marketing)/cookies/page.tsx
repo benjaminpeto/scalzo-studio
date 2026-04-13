@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import {
@@ -7,17 +6,11 @@ import {
   LegalSection,
 } from "@/components/legal/legal-page";
 import { cookiesPageContent } from "@/constants/legal/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/cookies",
-  },
-  description:
-    "Cookie notice for Scalzo Studio covering essential session cookies, conditional future analytics or anti-spam storage, and the current consent-first EU launch posture.",
-  title: "Cookies | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.cookies;
 
 export default function CookiesPage() {
   const { categories, intro, sections } = cookiesPageContent;

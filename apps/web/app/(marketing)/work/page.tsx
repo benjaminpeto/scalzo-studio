@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { getWorkIndexEntries } from "@/actions/work/get-work-index-entries";
@@ -10,6 +9,7 @@ import {
   TextReveal,
 } from "@/components/home/motion";
 import type { WorkIndexEntry } from "@/interfaces/work/content";
+import { marketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -17,14 +17,7 @@ import { Stack } from "@ui/components/layout/stack";
 import { CaseStudyCard } from "@ui/components/marketing/case-study-card";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/work",
-  },
-  description:
-    "Published case studies showing how clearer positioning, stronger design direction, and calmer digital systems improve commercial outcomes.",
-  title: "Work | Scalzo Studio",
-};
+export const metadata = marketingRouteMetadata.work;
 
 async function WorkGridContent() {
   const entries = await getWorkIndexEntries();
