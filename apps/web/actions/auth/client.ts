@@ -39,11 +39,18 @@ export async function ensureBrowserUserIsAdmin() {
 }
 
 export async function signInAdminWithPassword(input: {
+  captchaToken?: string;
   email: string;
   password: string;
 }) {
   const supabase = createBrowserSupabaseClient();
-  const { error } = await supabase.auth.signInWithPassword(input);
+  const { error } = await supabase.auth.signInWithPassword({
+    email: input.email,
+    options: {
+      captchaToken: input.captchaToken,
+    },
+    password: input.password,
+  });
 
   if (error) {
     throw error;
@@ -53,6 +60,7 @@ export async function signInAdminWithPassword(input: {
 }
 
 export async function requestAdminMagicLink(input: {
+  captchaToken?: string;
   email: string;
   next: string;
   origin: string;
@@ -61,6 +69,7 @@ export async function requestAdminMagicLink(input: {
   const { error } = await supabase.auth.signInWithOtp({
     email: input.email,
     options: {
+      captchaToken: input.captchaToken,
       emailRedirectTo: buildAuthConfirmUrl(input.origin, input.next),
       shouldCreateUser: false,
     },

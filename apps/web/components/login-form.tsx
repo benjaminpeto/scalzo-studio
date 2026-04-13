@@ -1,7 +1,9 @@
 "use client";
 
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import type { LoginFormProps } from "@/interfaces/auth/login-form";
 import { useLoginForm } from "@/hooks/auth/use-login-form";
+import { publicEnv, publicFeatureFlags } from "@/lib/env/public";
 import { cn } from "@/lib/utils";
 import { Button } from "@ui/components/ui/button";
 import {
@@ -19,8 +21,13 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const {
     authError,
     authMessage,
+    captchaError,
+    captchaRenderKey,
     email,
     error,
+    handleCaptchaError,
+    handleCaptchaExpire,
+    handleCaptchaVerify,
     handleLogin,
     handleMagicLinkLogin,
     isBusy,
@@ -32,6 +39,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     setPassword,
     successMessage,
   } = useLoginForm();
+  const showsCaptcha = publicFeatureFlags.hcaptchaEnabled;
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -77,6 +85,31 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+              {showsCaptcha ? (
+                <div className="rounded-2xl border border-border/70 bg-surface-container-low px-4 py-4">
+                  <Label className="text-sm font-semibold text-foreground">
+                    Anti-spam check
+                  </Label>
+                  <div className="mt-2 overflow-x-auto flex justify-center">
+                    <HCaptcha
+                      key={captchaRenderKey}
+                      sitekey={publicEnv.hcaptchaSiteKey ?? ""}
+                      onError={() =>
+                        handleCaptchaError(
+                          "The anti-spam check failed to load. Try again.",
+                        )
+                      }
+                      onExpire={handleCaptchaExpire}
+                      onVerify={handleCaptchaVerify}
+                    />
+                  </div>
+                  {captchaError ? (
+                    <p className="mt-3 text-sm text-red-500" role="alert">
+                      {captchaError}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
               {error ? (
                 <p className="text-sm text-red-500" role="alert">
                   {error}
