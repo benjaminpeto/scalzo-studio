@@ -14,15 +14,17 @@ import {
   buildTestimonialEditorFieldErrors,
   createActionErrorState,
   createActionSuccessState,
-  deleteManagedTestimonialAvatarObjects,
-  extractManagedTestimonialAvatarObjectPathFromUrl,
   isFileEntry,
   normalizeStringEntry,
   readTestimonialEditorFormData,
   revalidateTestimonialRoutes,
+} from "./helpers";
+import {
+  deleteManagedTestimonialAvatarObjects,
+  extractManagedTestimonialAvatarObjectPathFromUrl,
   syncTestimonialAvatarAltText,
   uploadTestimonialAvatar,
-} from "./helpers";
+} from "./storage";
 import {
   TESTIMONIAL_IMAGE_ALT_MAX_LENGTH,
   testimonialUpdateSchema,

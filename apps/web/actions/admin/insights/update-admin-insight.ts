@@ -12,16 +12,18 @@ import {
   buildNormalizedInsightPayload,
   createActionErrorState,
   createActionSuccessState,
-  deleteManagedBlogObjects,
   ensureUniqueInsightSlug,
-  extractManagedBlogObjectPathFromUrl,
   isFileEntry,
   normalizeStringEntry,
   readInsightEditorFormData,
   revalidateInsightRoutes,
+} from "./helpers";
+import {
+  deleteManagedBlogObjects,
+  extractManagedBlogObjectPathFromUrl,
   syncInsightImageAltText,
   uploadBlogImage,
-} from "./helpers";
+} from "./storage";
 import { insightUpdateSchema, POST_IMAGE_ALT_MAX_LENGTH } from "./schemas";
 
 export async function updateAdminInsight(

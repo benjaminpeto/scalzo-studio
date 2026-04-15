@@ -59,11 +59,14 @@ vi.mock("@/lib/supabase/server", () => ({
 vi.mock("./helpers", async () => ({
   ...(await vi.importActual("./helpers")),
   buildTestimonialsReturnPath: buildTestimonialsReturnPathMock,
+  revalidateTestimonialRoutes: revalidateTestimonialRoutesMock,
+}));
+
+vi.mock("./storage", () => ({
   deleteManagedTestimonialAvatarObjects:
     deleteManagedTestimonialAvatarObjectsMock,
   extractManagedTestimonialAvatarObjectPathFromUrl:
     extractManagedTestimonialAvatarObjectPathFromUrlMock,
-  revalidateTestimonialRoutes: revalidateTestimonialRoutesMock,
 }));
 
 import { deleteAdminTestimonial } from "./delete-admin-testimonial";

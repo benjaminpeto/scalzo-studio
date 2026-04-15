@@ -2,11 +2,9 @@
 
 import { describe, expect, it } from "vitest";
 
-import {
-  buildAdminOverviewDashboardData,
-  buildAdminOverviewWatchdogAlerts,
-  resolveAdminOverviewRange,
-} from "./helpers";
+import { resolveAdminOverviewRange } from "./date-range";
+import { buildAdminOverviewDashboardData } from "./helpers";
+import { buildAdminOverviewWatchdogAlerts } from "./watchdog-alerts";
 
 describe("admin overview analytics helpers", () => {
   it("defaults invalid range inputs to the last 30 days", () => {

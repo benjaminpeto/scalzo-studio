@@ -10,12 +10,12 @@ import type {
 import { serverFeatureFlags } from "@/lib/env/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
+import { resolveAdminOverviewRange } from "./date-range";
+import { buildAdminOverviewDashboardData } from "./helpers";
 import {
-  buildAdminOverviewDashboardData,
   buildAdminOverviewWatchdogAlerts,
   type OverviewWatchdogEventRow,
-  resolveAdminOverviewRange,
-} from "./helpers";
+} from "./watchdog-alerts";
 
 export async function getAdminOverviewDashboardData(
   searchParams?: AdminOverviewSearchParams,

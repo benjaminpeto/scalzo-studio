@@ -69,11 +69,14 @@ vi.mock("./helpers", async () => ({
   buildTestimonialEditorFieldErrors: buildTestimonialEditorFieldErrorsMock,
   createActionErrorState: createActionErrorStateMock,
   createActionSuccessState: createActionSuccessStateMock,
-  deleteManagedTestimonialAvatarObjects:
-    deleteManagedTestimonialAvatarObjectsMock,
   isFileEntry: isFileEntryMock,
   normalizeStringEntry: normalizeStringEntryMock,
   readTestimonialEditorFormData: readTestimonialEditorFormDataMock,
+}));
+
+vi.mock("./storage", () => ({
+  deleteManagedTestimonialAvatarObjects:
+    deleteManagedTestimonialAvatarObjectsMock,
   uploadTestimonialAvatar: uploadTestimonialAvatarMock,
 }));
 

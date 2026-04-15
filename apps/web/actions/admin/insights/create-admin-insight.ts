@@ -13,14 +13,13 @@ import {
   buildNormalizedInsightPayload,
   createActionErrorState,
   createActionSuccessState,
-  deleteManagedBlogObjects,
   ensureUniqueInsightSlug,
   isFileEntry,
   normalizeStringEntry,
   readInsightEditorFormData,
   revalidateInsightRoutes,
-  uploadBlogImage,
 } from "./helpers";
+import { deleteManagedBlogObjects, uploadBlogImage } from "./storage";
 import { insightEditorSchema, POST_IMAGE_ALT_MAX_LENGTH } from "./schemas";
 
 export async function createAdminInsight(

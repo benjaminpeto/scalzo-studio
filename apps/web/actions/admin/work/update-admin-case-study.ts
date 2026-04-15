@@ -11,22 +11,24 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getAdminCaseStudyBySlug } from "./get-admin-case-study-by-slug";
 import {
   buildCaseStudyEditorFieldErrors,
-  buildExistingGalleryImageAltEntries,
   buildNormalizedCaseStudyPayload,
   buildPublishedAtValue,
   createActionErrorState,
   createActionSuccessState,
-  deleteManagedCaseStudyObjects,
   ensureUniqueCaseStudySlug,
-  extractManagedCaseStudyObjectPathFromUrl,
   isFileEntry,
   normalizeMetricsRows,
   normalizeStringEntry,
   readCaseStudyEditorFormData,
   revalidateWorkRoutes,
+} from "./helpers";
+import {
+  buildExistingGalleryImageAltEntries,
+  deleteManagedCaseStudyObjects,
+  extractManagedCaseStudyObjectPathFromUrl,
   syncCaseStudyImageAltText,
   uploadCaseStudyImage,
-} from "./helpers";
+} from "./storage";
 import {
   CASE_STUDY_IMAGE_ALT_MAX_LENGTH,
   caseStudyUpdateSchema,

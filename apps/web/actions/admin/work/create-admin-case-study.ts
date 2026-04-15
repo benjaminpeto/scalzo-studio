@@ -14,15 +14,14 @@ import {
   buildPublishedAtValue,
   createActionErrorState,
   createActionSuccessState,
-  deleteManagedCaseStudyObjects,
   ensureUniqueCaseStudySlug,
   isFileEntry,
   normalizeMetricsRows,
   normalizeStringEntry,
   readCaseStudyEditorFormData,
   revalidateWorkRoutes,
-  uploadCaseStudyImage,
 } from "./helpers";
+import { deleteManagedCaseStudyObjects, uploadCaseStudyImage } from "./storage";
 import {
   CASE_STUDY_IMAGE_ALT_MAX_LENGTH,
   caseStudyCreateSchema,

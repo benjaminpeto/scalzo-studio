@@ -13,13 +13,15 @@ import {
   buildTestimonialEditorFieldErrors,
   createActionErrorState,
   createActionSuccessState,
-  deleteManagedTestimonialAvatarObjects,
   isFileEntry,
   normalizeStringEntry,
   readTestimonialEditorFormData,
   revalidateTestimonialRoutes,
-  uploadTestimonialAvatar,
 } from "./helpers";
+import {
+  deleteManagedTestimonialAvatarObjects,
+  uploadTestimonialAvatar,
+} from "./storage";
 import {
   TESTIMONIAL_IMAGE_ALT_MAX_LENGTH,
   testimonialEditorSchema,

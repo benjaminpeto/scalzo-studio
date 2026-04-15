@@ -7,8 +7,8 @@ import {
   isFileEntry,
   normalizeStringEntry,
   readContentImageUploadFormData,
-  uploadBlogImage,
 } from "./helpers";
+import { uploadBlogImage } from "./storage";
 import { contentImageUploadSchema } from "./schemas";
 
 export async function uploadAdminInsightContentImage(

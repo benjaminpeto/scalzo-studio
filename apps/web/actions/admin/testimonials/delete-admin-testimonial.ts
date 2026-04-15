@@ -7,10 +7,12 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import {
   buildTestimonialsReturnPath,
-  deleteManagedTestimonialAvatarObjects,
-  extractManagedTestimonialAvatarObjectPathFromUrl,
   revalidateTestimonialRoutes,
 } from "./helpers";
+import {
+  deleteManagedTestimonialAvatarObjects,
+  extractManagedTestimonialAvatarObjectPathFromUrl,
+} from "./storage";
 import { deleteActionSchema } from "./schemas";
 
 export async function deleteAdminTestimonial(formData: FormData) {

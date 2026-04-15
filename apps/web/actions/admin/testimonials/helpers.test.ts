@@ -16,11 +16,11 @@ vi.mock("@/lib/supabase/server", () => ({
 import {
   buildNormalizedTestimonialPayload,
   buildTestimonialsReturnPath,
-  extractManagedTestimonialAvatarObjectPathFromUrl,
   filterAdminTestimonials,
   getTestimonialSearchText,
   summarizeAdminTestimonials,
 } from "./helpers";
+import { extractManagedTestimonialAvatarObjectPathFromUrl } from "./storage";
 
 describe("testimonials helpers", () => {
   it("builds the filtered return path", () => {
