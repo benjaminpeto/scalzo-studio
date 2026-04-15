@@ -1,7 +1,7 @@
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
 
-import type { InsightEditorMediaHelperProps } from "@/interfaces/admin/component-props";
+import type { InsightEditorMediaHelperProps } from "@/interfaces/admin/insight-component-props";
 import { cn } from "@/lib/utils";
 
 import { AdminEditorField } from "../shared/admin-editor-field";

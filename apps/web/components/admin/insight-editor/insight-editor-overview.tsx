@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { InsightEditorOverviewProps } from "@/interfaces/admin/component-props";
+import type { InsightEditorOverviewProps } from "@/interfaces/admin/insight-component-props";
 import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 

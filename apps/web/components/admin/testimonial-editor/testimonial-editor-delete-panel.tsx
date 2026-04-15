@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import type { TestimonialEditorDeletePanelProps } from "@/interfaces/admin/component-props";
+import type { TestimonialEditorDeletePanelProps } from "@/interfaces/admin/testimonial-component-props";
 import { Button } from "@ui/components/ui/button";
 
 export function TestimonialEditorDeletePanel({

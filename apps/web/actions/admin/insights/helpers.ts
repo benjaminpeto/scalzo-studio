@@ -2,6 +2,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import {
+  buildAdminReturnPath,
+  buildZodFieldErrors,
+  createEditorActionStateBuilders,
   normalizeKebabSlug,
   normalizeOptionalText,
 } from "@/actions/admin/shared/helpers";
@@ -30,6 +33,11 @@ import {
   type InsightUpdateInput,
 } from "./schemas";
 
+const insightActionStateBuilders = createEditorActionStateBuilders<
+  AdminInsightEditorFieldErrors,
+  AdminInsightEditorState
+>();
+
 export function collectDistinctTags(items: Array<{ tags: string[] }>) {
   return collectDistinctInsightTags(items);
 }
@@ -39,23 +47,18 @@ export function buildInsightsReturnPath(input?: {
   status?: string;
   tag?: string;
 }) {
-  const searchParams = new URLSearchParams();
-
-  if (input?.publishedFilter && input.publishedFilter !== "all") {
-    searchParams.set("published", input.publishedFilter);
-  }
-
-  if (input?.tag) {
-    searchParams.set("tag", input.tag);
-  }
-
-  if (input?.status) {
-    searchParams.set("status", input.status);
-  }
-
-  const queryString = searchParams.toString();
-
-  return queryString ? `/admin/insights?${queryString}` : "/admin/insights";
+  return buildAdminReturnPath({
+    basePath: "/admin/insights",
+    params: [
+      {
+        key: "published",
+        value: input?.publishedFilter,
+        valueToSkip: "all",
+      },
+      { key: "tag", value: input?.tag },
+      { key: "status", value: input?.status },
+    ],
+  });
 }
 
 export function revalidateInsightRoutes(slug: string) {
@@ -67,29 +70,10 @@ export function revalidateInsightRoutes(slug: string) {
   revalidatePath(`/admin/insights/${slug}`);
 }
 
-export function createActionErrorState(
-  message: string,
-  fieldErrors: AdminInsightEditorFieldErrors = {},
-): AdminInsightEditorState {
-  return {
-    fieldErrors,
-    message,
-    redirectTo: null,
-    status: "error",
-  };
-}
-
-export function createActionSuccessState(input: {
-  message: string;
-  redirectTo: string;
-}): AdminInsightEditorState {
-  return {
-    fieldErrors: {},
-    message: input.message,
-    redirectTo: input.redirectTo,
-    status: "success",
-  };
-}
+export const createActionErrorState =
+  insightActionStateBuilders.createActionErrorState;
+export const createActionSuccessState =
+  insightActionStateBuilders.createActionSuccessState;
 
 export function createMediaErrorState(message: string): AdminInsightMediaState {
   return {
@@ -151,28 +135,13 @@ export function normalizeTagLines(value?: string) {
 export function buildInsightEditorFieldErrors(
   error: z.ZodError<InsightEditorInput | InsightUpdateInput>,
 ): AdminInsightEditorFieldErrors {
-  const fieldErrors: AdminInsightEditorFieldErrors = {};
-
-  for (const issue of error.issues) {
-    const field = issue.path[0];
-
-    if (
-      typeof field === "string" &&
-      field !== "postId" &&
-      field !== "currentSlug" &&
-      field !== "removeCoverImage" &&
-      !fieldErrors[field as keyof AdminInsightEditorFieldErrors]
-    ) {
-      if (field === "tagLines") {
-        fieldErrors.tags = issue.message;
-      } else {
-        fieldErrors[field as keyof AdminInsightEditorFieldErrors] =
-          issue.message;
-      }
-    }
-  }
-
-  return fieldErrors;
+  return buildZodFieldErrors({
+    error,
+    fieldAliases: {
+      tagLines: "tags",
+    },
+    ignoredFields: ["postId", "currentSlug", "removeCoverImage"],
+  });
 }
 
 export function readInsightEditorFormData(formData: FormData) {

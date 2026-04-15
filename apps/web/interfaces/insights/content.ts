@@ -1,5 +1,5 @@
 import type { InsightHeading } from "@/lib/insights/markdown";
-import type { CmsImageAsset } from "@/lib/media-assets/shared";
+import type { CmsImageAsset } from "@/interfaces/media-assets";
 
 export interface InsightIndexEntry {
   date: string;

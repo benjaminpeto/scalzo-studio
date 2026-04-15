@@ -11,7 +11,12 @@ describe("CaseStudyCard", () => {
         metadata="Brand and web direction"
         description="Offer hierarchy and page pacing rebuilt around trust."
         outcome="+31% qualified enquiries"
-        image={{ src: "/case-study.jpg", alt: "Case study artwork" }}
+        image={{
+          alt: "Case study artwork",
+          height: 1400,
+          src: "/case-study.jpg",
+          width: 1400,
+        }}
         cta={{ href: "/projects/coastal", label: "Read case study" }}
       />,
     );
@@ -33,7 +38,12 @@ describe("CaseStudyCard", () => {
     render(
       <CaseStudyCard
         title="A startup product simplified"
-        image={{ src: "/product.jpg", alt: "Product interface" }}
+        image={{
+          alt: "Product interface",
+          height: 1400,
+          src: "/product.jpg",
+          width: 1400,
+        }}
         variant="compact"
         cta={{
           href: "/projects/product",

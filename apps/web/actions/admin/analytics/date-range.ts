@@ -1,18 +1,8 @@
 import type {
-  AdminOverviewDateRange,
   AdminOverviewRangePreset,
+  ResolvedAdminOverviewRange,
   AdminOverviewSearchParams,
 } from "@/interfaces/admin/overview-dashboard";
-
-export interface TimeWindow {
-  endExclusive: Date;
-  startInclusive: Date;
-}
-
-export interface ResolvedAdminOverviewRange extends AdminOverviewDateRange {
-  currentWindow: TimeWindow;
-  previousWindow: TimeWindow;
-}
 
 const rangeDayCountMap: Record<
   Exclude<AdminOverviewRangePreset, "custom">,

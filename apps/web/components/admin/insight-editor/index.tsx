@@ -5,7 +5,7 @@ import { useActionState, useId } from "react";
 import { adminInsightEditorStatusMessageByCode } from "@/constants/admin/editor";
 import { useAdminInsightFormState } from "@/hooks/admin/use-admin-insight-form-state";
 import { useAdminRedirect } from "@/hooks/admin/use-admin-redirect";
-import type { AdminInsightEditorProps } from "@/interfaces/admin/component-props";
+import type { AdminInsightEditorProps } from "@/interfaces/admin/insight-component-props";
 import type { AdminInsightEditorFieldErrors } from "@/interfaces/admin/insight-editor";
 import {
   initialAdminInsightEditorState,

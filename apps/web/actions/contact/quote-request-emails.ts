@@ -12,6 +12,7 @@ import {
 } from "@/constants/contact/content";
 import { getBookingAction } from "@/lib/booking/config";
 import { sendResendEmail } from "@/lib/resend/client";
+import type { QuoteRequestSavedLead } from "@/interfaces/contact/quote-request";
 
 import type { ContactLeadInput } from "./schemas";
 
@@ -30,11 +31,6 @@ const budgetLabelByValue: Map<string, string> = new Map(
 const timelineLabelByValue: Map<string, string> = new Map(
   contactTimelineOptions.map((option) => [option.value, option.label]),
 );
-
-interface SavedLeadEmailMetadata {
-  createdAt: string;
-  id: string;
-}
 
 export interface QuoteRequestEmailPayload {
   bookingFallbackHref: string;
@@ -104,7 +100,7 @@ function resolveServiceLabels(values: string[]) {
 
 export function buildQuoteRequestEmailPayload(
   input: ContactLeadInput,
-  lead: SavedLeadEmailMetadata,
+  lead: QuoteRequestSavedLead,
 ): QuoteRequestEmailPayload {
   const bookingAction = getBookingAction();
 

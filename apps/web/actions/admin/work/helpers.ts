@@ -2,6 +2,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import {
+  buildAdminReturnPath,
+  buildZodFieldErrors,
+  createEditorActionStateBuilders,
   normalizeKebabSlug,
   normalizeLineSeparatedEntries,
   normalizeOptionalText,
@@ -32,52 +35,33 @@ import {
   reservedCaseStudySlugs,
 } from "./schemas";
 
-export function createActionErrorState(
-  message: string,
-  fieldErrors: AdminCaseStudyEditorFieldErrors = {},
-): AdminCaseStudyEditorState {
-  return {
-    fieldErrors,
-    message,
-    redirectTo: null,
-    status: "error",
-  };
-}
+const caseStudyActionStateBuilders = createEditorActionStateBuilders<
+  AdminCaseStudyEditorFieldErrors,
+  AdminCaseStudyEditorState
+>();
 
-export function createActionSuccessState(input: {
-  message: string;
-  redirectTo: string;
-}): AdminCaseStudyEditorState {
-  return {
-    fieldErrors: {},
-    message: input.message,
-    redirectTo: input.redirectTo,
-    status: "success",
-  };
-}
+export const createActionErrorState =
+  caseStudyActionStateBuilders.createActionErrorState;
+export const createActionSuccessState =
+  caseStudyActionStateBuilders.createActionSuccessState;
 
 export function buildWorkReturnPath(input?: {
   industry?: string;
   publishedFilter?: "all" | "published" | "draft";
   status?: string;
 }) {
-  const searchParams = new URLSearchParams();
-
-  if (input?.publishedFilter && input.publishedFilter !== "all") {
-    searchParams.set("published", input.publishedFilter);
-  }
-
-  if (input?.industry) {
-    searchParams.set("industry", input.industry);
-  }
-
-  if (input?.status) {
-    searchParams.set("status", input.status);
-  }
-
-  const queryString = searchParams.toString();
-
-  return queryString ? `/admin/work?${queryString}` : "/admin/work";
+  return buildAdminReturnPath({
+    basePath: "/admin/work",
+    params: [
+      {
+        key: "published",
+        value: input?.publishedFilter,
+        valueToSkip: "all",
+      },
+      { key: "industry", value: input?.industry },
+      { key: "status", value: input?.status },
+    ],
+  });
 }
 
 export function revalidateWorkRoutes(slug: string) {
@@ -177,28 +161,13 @@ export function normalizeMetricsRows(input: {
 export function buildCaseStudyEditorFieldErrors(
   error: z.ZodError<CaseStudyCreateInput | CaseStudyUpdateInput>,
 ): AdminCaseStudyEditorFieldErrors {
-  const fieldErrors: AdminCaseStudyEditorFieldErrors = {};
-
-  for (const issue of error.issues) {
-    const field = issue.path[0];
-
-    if (
-      typeof field === "string" &&
-      field !== "caseStudyId" &&
-      field !== "currentSlug" &&
-      field !== "removeCoverImage" &&
-      !fieldErrors[field as keyof AdminCaseStudyEditorFieldErrors]
-    ) {
-      if (field === "serviceLines") {
-        fieldErrors.services = issue.message;
-      } else {
-        fieldErrors[field as keyof AdminCaseStudyEditorFieldErrors] =
-          issue.message;
-      }
-    }
-  }
-
-  return fieldErrors;
+  return buildZodFieldErrors({
+    error,
+    fieldAliases: {
+      serviceLines: "services",
+    },
+    ignoredFields: ["caseStudyId", "currentSlug", "removeCoverImage"],
+  });
 }
 
 export function readCaseStudyEditorFormData(formData: FormData) {

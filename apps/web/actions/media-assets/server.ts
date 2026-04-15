@@ -1,13 +1,13 @@
 import "server-only";
 
 import type { Database } from "@/lib/supabase/database.types";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { StorageBucketId } from "@/lib/supabase/storage";
-
 import type {
   CmsImageAsset,
   CmsManagedImageKind,
-} from "@/lib/media-assets/shared";
+} from "@/interfaces/media-assets";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import type { StorageBucketId } from "@/lib/supabase/storage";
+
 import {
   createCmsImageAsset,
   defaultCmsImageDimensions,

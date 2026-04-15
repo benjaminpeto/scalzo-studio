@@ -6,16 +6,14 @@ import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type {
   AdminOverviewDashboardData,
   AdminOverviewSearchParams,
+  OverviewWatchdogEventRow,
 } from "@/interfaces/admin/overview-dashboard";
 import { serverFeatureFlags } from "@/lib/env/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import { resolveAdminOverviewRange } from "./date-range";
 import { buildAdminOverviewDashboardData } from "./helpers";
-import {
-  buildAdminOverviewWatchdogAlerts,
-  type OverviewWatchdogEventRow,
-} from "./watchdog-alerts";
+import { buildAdminOverviewWatchdogAlerts } from "./watchdog-alerts";
 
 export async function getAdminOverviewDashboardData(
   searchParams?: AdminOverviewSearchParams,

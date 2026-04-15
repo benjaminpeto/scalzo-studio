@@ -1,3 +1,5 @@
+import type { Json } from "@/lib/supabase/database.types";
+
 export const adminOverviewRangePresets = [
   "7d",
   "30d",
@@ -23,6 +25,16 @@ export interface AdminOverviewDateRange {
   to: string;
 }
 
+export interface TimeWindow {
+  endExclusive: Date;
+  startInclusive: Date;
+}
+
+export interface ResolvedAdminOverviewRange extends AdminOverviewDateRange {
+  currentWindow: TimeWindow;
+  previousWindow: TimeWindow;
+}
+
 export interface AdminOverviewKpiDelta {
   percentageDelta: number | null;
   previousValue: number;
@@ -44,6 +56,32 @@ export interface AdminOverviewTopCtaRow {
   ctaId: string;
   clicks: number;
   placement: string;
+}
+
+export interface OverviewEventRow {
+  created_at: string;
+  event_name: string;
+  page_path: string | null;
+  properties: Json | null;
+  session_id: string | null;
+}
+
+export interface OverviewLeadRow {
+  created_at: string;
+  status: string | null;
+}
+
+export interface OverviewWatchdogEventRow {
+  created_at: string;
+  reason: string;
+  source: "newsletter_signup" | "quote_request";
+  status: "error" | "success";
+}
+
+export interface AdminOverviewWatchdogFeatureFlags {
+  hcaptchaEnabled: boolean;
+  newsletterSignupEnabled: boolean;
+  serviceRoleEnabled: boolean;
 }
 
 export type AdminOverviewWatchdogAlertStatus =

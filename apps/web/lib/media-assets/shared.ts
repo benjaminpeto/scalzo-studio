@@ -1,17 +1,4 @@
-export type CmsManagedImageKind =
-  | "case-study-cover"
-  | "case-study-gallery"
-  | "insight-content"
-  | "insight-cover"
-  | "testimonial-avatar";
-
-export interface CmsImageAsset {
-  alt: string;
-  blurDataUrl?: string;
-  height: number;
-  src: string;
-  width: number;
-}
+import type { CmsImageAsset } from "@/interfaces/media-assets";
 
 export const defaultCmsImageDimensions = {
   height: 1200,

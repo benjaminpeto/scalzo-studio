@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { TestimonialEditorSidebarProps } from "@/interfaces/admin/component-props";
+import type { TestimonialEditorSidebarProps } from "@/interfaces/admin/testimonial-component-props";
 import { Button } from "@ui/components/ui/button";
 
 import { AdminSubmitButton } from "../shared/admin-submit-button";

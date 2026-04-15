@@ -1,4 +1,5 @@
-import type { CmsImageAsset } from "@/lib/media-assets/shared";
+import type { CmsImageAsset } from "@/interfaces/media-assets";
+import type { AdminEditorState } from "@/interfaces/admin/shared";
 
 export interface AdminInsightEditorFieldErrors {
   contentMd?: string;
@@ -12,12 +13,8 @@ export interface AdminInsightEditorFieldErrors {
   title?: string;
 }
 
-export interface AdminInsightEditorState {
-  fieldErrors: AdminInsightEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
+export type AdminInsightEditorState =
+  AdminEditorState<AdminInsightEditorFieldErrors>;
 
 export interface AdminInsightMediaState {
   message: string | null;

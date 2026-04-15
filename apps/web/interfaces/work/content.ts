@@ -1,4 +1,4 @@
-import type { CmsImageAsset } from "@/lib/media-assets/shared";
+import type { CmsImageAsset } from "@/interfaces/media-assets";
 
 export interface WorkIndexEntry {
   description: string;

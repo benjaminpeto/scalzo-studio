@@ -1,7 +1,94 @@
+import type { ZodError } from "zod";
+
 import { splitLineSeparatedEntries } from "@/lib/text/lines";
+import type { AdminEditorState } from "@/interfaces/admin/shared";
+
+export function createEditorActionStateBuilders<
+  TFieldErrors extends object,
+  TState extends AdminEditorState<TFieldErrors>,
+>() {
+  return {
+    createActionErrorState(
+      message: string,
+      fieldErrors: TFieldErrors = {} as TFieldErrors,
+    ): TState {
+      return {
+        fieldErrors,
+        message,
+        redirectTo: null,
+        status: "error",
+      } as TState;
+    },
+
+    createActionSuccessState(input: {
+      message: string;
+      redirectTo: string;
+    }): TState {
+      return {
+        fieldErrors: {} as TFieldErrors,
+        message: input.message,
+        redirectTo: input.redirectTo,
+        status: "success",
+      } as TState;
+    },
+  };
+}
+
+export function buildAdminReturnPath(input: {
+  basePath: string;
+  params: Array<{
+    key: string;
+    value?: string | null;
+    valueToSkip?: string;
+  }>;
+}) {
+  const searchParams = new URLSearchParams();
+
+  for (const param of input.params) {
+    if (!param.value || param.value === param.valueToSkip) {
+      continue;
+    }
+
+    searchParams.set(param.key, param.value);
+  }
+
+  const queryString = searchParams.toString();
+
+  return queryString ? `${input.basePath}?${queryString}` : input.basePath;
+}
 
 export function normalizeStringEntry(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value : "";
+}
+
+export function buildZodFieldErrors<
+  TFieldErrors extends object,
+  TInput,
+>(input: {
+  error: ZodError<TInput>;
+  fieldAliases?: Partial<Record<string, keyof TFieldErrors>>;
+  ignoredFields?: string[];
+}): TFieldErrors {
+  const fieldErrors = {} as TFieldErrors;
+  const ignoredFields = new Set(input.ignoredFields ?? []);
+
+  for (const issue of input.error.issues) {
+    const rawField = issue.path[0];
+
+    if (typeof rawField !== "string" || ignoredFields.has(rawField)) {
+      continue;
+    }
+
+    const targetField = (input.fieldAliases?.[rawField] ??
+      rawField) as keyof TFieldErrors;
+
+    if (!fieldErrors[targetField]) {
+      fieldErrors[targetField] =
+        issue.message as TFieldErrors[keyof TFieldErrors];
+    }
+  }
+
+  return fieldErrors;
 }
 
 export function normalizeOptionalText(value?: string) {

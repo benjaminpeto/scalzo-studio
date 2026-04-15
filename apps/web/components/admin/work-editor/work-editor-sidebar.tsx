@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { WorkEditorSidebarProps } from "@/interfaces/admin/component-props";
+import type { WorkEditorSidebarProps } from "@/interfaces/admin/work-component-props";
 import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { toggleAdminCaseStudyPublished } from "@/actions/admin/work/toggle-admin-case-study-published";
-import type { AdminWorkListProps } from "@/interfaces/admin/component-props";
+import type { AdminWorkListProps } from "@/interfaces/admin/work-component-props";
 import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 

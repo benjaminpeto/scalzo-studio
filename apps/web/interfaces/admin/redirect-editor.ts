@@ -1,15 +1,13 @@
+import type { AdminEditorState } from "@/interfaces/admin/shared";
+
 export interface AdminRedirectEditorFieldErrors {
   fromPath?: string;
   statusCode?: string;
   toPath?: string;
 }
 
-export interface AdminRedirectEditorState {
-  fieldErrors: AdminRedirectEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
+export type AdminRedirectEditorState =
+  AdminEditorState<AdminRedirectEditorFieldErrors>;
 
 export interface AdminRedirectEditorRecord {
   fromPath: string;

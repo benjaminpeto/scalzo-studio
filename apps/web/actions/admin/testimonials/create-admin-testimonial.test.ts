@@ -96,6 +96,7 @@ describe("createAdminTestimonial", () => {
     insertMock.mockResolvedValue({ error: null });
     readTestimonialEditorFormDataMock.mockReturnValue({
       avatar: new File(["avatar"], "avatar.webp", { type: "image/webp" }),
+      avatarAlt: "Portrait of Marina Ortega",
       company: "Northshore",
       featured: true,
       name: "Marina Ortega",
@@ -140,6 +141,7 @@ describe("createAdminTestimonial", () => {
       "/admin/testimonials/new",
     );
     expect(uploadTestimonialAvatarMock).toHaveBeenCalledWith({
+      altText: "Portrait of Marina Ortega",
       file: expect.any(File),
       testimonialId: "550e8400-e29b-41d4-a716-446655440000",
     });

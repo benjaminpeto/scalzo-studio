@@ -1,3 +1,5 @@
+import type { QuoteRequestLogContext } from "@/interfaces/contact/quote-request";
+
 import { contactFieldStepMap } from "@/constants/contact/content";
 import type { SubmitQuoteRequestState } from "@/interfaces/contact/form";
 
@@ -62,7 +64,7 @@ export function buildQuoteRequestLogContext(input: {
   utmSource?: string | null;
   utmTerm?: string | null;
   website?: string | null;
-}) {
+}): QuoteRequestLogContext {
   return {
     budgetBand: normalizeOptionalString(input.budgetBand),
     hasReferrer: Boolean(normalizeOptionalString(input.referrer)),

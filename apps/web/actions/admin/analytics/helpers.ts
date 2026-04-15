@@ -5,24 +5,13 @@ import {
 import type {
   AdminOverviewDashboardData,
   AdminOverviewKpiDelta,
+  OverviewEventRow,
+  OverviewLeadRow,
+  ResolvedAdminOverviewRange,
+  TimeWindow,
   AdminOverviewTopCtaRow,
 } from "@/interfaces/admin/overview-dashboard";
 import type { Json } from "@/lib/supabase/database.types";
-
-import type { ResolvedAdminOverviewRange, TimeWindow } from "./date-range";
-
-export interface OverviewEventRow {
-  created_at: string;
-  event_name: string;
-  page_path: string | null;
-  properties: Json | null;
-  session_id: string | null;
-}
-
-export interface OverviewLeadRow {
-  created_at: string;
-  status: string | null;
-}
 
 export function buildKpiDelta(
   value: number,

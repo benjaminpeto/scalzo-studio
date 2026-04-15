@@ -5,8 +5,11 @@ import sharp from "sharp";
 import type { Database } from "@/lib/supabase/database.types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { StorageBucketId } from "@/lib/supabase/storage";
+import type {
+  CmsImageAsset,
+  CmsManagedImageKind,
+} from "@/interfaces/media-assets";
 
-import type { CmsImageAsset, CmsManagedImageKind } from "./shared";
 import { createCmsImageAsset, defaultCmsImageDimensions } from "./shared";
 
 const BLUR_PLACEHOLDER_WIDTH = 24;

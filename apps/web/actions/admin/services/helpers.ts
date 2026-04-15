@@ -2,6 +2,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import {
+  buildAdminReturnPath,
+  buildZodFieldErrors,
+  createEditorActionStateBuilders,
   normalizeKebabSlug,
   normalizeLineSeparatedEntries,
   normalizeOptionalText,
@@ -26,29 +29,15 @@ import {
   type ServiceUpdateInput,
 } from "./schemas";
 
-export function createActionErrorState(
-  message: string,
-  fieldErrors: AdminServiceEditorFieldErrors = {},
-): AdminServiceEditorState {
-  return {
-    fieldErrors,
-    message,
-    redirectTo: null,
-    status: "error",
-  };
-}
+const serviceActionStateBuilders = createEditorActionStateBuilders<
+  AdminServiceEditorFieldErrors,
+  AdminServiceEditorState
+>();
 
-export function createActionSuccessState(input: {
-  message: string;
-  redirectTo: string;
-}): AdminServiceEditorState {
-  return {
-    fieldErrors: {},
-    message: input.message,
-    redirectTo: input.redirectTo,
-    status: "success",
-  };
-}
+export const createActionErrorState =
+  serviceActionStateBuilders.createActionErrorState;
+export const createActionSuccessState =
+  serviceActionStateBuilders.createActionSuccessState;
 
 export function readServiceEditorFormData(formData: FormData) {
   return {
@@ -68,22 +57,10 @@ export function readServiceEditorFormData(formData: FormData) {
 export function buildServiceEditorFieldErrors(
   error: z.ZodError<ServiceEditorInput | ServiceUpdateInput>,
 ): AdminServiceEditorFieldErrors {
-  const fieldErrors: AdminServiceEditorFieldErrors = {};
-
-  for (const issue of error.issues) {
-    const field = issue.path[0];
-
-    if (
-      typeof field === "string" &&
-      field !== "serviceId" &&
-      field !== "currentSlug" &&
-      !fieldErrors[field as keyof AdminServiceEditorFieldErrors]
-    ) {
-      fieldErrors[field as keyof AdminServiceEditorFieldErrors] = issue.message;
-    }
-  }
-
-  return fieldErrors;
+  return buildZodFieldErrors({
+    error,
+    ignoredFields: ["serviceId", "currentSlug"],
+  });
 }
 
 export function normalizeDeliverables(value?: string) {
@@ -112,19 +89,13 @@ export function buildServicesReturnPath(input?: {
   query?: string;
   status?: string;
 }) {
-  const searchParams = new URLSearchParams();
-
-  if (input?.query) {
-    searchParams.set("q", input.query);
-  }
-
-  if (input?.status) {
-    searchParams.set("status", input.status);
-  }
-
-  const queryString = searchParams.toString();
-
-  return queryString ? `/admin/services?${queryString}` : "/admin/services";
+  return buildAdminReturnPath({
+    basePath: "/admin/services",
+    params: [
+      { key: "q", value: input?.query },
+      { key: "status", value: input?.status },
+    ],
+  });
 }
 
 export function getServiceSearchText(service: {

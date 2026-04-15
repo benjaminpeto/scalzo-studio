@@ -1,7 +1,12 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { normalizeOptionalText } from "@/actions/admin/shared/helpers";
+import {
+  buildAdminReturnPath,
+  buildZodFieldErrors,
+  createEditorActionStateBuilders,
+  normalizeOptionalText,
+} from "@/actions/admin/shared/helpers";
 export {
   isFileEntry,
   normalizeStringEntry,
@@ -21,6 +26,11 @@ import {
   TESTIMONIAL_ROLE_MAX_LENGTH,
 } from "./schemas";
 
+const testimonialActionStateBuilders = createEditorActionStateBuilders<
+  AdminTestimonialEditorFieldErrors,
+  AdminTestimonialEditorState
+>();
+
 type TestimonialFilterInput = {
   featuredFilter: "all" | "featured" | "standard";
   publishedFilter: "all" | "published" | "draft";
@@ -31,29 +41,10 @@ type TestimonialWithSearchText = AdminTestimonialListItem & {
   searchText: string;
 };
 
-export function createActionErrorState(
-  message: string,
-  fieldErrors: AdminTestimonialEditorFieldErrors = {},
-): AdminTestimonialEditorState {
-  return {
-    fieldErrors,
-    message,
-    redirectTo: null,
-    status: "error",
-  };
-}
-
-export function createActionSuccessState(input: {
-  message: string;
-  redirectTo: string;
-}): AdminTestimonialEditorState {
-  return {
-    fieldErrors: {},
-    message: input.message,
-    redirectTo: input.redirectTo,
-    status: "success",
-  };
-}
+export const createActionErrorState =
+  testimonialActionStateBuilders.createActionErrorState;
+export const createActionSuccessState =
+  testimonialActionStateBuilders.createActionSuccessState;
 
 export function readTestimonialEditorFormData(formData: FormData) {
   return {
@@ -73,23 +64,10 @@ export function readTestimonialEditorFormData(formData: FormData) {
 export function buildTestimonialEditorFieldErrors(
   error: z.ZodError<TestimonialEditorInput | TestimonialUpdateInput>,
 ): AdminTestimonialEditorFieldErrors {
-  const fieldErrors: AdminTestimonialEditorFieldErrors = {};
-
-  for (const issue of error.issues) {
-    const field = issue.path[0];
-
-    if (
-      typeof field === "string" &&
-      field !== "testimonialId" &&
-      field !== "removeAvatar" &&
-      !fieldErrors[field as keyof AdminTestimonialEditorFieldErrors]
-    ) {
-      fieldErrors[field as keyof AdminTestimonialEditorFieldErrors] =
-        issue.message;
-    }
-  }
-
-  return fieldErrors;
+  return buildZodFieldErrors({
+    error,
+    ignoredFields: ["testimonialId", "removeAvatar"],
+  });
 }
 
 export function buildTestimonialsReturnPath(input?: {
@@ -98,29 +76,23 @@ export function buildTestimonialsReturnPath(input?: {
   query?: string;
   status?: string;
 }) {
-  const searchParams = new URLSearchParams();
-
-  if (input?.query) {
-    searchParams.set("q", input.query);
-  }
-
-  if (input?.publishedFilter && input.publishedFilter !== "all") {
-    searchParams.set("published", input.publishedFilter);
-  }
-
-  if (input?.featuredFilter && input.featuredFilter !== "all") {
-    searchParams.set("featured", input.featuredFilter);
-  }
-
-  if (input?.status) {
-    searchParams.set("status", input.status);
-  }
-
-  const queryString = searchParams.toString();
-
-  return queryString
-    ? `/admin/testimonials?${queryString}`
-    : "/admin/testimonials";
+  return buildAdminReturnPath({
+    basePath: "/admin/testimonials",
+    params: [
+      { key: "q", value: input?.query },
+      {
+        key: "published",
+        value: input?.publishedFilter,
+        valueToSkip: "all",
+      },
+      {
+        key: "featured",
+        value: input?.featuredFilter,
+        valueToSkip: "all",
+      },
+      { key: "status", value: input?.status },
+    ],
+  });
 }
 
 export function getTestimonialSearchText(testimonial: {

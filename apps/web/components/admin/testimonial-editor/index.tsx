@@ -4,7 +4,7 @@ import { useActionState, useId } from "react";
 
 import { adminTestimonialEditorStatusMessageByCode } from "@/constants/admin/editor";
 import { useAdminRedirect } from "@/hooks/admin/use-admin-redirect";
-import type { AdminTestimonialEditorProps } from "@/interfaces/admin/component-props";
+import type { AdminTestimonialEditorProps } from "@/interfaces/admin/testimonial-component-props";
 import type { AdminTestimonialEditorFieldErrors } from "@/interfaces/admin/testimonial-editor";
 import { initialAdminTestimonialEditorState } from "@/lib/admin/testimonial-editor";
 import { cn } from "@/lib/utils";

@@ -36,8 +36,8 @@ export async function generateMetadata({
     noIndex: isPreview,
     publishedTime: detailPageData.publishedAt,
     socialFallbackPath: `/work/${detailPageData.slug}/opengraph-image`,
-    socialImage: detailPageData.image.src,
-    socialImageAlt: detailPageData.image.alt,
+    socialImage: detailPageData.image?.src ?? null,
+    socialImageAlt: detailPageData.image?.alt,
     title:
       detailPageData.seoTitle ??
       `${detailPageData.title} | Work | Scalzo Studio`,

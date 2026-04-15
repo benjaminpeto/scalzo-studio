@@ -32,7 +32,12 @@ describe("ServiceCard", () => {
     render(
       <ServiceCard
         title="Design systems"
-        image={{ src: "/service.jpg", alt: "Design system artwork" }}
+        image={{
+          alt: "Design system artwork",
+          height: 1400,
+          src: "/service.jpg",
+          width: 1400,
+        }}
       />,
     );
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { TestimonialEditorOverviewProps } from "@/interfaces/admin/component-props";
+import type { TestimonialEditorOverviewProps } from "@/interfaces/admin/testimonial-component-props";
 import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 

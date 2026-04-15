@@ -1,6 +1,11 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import {
+  buildAdminReturnPath,
+  buildZodFieldErrors,
+  createEditorActionStateBuilders,
+} from "@/actions/admin/shared/helpers";
 import { normalizeInternalRedirectPath } from "@/actions/redirects/helpers";
 import type {
   AdminRedirectEditorFieldErrors,
@@ -17,29 +22,15 @@ type RedirectWithSearchText = AdminRedirectListItem & {
   searchText: string;
 };
 
-export function createActionErrorState(
-  message: string,
-  fieldErrors: AdminRedirectEditorFieldErrors = {},
-): AdminRedirectEditorState {
-  return {
-    fieldErrors,
-    message,
-    redirectTo: null,
-    status: "error",
-  };
-}
+const redirectActionStateBuilders = createEditorActionStateBuilders<
+  AdminRedirectEditorFieldErrors,
+  AdminRedirectEditorState
+>();
 
-export function createActionSuccessState(input: {
-  message: string;
-  redirectTo: string;
-}): AdminRedirectEditorState {
-  return {
-    fieldErrors: {},
-    message: input.message,
-    redirectTo: input.redirectTo,
-    status: "success",
-  };
-}
+export const createActionErrorState =
+  redirectActionStateBuilders.createActionErrorState;
+export const createActionSuccessState =
+  redirectActionStateBuilders.createActionSuccessState;
 
 export function readRedirectEditorFormData(formData: FormData) {
   return {
@@ -53,22 +44,10 @@ export function readRedirectEditorFormData(formData: FormData) {
 export function buildRedirectEditorFieldErrors(
   error: z.ZodError<RedirectEditorInput | RedirectUpdateInput>,
 ): AdminRedirectEditorFieldErrors {
-  const fieldErrors: AdminRedirectEditorFieldErrors = {};
-
-  for (const issue of error.issues) {
-    const field = issue.path[0];
-
-    if (
-      typeof field === "string" &&
-      field !== "redirectId" &&
-      !fieldErrors[field as keyof AdminRedirectEditorFieldErrors]
-    ) {
-      fieldErrors[field as keyof AdminRedirectEditorFieldErrors] =
-        issue.message;
-    }
-  }
-
-  return fieldErrors;
+  return buildZodFieldErrors({
+    error,
+    ignoredFields: ["redirectId"],
+  });
 }
 
 export function buildRedirectsReturnPath(input?: {
@@ -76,23 +55,18 @@ export function buildRedirectsReturnPath(input?: {
   status?: string;
   statusCodeFilter?: "all" | "301" | "302";
 }) {
-  const searchParams = new URLSearchParams();
-
-  if (input?.query) {
-    searchParams.set("q", input.query);
-  }
-
-  if (input?.statusCodeFilter && input.statusCodeFilter !== "all") {
-    searchParams.set("statusCode", input.statusCodeFilter);
-  }
-
-  if (input?.status) {
-    searchParams.set("status", input.status);
-  }
-
-  const queryString = searchParams.toString();
-
-  return queryString ? `/admin/redirects?${queryString}` : "/admin/redirects";
+  return buildAdminReturnPath({
+    basePath: "/admin/redirects",
+    params: [
+      { key: "q", value: input?.query },
+      {
+        key: "statusCode",
+        value: input?.statusCodeFilter,
+        valueToSkip: "all",
+      },
+      { key: "status", value: input?.status },
+    ],
+  });
 }
 
 export function getRedirectSearchText(redirectRecord: {

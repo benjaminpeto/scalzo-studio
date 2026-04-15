@@ -1,3 +1,5 @@
+import type { AdminEditorState } from "@/interfaces/admin/shared";
+
 export interface AdminServiceEditorFieldErrors {
   contentMd?: string;
   deliverables?: string;
@@ -8,12 +10,8 @@ export interface AdminServiceEditorFieldErrors {
   title?: string;
 }
 
-export interface AdminServiceEditorState {
-  fieldErrors: AdminServiceEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
+export type AdminServiceEditorState =
+  AdminEditorState<AdminServiceEditorFieldErrors>;
 
 export interface AdminServiceEditorRecord {
   contentMd: string;

@@ -88,6 +88,7 @@ describe("updateAdminTestimonial", () => {
     deleteManagedTestimonialAvatarObjectsMock.mockResolvedValue(undefined);
     readTestimonialEditorFormDataMock.mockReturnValue({
       avatar: new File(["avatar"], "avatar.webp", { type: "image/webp" }),
+      avatarAlt: "Portrait of Marina Ortega",
       company: "Northshore",
       featured: true,
       name: "Marina Ortega",
@@ -109,8 +110,12 @@ describe("updateAdminTestimonial", () => {
       },
     });
     getAdminTestimonialByIdMock.mockResolvedValue({
-      avatarUrl:
-        "https://example.supabase.co/storage/v1/object/public/testimonial-avatars/550e8400-e29b-41d4-a716-446655440000/avatar/current.webp",
+      avatar: {
+        alt: "Portrait of Marina Ortega",
+        height: 800,
+        src: "https://example.supabase.co/storage/v1/object/public/testimonial-avatars/550e8400-e29b-41d4-a716-446655440000/avatar/current.webp",
+        width: 800,
+      },
       company: "Northshore",
       featured: false,
       id: "550e8400-e29b-41d4-a716-446655440000",

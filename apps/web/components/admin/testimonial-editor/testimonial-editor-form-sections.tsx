@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { Input } from "@ui/components/ui/input";
 
-import type { TestimonialEditorFormSectionsProps } from "@/interfaces/admin/component-props";
+import type { TestimonialEditorFormSectionsProps } from "@/interfaces/admin/testimonial-component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
 import { buildCmsImageProps, cmsImageSizes } from "@/lib/media-assets/shared";
 

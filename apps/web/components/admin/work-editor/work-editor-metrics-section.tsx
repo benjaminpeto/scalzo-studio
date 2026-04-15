@@ -1,7 +1,7 @@
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
 
-import type { WorkEditorMetricsSectionProps } from "@/interfaces/admin/component-props";
+import type { WorkEditorMetricsSectionProps } from "@/interfaces/admin/work-component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
 
 import { AdminEditorField } from "../shared/admin-editor-field";

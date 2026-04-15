@@ -10,7 +10,12 @@ describe("BlogPostCard", () => {
         title="Why premium service brands need proof"
         metadata="March 18, 2026"
         excerpt="The first screen should reduce doubt quickly."
-        image={{ src: "/journal.jpg", alt: "Journal artwork" }}
+        image={{
+          alt: "Journal artwork",
+          height: 1200,
+          src: "/journal.jpg",
+          width: 1200,
+        }}
         cta={{ href: "/journal/proof", label: "Read note" }}
       />,
     );
@@ -33,7 +38,7 @@ describe("BlogPostCard", () => {
         variant="featured"
         metadata="March 21, 2026"
         excerpt="A longer narrative lives comfortably in the large variant."
-        image={{ src: "/featured.jpg", alt: "" }}
+        image={{ alt: "", height: 1400, src: "/featured.jpg", width: 1400 }}
       />,
     );
 

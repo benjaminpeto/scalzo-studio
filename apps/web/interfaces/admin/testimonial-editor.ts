@@ -1,4 +1,5 @@
-import type { CmsImageAsset } from "@/lib/media-assets/shared";
+import type { CmsImageAsset } from "@/interfaces/media-assets";
+import type { AdminEditorState } from "@/interfaces/admin/shared";
 
 export interface AdminTestimonialEditorFieldErrors {
   avatar?: string;
@@ -9,12 +10,8 @@ export interface AdminTestimonialEditorFieldErrors {
   role?: string;
 }
 
-export interface AdminTestimonialEditorState {
-  fieldErrors: AdminTestimonialEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
+export type AdminTestimonialEditorState =
+  AdminEditorState<AdminTestimonialEditorFieldErrors>;
 
 export interface AdminTestimonialEditorRecord {
   avatar: CmsImageAsset | null;

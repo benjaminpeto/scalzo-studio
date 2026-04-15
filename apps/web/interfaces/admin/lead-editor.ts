@@ -1,3 +1,5 @@
+import type { AdminEditorState } from "@/interfaces/admin/shared";
+
 export interface AdminLeadEditorRecord {
   budgetBand: string | null;
   company: string | null;
@@ -20,9 +22,4 @@ export interface AdminLeadEditorFieldErrors {
   status?: string;
 }
 
-export interface AdminLeadEditorState {
-  fieldErrors: AdminLeadEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
+export type AdminLeadEditorState = AdminEditorState<AdminLeadEditorFieldErrors>;

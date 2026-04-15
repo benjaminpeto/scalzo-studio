@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { toggleAdminInsightPublished } from "@/actions/admin/insights/toggle-admin-insight-published";
-import type { AdminInsightsListProps } from "@/interfaces/admin/component-props";
+import type { AdminInsightsListProps } from "@/interfaces/admin/insight-component-props";
 import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 

@@ -1,4 +1,4 @@
-import type { InsightEditorSidebarProps } from "@/interfaces/admin/component-props";
+import type { InsightEditorSidebarProps } from "@/interfaces/admin/insight-component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
 import { Input } from "@ui/components/ui/input";
 

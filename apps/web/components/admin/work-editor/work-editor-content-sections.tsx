@@ -1,6 +1,6 @@
 import { Input } from "@ui/components/ui/input";
 
-import type { WorkEditorContentSectionsProps } from "@/interfaces/admin/component-props";
+import type { WorkEditorContentSectionsProps } from "@/interfaces/admin/work-component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
 
 import { AdminEditorField } from "../shared/admin-editor-field";

@@ -33,7 +33,12 @@ function buildServiceDetail(
 function buildWorkDetail(
   overrides?: Partial<{
     description: string;
-    image: string | null;
+    image: {
+      alt: string;
+      height: number;
+      src: string;
+      width: number;
+    } | null;
     outcomes: string;
     publishedAt: string | null;
     seoDescription: string | null;
@@ -45,7 +50,12 @@ function buildWorkDetail(
 ) {
   return {
     description: "Case study description",
-    image: "/work-cover.jpg",
+    image: {
+      alt: "Work cover image",
+      height: 1200,
+      src: "/work-cover.jpg",
+      width: 1600,
+    },
     outcomes: "Commercial outcomes",
     publishedAt: "2026-04-01T09:00:00.000Z",
     seoDescription: null,
@@ -61,7 +71,12 @@ function buildInsightDetail(
   overrides?: Partial<{
     content: string;
     excerpt: string;
-    image: string | null;
+    image: {
+      alt: string;
+      height: number;
+      src: string;
+      width: number;
+    } | null;
     publishedAt: string | null;
     seoDescription: string | null;
     seoTitle: string | null;
@@ -73,7 +88,12 @@ function buildInsightDetail(
   return {
     content: "A longer editorial article body.",
     excerpt: "A shorter editorial summary.",
-    image: "/insight-cover.jpg",
+    image: {
+      alt: "Insight cover image",
+      height: 1200,
+      src: "/insight-cover.jpg",
+      width: 1600,
+    },
     publishedAt: "2026-04-01T09:00:00.000Z",
     seoDescription: null,
     seoTitle: null,

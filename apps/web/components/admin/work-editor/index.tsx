@@ -6,7 +6,7 @@ import { adminWorkEditorStatusMessageByCode } from "@/constants/admin/editor";
 import { useAdminGalleryUploadRows } from "@/hooks/admin/use-admin-gallery-upload-rows";
 import { useAdminMetricRows } from "@/hooks/admin/use-admin-metric-rows";
 import { useAdminRedirect } from "@/hooks/admin/use-admin-redirect";
-import type { AdminWorkEditorProps } from "@/interfaces/admin/component-props";
+import type { AdminWorkEditorProps } from "@/interfaces/admin/work-component-props";
 import type { AdminCaseStudyEditorFieldErrors } from "@/interfaces/admin/work-editor";
 import { initialAdminCaseStudyEditorState } from "@/lib/admin/work-editor";
 import { cn } from "@/lib/utils";

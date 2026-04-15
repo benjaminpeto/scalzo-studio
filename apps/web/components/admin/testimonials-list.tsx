@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { toggleAdminTestimonialFeatured } from "@/actions/admin/testimonials/toggle-admin-testimonial-featured";
 import { toggleAdminTestimonialPublished } from "@/actions/admin/testimonials/toggle-admin-testimonial-published";
-import type { AdminTestimonialsListProps } from "@/interfaces/admin/component-props";
+import type { AdminTestimonialsListProps } from "@/interfaces/admin/testimonial-component-props";
 import { formatUpdatedAt } from "@/lib/admin/format";
 import { Button } from "@ui/components/ui/button";
 

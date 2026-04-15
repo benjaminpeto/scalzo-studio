@@ -1,4 +1,5 @@
-import type { CmsImageAsset } from "@/lib/media-assets/shared";
+import type { CmsImageAsset } from "@/interfaces/media-assets";
+import type { AdminEditorState } from "@/interfaces/admin/shared";
 
 export interface AdminCaseStudyMetricRow {
   label: string;
@@ -32,12 +33,8 @@ export interface AdminCaseStudyEditorFieldErrors {
   title?: string;
 }
 
-export interface AdminCaseStudyEditorState {
-  fieldErrors: AdminCaseStudyEditorFieldErrors;
-  message: string | null;
-  redirectTo: string | null;
-  status: "idle" | "success" | "error";
-}
+export type AdminCaseStudyEditorState =
+  AdminEditorState<AdminCaseStudyEditorFieldErrors>;
 
 export interface AdminCaseStudyEditorRecord {
   approach: string;

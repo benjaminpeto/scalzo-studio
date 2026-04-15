@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
+  captureServerEventMock: vi.fn(),
   createServiceRoleSupabaseClientMock: vi.fn(),
   fromMock: vi.fn(),
   insertMock: vi.fn(),
@@ -17,9 +18,15 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
+vi.mock("server-only", () => ({}));
+
 vi.mock("@/lib/env/server", () => ({
   serverEnv: mocks.serverEnv,
   serverFeatureFlags: mocks.serverFeatureFlags,
+}));
+
+vi.mock("@/lib/analytics/server", () => ({
+  captureServerEvent: mocks.captureServerEventMock,
 }));
 
 vi.mock("@/lib/supabase/service-role", () => ({
@@ -47,6 +54,7 @@ function buildRequest(payload: string, signature = signPayload(payload)) {
 
 describe("POST /api/webhooks/cal", () => {
   beforeEach(() => {
+    mocks.captureServerEventMock.mockReset();
     mocks.fromMock.mockReset();
     mocks.insertMock.mockReset();
     mocks.createServiceRoleSupabaseClientMock.mockReset();

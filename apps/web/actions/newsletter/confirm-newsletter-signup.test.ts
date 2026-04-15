@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hashNewsletterToken } from "./helpers";
 
 const mocks = vi.hoisted(() => ({
+  captureServerEventMock: vi.fn(),
   createOrUpdateResendContactWithTopicMock: vi.fn(),
   eqMock: vi.fn(),
   fromMock: vi.fn(),
@@ -30,6 +31,10 @@ vi.mock("@/lib/resend/client", () => ({
     mocks.createOrUpdateResendContactWithTopicMock,
 }));
 
+vi.mock("@/lib/analytics/server", () => ({
+  captureServerEvent: mocks.captureServerEventMock,
+}));
+
 vi.mock("@/lib/supabase/service-role", () => ({
   createServiceRoleSupabaseClient: () => ({
     from: mocks.fromMock,
@@ -44,6 +49,7 @@ describe("handleNewsletterConfirmRequest", () => {
     vi.setSystemTime(new Date("2026-03-15T12:00:00.000Z"));
 
     mocks.createOrUpdateResendContactWithTopicMock.mockReset();
+    mocks.captureServerEventMock.mockReset();
     mocks.eqMock.mockReset();
     mocks.fromMock.mockReset();
     mocks.maybeSingleMock.mockReset();

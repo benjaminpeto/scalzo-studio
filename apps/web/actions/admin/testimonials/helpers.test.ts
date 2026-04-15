@@ -2,6 +2,8 @@
 
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("server-only", () => ({}));
+
 vi.mock("@/lib/env/public", () => ({
   publicEnv: {
     siteUrl: "https://example.com",

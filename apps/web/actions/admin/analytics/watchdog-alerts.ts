@@ -1,17 +1,8 @@
-import type { AdminOverviewWatchdogAlert } from "@/interfaces/admin/overview-dashboard";
-
-export interface OverviewWatchdogEventRow {
-  created_at: string;
-  reason: string;
-  source: "newsletter_signup" | "quote_request";
-  status: "error" | "success";
-}
-
-interface AdminOverviewWatchdogFeatureFlags {
-  hcaptchaEnabled: boolean;
-  newsletterSignupEnabled: boolean;
-  serviceRoleEnabled: boolean;
-}
+import type {
+  AdminOverviewWatchdogAlert,
+  AdminOverviewWatchdogFeatureFlags,
+  OverviewWatchdogEventRow,
+} from "@/interfaces/admin/overview-dashboard";
 
 const watchdogWindowMs = 24 * 60 * 60 * 1000;
 
