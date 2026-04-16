@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { InsightMarkdown } from "@/components/insights/insight-markdown";
+import { MarkdownEditor } from "@/components/admin/shared/markdown-editor";
 import type { InsightEditorMarkdownPreviewSectionProps } from "@/interfaces/admin/insight-component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
 import { formatUpdatedAt } from "@/lib/admin/format";
@@ -29,19 +30,19 @@ export function InsightEditorMarkdownPreviewSection({
           htmlFor={contentId}
           label="Article body"
         >
-          <textarea
+          <MarkdownEditor
             id={contentId}
-            ref={contentTextareaRef}
             name="contentMd"
             value={contentMdValue}
-            onChange={(event) => onContentChange(event.target.value)}
+            onChange={onContentChange}
+            textareaRef={contentTextareaRef}
             aria-invalid={Boolean(errors.contentMd)}
             aria-describedby={buildDescribedBy({
               error: errors.contentMd,
               hint: "Write the article in Markdown. The preview uses the same rendering rules as the public article page.",
               id: contentId,
             })}
-            className="input-shell min-h-144 w-full rounded-[1.15rem] border-0 bg-transparent px-4 py-4 font-mono text-sm leading-7 text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden"
+            className="min-h-144"
             placeholder="# Start writing&#10;&#10;Use markdown headings, lists, quotes, links, and images."
             spellCheck={false}
             required

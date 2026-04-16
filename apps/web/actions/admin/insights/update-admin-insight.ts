@@ -1,5 +1,6 @@
 import type { Database } from "@/lib/supabase/database.types";
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
+import { sanitizeMarkdownUrls } from "@/lib/markdown/sanitize";
 import type {
   AdminInsightEditorFieldErrors,
   AdminInsightEditorState,
@@ -156,7 +157,7 @@ export async function updateAdminInsight(
       ? (existingPost.publishedAt ?? normalizedInput.payload.publishedAt)
       : null;
     const updatePayload: Database["public"]["Tables"]["posts"]["Update"] = {
-      content_md: normalizedInput.payload.contentMd,
+      content_md: sanitizeMarkdownUrls(normalizedInput.payload.contentMd),
       cover_image_url: nextCoverImageUrl,
       excerpt: normalizedInput.payload.excerpt,
       published: normalizedInput.payload.published,

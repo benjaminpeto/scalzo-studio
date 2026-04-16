@@ -2,6 +2,7 @@ import { Input } from "@ui/components/ui/input";
 
 import type { ServiceEditorFormSectionsProps } from "@/interfaces/admin/component-props";
 import { buildDescribedBy } from "@/lib/admin/field";
+import { MarkdownEditor } from "../shared/markdown-editor";
 
 import { AdminEditorField } from "../shared/admin-editor-field";
 import { AdminEditorTextarea } from "../shared/admin-editor-textarea";
@@ -96,7 +97,7 @@ export function ServiceEditorFormSections({
             label="Markdown body"
             optionalLabel="Optional"
           >
-            <AdminEditorTextarea
+            <MarkdownEditor
               id={contentId}
               name="contentMd"
               defaultValue={service?.contentMd ?? ""}

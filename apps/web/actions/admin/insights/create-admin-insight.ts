@@ -19,6 +19,8 @@ import {
   readInsightEditorFormData,
   revalidateInsightRoutes,
 } from "./helpers";
+import { sanitizeMarkdownUrls } from "@/lib/markdown/sanitize";
+
 import { deleteManagedBlogObjects, uploadBlogImage } from "./storage";
 import { insightEditorSchema, POST_IMAGE_ALT_MAX_LENGTH } from "./schemas";
 
@@ -106,7 +108,7 @@ export async function createAdminInsight(
     }
 
     const insertPayload: Database["public"]["Tables"]["posts"]["Insert"] = {
-      content_md: normalizedInput.payload.contentMd,
+      content_md: sanitizeMarkdownUrls(normalizedInput.payload.contentMd),
       cover_image_url: coverImageUrl,
       excerpt: normalizedInput.payload.excerpt,
       published: normalizedInput.payload.published,

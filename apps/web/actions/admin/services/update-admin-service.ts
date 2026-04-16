@@ -2,6 +2,7 @@
 
 import type { AdminServiceEditorState } from "@/interfaces/admin/service-editor";
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
+import { sanitizeMarkdownUrls } from "@/lib/markdown/sanitize";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import {
@@ -71,7 +72,9 @@ export async function updateAdminService(
 
     const supabase = await createServerSupabaseClient();
     const updatePayload: ServiceUpdatePayload = {
-      content_md: normalizedInput.payload.contentMd,
+      content_md: normalizedInput.payload.contentMd
+        ? sanitizeMarkdownUrls(normalizedInput.payload.contentMd)
+        : null,
       deliverables: normalizedInput.payload.deliverables,
       published: normalizedInput.payload.published,
       seo_description: normalizedInput.payload.seoDescription,

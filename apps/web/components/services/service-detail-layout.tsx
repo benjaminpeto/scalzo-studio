@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getServiceDetailBodyCopy } from "@/actions/services/helpers";
+import { InsightMarkdown } from "@/components/insights/insight-markdown";
 import {
   Reveal,
   RevealGroup,
@@ -24,8 +24,6 @@ interface ServiceDetailLayoutProps {
 export default function ServiceDetailLayout({
   detailPageData,
 }: ServiceDetailLayoutProps) {
-  const bodyParagraphs = getServiceDetailBodyCopy(detailPageData);
-
   return (
     <>
       <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">
@@ -83,13 +81,11 @@ export default function ServiceDetailLayout({
               <Prose size="lg" tone="strong" measure="lg">
                 {detailPageData.problem}
               </Prose>
-              <div className="space-y-4">
-                {bodyParagraphs.slice(1).map((paragraph) => (
-                  <Prose key={paragraph} measure="lg">
-                    {paragraph}
-                  </Prose>
-                ))}
-              </div>
+              {detailPageData.content ? (
+                <div className="space-y-5">
+                  <InsightMarkdown content={detailPageData.content} />
+                </div>
+              ) : null}
             </div>
           </Grid>
         </Reveal>

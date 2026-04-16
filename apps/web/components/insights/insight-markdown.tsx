@@ -32,12 +32,14 @@ function flattenMarkdownText(children: ReactNode): string {
     .join("");
 }
 
+const ALLOWED_HREF = /^(https?:|\/|#|mailto:)/i;
+
 export function createInsightMarkdownComponents(
   imageAssets: Record<string, CmsImageAsset>,
 ): Components {
   return {
     a: ({ children, href }) => {
-      if (!href) {
+      if (!href || !ALLOWED_HREF.test(href.trim())) {
         return <>{children}</>;
       }
 
