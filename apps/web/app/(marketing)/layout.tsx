@@ -25,7 +25,9 @@ export default function MarketingLayout({
         <Suspense fallback={null}>
           <MarketingPageViewTracker />
         </Suspense>
-        <SiteHeader />
+        <Suspense fallback={null}>
+          <SiteHeader />
+        </Suspense>
         <main id="main-content" className="flex-1">
           {children}
         </main>
