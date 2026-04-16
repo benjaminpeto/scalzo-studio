@@ -6,6 +6,7 @@ import { LEAD_STATUSES } from "@/actions/admin/leads/schemas";
 import { AdminEditorField } from "@/components/admin/shared/admin-editor-field";
 import { AdminEditorTextarea } from "@/components/admin/shared/admin-editor-textarea";
 import type { AdminLeadEditorFieldErrors } from "@/interfaces/admin/lead-editor";
+import { buildDescribedBy } from "@/lib/admin/field";
 
 export function LeadEditorFormSections({
   currentNotes,
@@ -36,6 +37,11 @@ export function LeadEditorFormSections({
             name="status"
             defaultValue={currentStatus}
             aria-invalid={Boolean(errors.status)}
+            aria-describedby={buildDescribedBy({
+              error: errors.status,
+              hint: "Track where this lead is in the qualification pipeline.",
+              id: statusId,
+            })}
             className="input-shell h-12 rounded-[1rem] border border-border/70 bg-white/82 px-4 text-sm text-foreground"
           >
             {LEAD_STATUSES.map((s) => (
@@ -58,6 +64,11 @@ export function LeadEditorFormSections({
             name="internalNotes"
             defaultValue={currentNotes}
             aria-invalid={Boolean(errors.internalNotes)}
+            aria-describedby={buildDescribedBy({
+              error: errors.internalNotes,
+              hint: "Internal notes are never visible to the contact.",
+              id: notesId,
+            })}
             placeholder="Add context, next steps, or follow-up notes…"
           />
         </AdminEditorField>

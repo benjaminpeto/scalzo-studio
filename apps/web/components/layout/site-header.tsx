@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { navigationLinks, primaryCta } from "@/components/home/content";
 import { captureEvent } from "@/lib/analytics/client";
@@ -17,6 +18,7 @@ import { Button } from "@ui/components/ui/button";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 bg-[rgba(250,249,245,0.92)] backdrop-blur-xl">
@@ -37,6 +39,7 @@ export function SiteHeader() {
             <Link
               key={item.label}
               href={item.href}
+              aria-current={pathname === item.href ? "page" : undefined}
               className="text-sm text-foreground transition-colors hover:text-primary"
             >
               {item.label}
@@ -89,6 +92,7 @@ export function SiteHeader() {
                 <Link
                   key={item.label}
                   href={item.href}
+                  aria-current={pathname === item.href ? "page" : undefined}
                   className="rounded-2xl px-4 py-3 text-lg text-foreground transition-colors hover:bg-accent"
                   onClick={() => setOpen(false)}
                 >

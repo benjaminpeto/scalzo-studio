@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useId } from "react";
 
 import Link from "next/link";
 
@@ -46,6 +47,8 @@ export function AdminListToolbar({
   summaryText,
   title,
 }: AdminListToolbarProps) {
+  const searchId = useId();
+
   return (
     <div className="space-y-3 border-b border-border/60 px-5 py-4 md:px-6">
       <div className="flex items-center justify-between gap-4">
@@ -61,13 +64,19 @@ export function AdminListToolbar({
 
       <form action={formAction} className="flex flex-wrap items-center gap-2">
         {searchPlaceholder !== undefined ? (
-          <Input
-            type="search"
-            name="q"
-            defaultValue={query}
-            placeholder={searchPlaceholder}
-            className="h-9 min-w-56 flex-1 rounded-full border border-border/70 bg-white/82 px-4 text-sm"
-          />
+          <>
+            <label htmlFor={searchId} className="sr-only">
+              Search
+            </label>
+            <Input
+              id={searchId}
+              type="search"
+              name="q"
+              defaultValue={query}
+              placeholder={searchPlaceholder}
+              className="h-9 min-w-56 flex-1 rounded-full border border-border/70 bg-white/82 px-4 text-sm"
+            />
+          </>
         ) : null}
 
         {filters?.map((filter) => (
@@ -75,6 +84,7 @@ export function AdminListToolbar({
             key={filter.name}
             name={filter.name}
             defaultValue={filter.defaultValue}
+            aria-label={filter.placeholder}
             className="input-shell h-9 rounded-full border border-border/70 bg-white/82 px-4 text-sm text-foreground"
           >
             <option value="">{filter.placeholder}</option>
@@ -86,7 +96,12 @@ export function AdminListToolbar({
           </select>
         ))}
 
-        <Button type="submit" size="sm" className="rounded-full px-4">
+        <Button
+          type="submit"
+          size="sm"
+          aria-label="Apply filters"
+          className="rounded-full px-4"
+        >
           Apply
         </Button>
 
@@ -107,7 +122,13 @@ export function AdminListToolbar({
       <div className="flex items-center justify-between gap-4">
         <p className="text-xs text-muted-foreground">{summaryText}</p>
         {statusMessage ? (
-          <p className="text-xs font-medium text-foreground">{statusMessage}</p>
+          <p
+            aria-live="polite"
+            aria-atomic="true"
+            className="text-xs font-medium text-foreground"
+          >
+            {statusMessage}
+          </p>
         ) : null}
       </div>
     </div>

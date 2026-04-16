@@ -16,7 +16,12 @@ export function BudgetStep({
       <legend className="sr-only">Budget and timeline</legend>
       <div>
         <p className="text-sm font-semibold text-foreground">Budget band</p>
-        <div className="mt-4 space-y-3">
+        <div
+          className="mt-4 space-y-3"
+          aria-describedby={
+            stepErrors.budgetBand ? "budget-band-error" : undefined
+          }
+        >
           {contactBudgetOptions.map((option) => (
             <label
               key={option.value}
@@ -35,12 +40,17 @@ export function BudgetStep({
             </label>
           ))}
         </div>
-        <FieldError message={stepErrors.budgetBand} />
+        <FieldError id="budget-band-error" message={stepErrors.budgetBand} />
       </div>
 
       <div>
         <p className="text-sm font-semibold text-foreground">Timeline</p>
-        <div className="mt-4 space-y-3">
+        <div
+          className="mt-4 space-y-3"
+          aria-describedby={
+            stepErrors.timelineBand ? "timeline-band-error" : undefined
+          }
+        >
           {contactTimelineOptions.map((option) => (
             <label
               key={option.value}
@@ -59,7 +69,10 @@ export function BudgetStep({
             </label>
           ))}
         </div>
-        <FieldError message={stepErrors.timelineBand} />
+        <FieldError
+          id="timeline-band-error"
+          message={stepErrors.timelineBand}
+        />
       </div>
     </fieldset>
   );

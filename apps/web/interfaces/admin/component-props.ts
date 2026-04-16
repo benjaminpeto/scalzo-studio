@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 
 import type {
   AdminLeadEditorRecord,
@@ -31,6 +31,7 @@ export interface AdminShellProps {
 }
 
 export interface AdminProfileMenuProps {
+  buttonRef: RefObject<HTMLButtonElement | null>;
   isCollapsed: boolean;
   isOpen: boolean;
   profileInitials: string;

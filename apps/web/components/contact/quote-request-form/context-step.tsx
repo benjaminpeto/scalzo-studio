@@ -21,9 +21,11 @@ export function ContextStep({
           id="name"
           value={values.name}
           onChange={(event) => updateField("name", event.target.value)}
+          aria-invalid={Boolean(stepErrors.name)}
+          aria-describedby={stepErrors.name ? "name-error" : undefined}
           className="mt-3 h-12"
         />
-        <FieldError message={stepErrors.name} />
+        <FieldError id="name-error" message={stepErrors.name} />
       </div>
       <div className="sm:col-span-1">
         <Label
@@ -37,9 +39,11 @@ export function ContextStep({
           type="email"
           value={values.email}
           onChange={(event) => updateField("email", event.target.value)}
+          aria-invalid={Boolean(stepErrors.email)}
+          aria-describedby={stepErrors.email ? "email-error" : undefined}
           className="mt-3 h-12"
         />
-        <FieldError message={stepErrors.email} />
+        <FieldError id="email-error" message={stepErrors.email} />
       </div>
       <div>
         <Label
@@ -79,6 +83,7 @@ export function ContextStep({
             <button
               key={option.value}
               type="button"
+              aria-pressed={values.location === option.value}
               onClick={() =>
                 updateField(
                   "location",

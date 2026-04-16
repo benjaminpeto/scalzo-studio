@@ -14,7 +14,7 @@ import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 export function SignUpForm({
   className,
@@ -26,6 +26,7 @@ export function SignUpForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const errorId = useId();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +82,8 @@ export function SignUpForm({
                   id="password"
                   type="password"
                   required
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? errorId : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -93,11 +96,17 @@ export function SignUpForm({
                   id="repeat-password"
                   type="password"
                   required
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? errorId : undefined}
                   value={repeatPassword}
                   onChange={(e) => setRepeatPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && (
+                <p id={errorId} role="alert" className="text-sm text-red-500">
+                  {error}
+                </p>
+              )}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Creating an account..." : "Sign up"}
               </Button>

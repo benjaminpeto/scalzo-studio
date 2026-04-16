@@ -13,7 +13,7 @@ import {
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 export function ForgotPasswordForm({
   className,
@@ -23,6 +23,7 @@ export function ForgotPasswordForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const errorId = useId();
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,11 +77,17 @@ export function ForgotPasswordForm({
                     type="email"
                     placeholder="m@example.com"
                     required
+                    aria-invalid={Boolean(error)}
+                    aria-describedby={error ? errorId : undefined}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {error && (
+                  <p id={errorId} role="alert" className="text-sm text-red-500">
+                    {error}
+                  </p>
+                )}
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Sending..." : "Send reset email"}
                 </Button>

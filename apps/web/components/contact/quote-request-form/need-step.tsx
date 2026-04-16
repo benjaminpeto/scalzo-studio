@@ -18,7 +18,12 @@ export function NeedStep({
       <legend className="sr-only">What do you need?</legend>
       <div>
         <p className="text-sm font-semibold text-foreground">Services needed</p>
-        <div className="mt-4 grid gap-3">
+        <div
+          className="mt-4 grid gap-3"
+          aria-describedby={
+            stepErrors.servicesInterest ? "services-interest-error" : undefined
+          }
+        >
           {contactServiceOptions.map((option) => {
             const checked = values.servicesInterest.includes(option.value);
 
@@ -59,7 +64,10 @@ export function NeedStep({
             );
           })}
         </div>
-        <FieldError message={stepErrors.servicesInterest} />
+        <FieldError
+          id="services-interest-error"
+          message={stepErrors.servicesInterest}
+        />
       </div>
 
       <div>
@@ -74,6 +82,7 @@ export function NeedStep({
             <button
               key={option.value}
               type="button"
+              aria-pressed={values.projectType === option.value}
               onClick={() =>
                 updateField(
                   "projectType",
@@ -103,10 +112,14 @@ export function NeedStep({
           id="primary-goal"
           value={values.primaryGoal}
           onChange={(event) => updateField("primaryGoal", event.target.value)}
+          aria-invalid={Boolean(stepErrors.primaryGoal)}
+          aria-describedby={
+            stepErrors.primaryGoal ? "primary-goal-error" : undefined
+          }
           placeholder="More qualified leads, clearer positioning, a stronger launch..."
           className="mt-3 h-12"
         />
-        <FieldError message={stepErrors.primaryGoal} />
+        <FieldError id="primary-goal-error" message={stepErrors.primaryGoal} />
       </div>
     </fieldset>
   );

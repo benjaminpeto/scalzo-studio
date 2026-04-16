@@ -6,6 +6,7 @@ import type { AdminProfileMenuProps } from "@/interfaces/admin/component-props";
 import { cn } from "@/lib/utils";
 
 export function AdminProfileMenu({
+  buttonRef,
   isCollapsed,
   isOpen,
   profileInitials,
@@ -15,8 +16,10 @@ export function AdminProfileMenu({
   return (
     <>
       <button
+        ref={buttonRef}
         type="button"
         aria-expanded={isOpen}
+        aria-haspopup="menu"
         aria-label="Open profile menu"
         onClick={toggle}
         className={cn(
@@ -38,6 +41,7 @@ export function AdminProfileMenu({
           </span>
         </span>
         <ChevronRight
+          aria-hidden="true"
           className={cn(
             "size-[0.9rem] shrink-0 text-muted-foreground transition-transform",
             isOpen && "rotate-90",
@@ -48,6 +52,7 @@ export function AdminProfileMenu({
 
       {isOpen ? (
         <div
+          role="menu"
           className={cn(
             "absolute z-20 w-56 rounded-[1.15rem] border border-border/70 bg-white/96 p-2 shadow-[0_18px_40px_rgba(27,28,26,0.12)] backdrop-blur",
             isCollapsed
@@ -66,15 +71,16 @@ export function AdminProfileMenu({
           <div className="mt-1 space-y-1">
             <Link
               href="/"
+              role="menuitem"
               className="flex items-center gap-2 rounded-[0.9rem] px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-container-low"
             >
-              <ArrowUpRight className="size-[0.95rem]" />
+              <ArrowUpRight aria-hidden="true" className="size-[0.95rem]" />
               <span>View site</span>
             </Link>
             <LogoutButton
               ariaLabel="Logout"
               className="w-full justify-start rounded-[0.9rem] border-0 bg-transparent px-3 py-2 text-sm font-medium shadow-none hover:bg-surface-container-low"
-              icon={<LogOut className="size-[0.95rem]" />}
+              icon={<LogOut aria-hidden="true" className="size-[0.95rem]" />}
               label="Logout"
               message="You have been signed out of the admin session."
               size="default"

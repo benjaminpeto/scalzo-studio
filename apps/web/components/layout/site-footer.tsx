@@ -18,7 +18,7 @@ export function SiteFooter() {
           </p>
         </div>
 
-        <div>
+        <nav aria-label="Explore">
           <p className="section-kicker">Explore</p>
           <ul className="mt-5 space-y-3">
             {footerLinks.primary.map((item) => (
@@ -32,9 +32,9 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
-        <div>
+        <nav aria-label="Action">
           <p className="section-kicker">Action</p>
           <ul className="mt-5 space-y-3">
             {footerLinks.secondary.map((item) => (
@@ -48,25 +48,30 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
         <div>
-          <p className="section-kicker">Elsewhere</p>
-          <ul className="mt-5 space-y-3">
-            {footerLinks.social.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-8 border-t border-border/70 pt-5">
+          <nav aria-label="Elsewhere">
+            <p className="section-kicker">Elsewhere</p>
+            <ul className="mt-5 space-y-3">
+              {footerLinks.social.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <nav
+            aria-label="Legal"
+            className="mt-8 border-t border-border/70 pt-5"
+          >
             <ul className="space-y-3">
               {footerLinks.legal.map((item) => (
                 <li key={item.label}>
@@ -79,7 +84,7 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
         </div>
 
         <NewsletterSignup placement="footer" />

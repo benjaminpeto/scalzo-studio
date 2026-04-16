@@ -41,6 +41,7 @@ export function useAdminShellState(input: {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const profileMenuButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     setIsSidebarCollapsed(readStoredSidebarState());
@@ -60,17 +61,26 @@ export function useAdminShellState(input: {
     }
   });
 
+  const handleKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setIsProfileMenuOpen(false);
+      profileMenuButtonRef.current?.focus();
+    }
+  });
+
   useEffect(() => {
     if (!isProfileMenuOpen) {
       return;
     }
 
     window.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handlePointerDown, isProfileMenuOpen]);
+  }, [handlePointerDown, handleKeyDown, isProfileMenuOpen]);
 
   const profileInitials = useMemo(
     () => buildProfileInitials(input.userEmail),
@@ -81,6 +91,7 @@ export function useAdminShellState(input: {
     isProfileMenuOpen,
     isSidebarCollapsed,
     profileInitials,
+    profileMenuButtonRef,
     profileMenuRef,
     setIsProfileMenuOpen,
     toggleProfileMenu: () => setIsProfileMenuOpen((current) => !current),

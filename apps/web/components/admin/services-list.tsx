@@ -46,22 +46,40 @@ export function AdminServicesList({ data, status }: AdminServicesListProps) {
           <table className="w-full text-sm">
             <thead className="border-b border-border/60">
               <tr>
-                <th className="w-12 px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <th
+                  scope="col"
+                  className="w-12 px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                >
                   #
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <th
+                  scope="col"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                >
                   Title
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <th
+                  scope="col"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                >
                   Status
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <th
+                  scope="col"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                >
                   Deliverables
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <th
+                  scope="col"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                >
                   Updated
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <th
+                  scope="col"
+                  className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+                >
                   Actions
                 </th>
               </tr>
@@ -125,6 +143,7 @@ export function AdminServicesList({ data, status }: AdminServicesListProps) {
                             type="submit"
                             variant="outline"
                             size="sm"
+                            aria-label={`Move ${service.title} up`}
                             disabled={isFirst}
                           >
                             ↑
@@ -146,6 +165,7 @@ export function AdminServicesList({ data, status }: AdminServicesListProps) {
                             type="submit"
                             variant="outline"
                             size="sm"
+                            aria-label={`Move ${service.title} down`}
                             disabled={isLast}
                           >
                             ↓

@@ -13,7 +13,7 @@ import {
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 export function UpdatePasswordForm({
   className,
@@ -23,6 +23,7 @@ export function UpdatePasswordForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const errorId = useId();
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +59,17 @@ export function UpdatePasswordForm({
                   type="password"
                   placeholder="New password"
                   required
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? errorId : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && (
+                <p id={errorId} role="alert" className="text-sm text-red-500">
+                  {error}
+                </p>
+              )}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Saving..." : "Save new password"}
               </Button>

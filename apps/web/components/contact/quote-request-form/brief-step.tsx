@@ -25,10 +25,12 @@ export function BriefStep({
           id="message"
           value={values.message}
           onChange={(event) => updateField("message", event.target.value)}
+          aria-invalid={Boolean(stepErrors.message)}
+          aria-describedby={stepErrors.message ? "message-error" : undefined}
           placeholder="What needs to feel clearer, more premium, or more commercially useful?"
-          className="input-shell mt-3 min-h-40 w-full rounded-[1rem] px-4 py-3 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden"
+          className="input-shell mt-3 min-h-40 w-full rounded-[1rem] px-4 py-3 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
         />
-        <FieldError message={stepErrors.message} />
+        <FieldError id="message-error" message={stepErrors.message} />
       </div>
 
       <div className="rounded-[1.2rem] border border-border/70 bg-white/72 p-4">
@@ -53,6 +55,8 @@ export function BriefStep({
             type="checkbox"
             checked={values.consent}
             onChange={(event) => updateField("consent", event.target.checked)}
+            aria-invalid={Boolean(stepErrors.consent)}
+            aria-describedby={stepErrors.consent ? "consent-error" : undefined}
             className="mt-1 size-4"
           />
           <span className="text-sm leading-6 text-foreground">
@@ -68,7 +72,7 @@ export function BriefStep({
           </span>
         </label>
       </div>
-      <FieldError message={stepErrors.consent} />
+      <FieldError id="consent-error" message={stepErrors.consent} />
     </fieldset>
   );
 }
