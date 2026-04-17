@@ -109,13 +109,6 @@ export default function CookiesPage() {
               {paragraph}
             </Prose>
           ))}
-          {sections[1].note ? (
-            <LegalCard>
-              <Prose measure="lg" size="sm" tone="strong">
-                {sections[1].note}
-              </Prose>
-            </LegalCard>
-          ) : null}
           <div className="flex flex-wrap gap-3">
             <Link
               href="/privacy"
