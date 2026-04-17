@@ -82,3 +82,11 @@ export const marketingRouteMetadata = Object.fromEntries(
     buildRouteMetadata(value),
   ]),
 ) as Record<MarketingRouteMetadataKey, Metadata>;
+
+export function getMarketingRouteMetadata(
+  locale: string,
+  key: MarketingRouteMetadataKey,
+): Metadata {
+  const entry = marketingRouteMetadataEntries[key];
+  return buildRouteMetadata({ ...entry, locale });
+}

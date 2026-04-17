@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   AnimatePresence,
   motion,
@@ -9,7 +8,9 @@ import {
   useScroll,
 } from "motion/react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
+import { Link } from "@/lib/i18n/navigation";
 import { captureEvent } from "@/lib/analytics/client";
 import { Button } from "@ui/components/ui/button";
 
@@ -17,6 +18,8 @@ export function MobileCtaBar() {
   const reduceMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
   const { scrollY } = useScroll();
+  const t = useTranslations("mobileCtaBar");
+
   useMotionValueEvent(scrollY, "change", (latest) => {
     setVisible(latest > 480);
   });
@@ -34,9 +37,9 @@ export function MobileCtaBar() {
           <div className="flex items-center justify-between gap-3 rounded-full border border-white/10 bg-[#0d0f0c] px-4 py-3 text-white shadow-[0_24px_48px_rgba(27,28,26,0.28)]">
             <div>
               <p className="text-[0.65rem] uppercase tracking-[0.28em] text-white/55">
-                Start the conversation
+                {t("eyebrow")}
               </p>
-              <p className="text-sm text-white">Book a calm first call.</p>
+              <p className="text-sm text-white">{t("body")}</p>
             </div>
             <Button
               asChild
@@ -52,7 +55,7 @@ export function MobileCtaBar() {
                   })
                 }
               >
-                Book a call
+                {t("cta")}
               </Link>
             </Button>
           </div>

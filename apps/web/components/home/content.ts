@@ -16,6 +16,7 @@ export type {
   CredibilityStat,
   FeaturedProject,
   FaqItem,
+  FooterLink,
   FooterLinks,
   JournalEntry,
   NavigationLink,

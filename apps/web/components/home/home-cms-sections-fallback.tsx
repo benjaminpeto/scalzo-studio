@@ -72,12 +72,14 @@ export function HomeCmsSectionsFallback() {
           </div>
 
           <div className="grid gap-5 lg:grid-cols-[1.1fr_0.55fr_0.55fr]">
-            <div className="overflow-hidden rounded-[1.85rem] bg-[#111311]">
-              <div className="aspect-[1.25] w-full bg-white/8" />
-              <div className="space-y-4 p-7 sm:p-8">
-                <div className="h-4 w-28 rounded-full bg-white/14" />
-                <div className="h-9 max-w-md rounded-[0.9rem] bg-white/14" />
-                <div className="h-4 max-w-xl rounded-full bg-white/10" />
+            <div className="relative overflow-hidden rounded-[1.85rem] bg-[#111311]">
+              <div className="absolute inset-0 bg-white/3" />
+              <div className="relative flex min-h-116 flex-col justify-end p-7 sm:p-8">
+                <div className="space-y-4">
+                  <div className="h-4 w-28 rounded-full bg-white/14" />
+                  <div className="h-9 max-w-md rounded-[0.9rem] bg-white/14" />
+                  <div className="h-4 max-w-xl rounded-full bg-white/10" />
+                </div>
               </div>
             </div>
 

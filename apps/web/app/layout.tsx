@@ -29,6 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <link rel="dns-prefetch" href="https://api.hcaptcha.com" />
+        <link rel="dns-prefetch" href="https://js.hcaptcha.com" />
+        <link rel="dns-prefetch" href="https://cal.com" />
+      </head>
       <body
         className={`${bodyFont.variable} ${displayFont.variable} antialiased`}
       >

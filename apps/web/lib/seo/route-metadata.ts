@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 interface BuildRouteMetadataInput {
   canonical?: string;
   description: string;
+  locale?: string;
   noIndex?: boolean;
   openGraphType?: "article" | "website";
   publishedTime?: string | null;
@@ -42,9 +43,15 @@ function resolveSocialImage({
   return candidate && candidate.length > 0 ? candidate : defaultSocialImagePath;
 }
 
+function buildLocalizedPath(path: string, locale: string): string {
+  if (locale === "en") return path;
+  return path === "/" ? "/es" : `/es${path}`;
+}
+
 export function buildRouteMetadata({
   canonical,
   description,
+  locale,
   noIndex = false,
   openGraphType = "website",
   publishedTime,
@@ -61,6 +68,27 @@ export function buildRouteMetadata({
     socialFallbackPath,
     socialImage,
   });
+
+  const localizedCanonical =
+    normalizedCanonical && locale
+      ? buildLocalizedPath(normalizedCanonical, locale)
+      : normalizedCanonical;
+
+  const alternates = normalizedCanonical
+    ? {
+        canonical: localizedCanonical ?? normalizedCanonical,
+        ...(locale
+          ? {
+              languages: {
+                en: normalizedCanonical,
+                es: buildLocalizedPath(normalizedCanonical, "es"),
+                "x-default": normalizedCanonical,
+              },
+            }
+          : {}),
+      }
+    : undefined;
+
   const openGraph = {
     description,
     images: [
@@ -72,7 +100,7 @@ export function buildRouteMetadata({
     siteName: "Scalzo Studio",
     title,
     type: openGraphType,
-    url: normalizedCanonical,
+    url: localizedCanonical ?? normalizedCanonical,
   } satisfies NonNullable<Metadata["openGraph"]>;
 
   if (openGraphType === "article") {
@@ -83,11 +111,7 @@ export function buildRouteMetadata({
   }
 
   return {
-    alternates: normalizedCanonical
-      ? {
-          canonical: normalizedCanonical,
-        }
-      : undefined,
+    alternates,
     description,
     openGraph,
     robots: noIndex ? nonIndexRobots : undefined,

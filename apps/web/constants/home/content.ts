@@ -19,15 +19,15 @@ function staticImage(src: string, alt: string) {
 }
 
 export const navigationLinks = [
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
-  { href: "/work", label: "Work" },
-  { href: "/insights", label: "Insights" },
+  { href: "/about", labelKey: "about" },
+  { href: "/services", labelKey: "services" },
+  { href: "/work", labelKey: "work" },
+  { href: "/insights", labelKey: "insights" },
 ] as const satisfies readonly NavigationLink[];
 
 export const primaryCta = {
   href: "/contact#booking",
-  label: "Book a call",
+  labelKey: "bookACall",
 } as const satisfies PrimaryCta;
 
 export const trustMarks = [

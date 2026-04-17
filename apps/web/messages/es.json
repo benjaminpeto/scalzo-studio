@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "about": "Acerca de",
+    "ariaLabel": "Principal",
+    "bookACall": "Reservar llamada",
+    "insights": "Artículos",
+    "mobileAriaLabel": "Móvil",
+    "mobileSheetDescription": "Navegación principal del sitio y llamada a la acción.",
+    "mobileSheetTitle": "Navegación móvil",
+    "openMenu": "Abrir menú",
+    "services": "Servicios",
+    "skipToContent": "Saltar al contenido",
+    "work": "Trabajo"
+  },
+  "footer": {
+    "actionLabel": "Acción",
+    "copyright": "Scalzo Studio",
+    "description": "Para empresas que necesitan una página con más autoridad, estructura más clara y menos ruido.",
+    "elsewhereLabel": "En la red",
+    "exploreLabel": "Explorar",
+    "links": {
+      "about": "Acerca de",
+      "contact": "Contacto",
+      "cookies": "Cookies",
+      "faq": "FAQ",
+      "insights": "Artículos",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "method": "Método",
+      "privacy": "Privacidad",
+      "services": "Servicios",
+      "work": "Trabajo"
+    },
+    "tagline": "Dirección editorial, de producto y marca digital"
+  },
+  "cookie": {
+    "accept": "Aceptar analíticas",
+    "body": "Scalzo Studio usa PostHog para entender cómo los visitantes usan el sitio. Las cookies esenciales siempre están activas. Las cookies analíticas son opcionales — puedes aceptar o rechazar y cambiar tu preferencia en cualquier momento.",
+    "cookiesLinkLabel": "Política de cookies",
+    "decline": "Rechazar",
+    "heading": "Usamos cookies analíticas",
+    "privacyLinkLabel": "Aviso de privacidad"
+  },
+  "mobileCtaBar": {
+    "body": "Reserva una primera llamada.",
+    "cta": "Reservar llamada",
+    "eyebrow": "Comienza la conversación"
+  },
+  "localeSwitcher": {
+    "en": "EN",
+    "es": "ES",
+    "label": "Idioma"
+  }
+}

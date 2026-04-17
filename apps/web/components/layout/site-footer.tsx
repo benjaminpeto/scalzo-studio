@@ -1,9 +1,12 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
+import { Link } from "@/lib/i18n/navigation";
 import { footerLinks } from "@/components/home/content";
+import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const t = await getTranslations("footer");
+
   return (
     <footer className="pb-0 pt-14">
       <div className="section-shell grid gap-12 lg:grid-cols-[1fr_1fr_0.7fr_0.7fr_0.9fr]">
@@ -13,57 +16,92 @@ export function SiteFooter() {
             scalzo.
           </p>
           <p className="mt-5 text-sm leading-7 text-muted-foreground">
-            Built for businesses that need a homepage with more authority,
-            clearer structure, and less noise.
+            {t("description")}
           </p>
         </div>
 
-        <nav aria-label="Explore">
-          <p className="section-kicker">Explore</p>
+        <nav aria-label={t("exploreLabel")}>
+          <p className="section-kicker">{t("exploreLabel")}</p>
           <ul className="mt-5 space-y-3">
-            {footerLinks.primary.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link
+                href="/about"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t("links.about")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/services"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t("links.services")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/work"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t("links.work")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/insights"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t("links.insights")}
+              </Link>
+            </li>
           </ul>
         </nav>
 
-        <nav aria-label="Action">
-          <p className="section-kicker">Action</p>
+        <nav aria-label={t("actionLabel")}>
+          <p className="section-kicker">{t("actionLabel")}</p>
           <ul className="mt-5 space-y-3">
-            {footerLinks.secondary.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link
+                href="/#method"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t("links.method")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/#faq"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t("links.faq")}
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/contact"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                {t("links.contact")}
+              </Link>
+            </li>
           </ul>
         </nav>
 
         <div>
-          <nav aria-label="Elsewhere">
-            <p className="section-kicker">Elsewhere</p>
+          <nav aria-label={t("elsewhereLabel")}>
+            <p className="section-kicker">{t("elsewhereLabel")}</p>
             <ul className="mt-5 space-y-3">
               {footerLinks.social.map((item) => (
-                <li key={item.label}>
-                  <Link
+                <li key={item.href}>
+                  <a
                     href={item.href}
                     className="text-sm text-muted-foreground transition-colors hover:text-primary"
                     target="_blank"
                     rel="noreferrer"
                   >
                     {item.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -73,16 +111,22 @@ export function SiteFooter() {
             className="mt-8 border-t border-border/70 pt-5"
           >
             <ul className="space-y-3">
-              {footerLinks.legal.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link
+                  href="/privacy"
+                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                >
+                  {t("links.privacy")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cookies"
+                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                >
+                  {t("links.cookies")}
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
@@ -91,8 +135,8 @@ export function SiteFooter() {
       </div>
       <div className="mt-14 bg-[#0d0f0c] py-4">
         <div className="section-shell flex flex-col gap-3 text-xs uppercase tracking-[0.18em] text-white/52 sm:flex-row sm:items-center sm:justify-between">
-          <p>Scalzo Studio</p>
-          <p>Editorial product, brand, and digital direction</p>
+          <p>{t("copyright")}</p>
+          <p>{t("tagline")}</p>
         </div>
       </div>
     </footer>

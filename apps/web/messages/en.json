@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "about": "About",
+    "ariaLabel": "Primary",
+    "bookACall": "Book a call",
+    "insights": "Insights",
+    "mobileAriaLabel": "Mobile",
+    "mobileSheetDescription": "Primary site navigation and the main call to action.",
+    "mobileSheetTitle": "Mobile navigation",
+    "openMenu": "Open menu",
+    "services": "Services",
+    "skipToContent": "Skip to content",
+    "work": "Work"
+  },
+  "footer": {
+    "actionLabel": "Action",
+    "copyright": "Scalzo Studio",
+    "description": "Built for businesses that need a homepage with more authority, clearer structure, and less noise.",
+    "elsewhereLabel": "Elsewhere",
+    "exploreLabel": "Explore",
+    "links": {
+      "about": "About",
+      "contact": "Contact",
+      "cookies": "Cookies",
+      "faq": "FAQ",
+      "insights": "Insights",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn",
+      "method": "Method",
+      "privacy": "Privacy",
+      "services": "Services",
+      "work": "Work"
+    },
+    "tagline": "Editorial product, brand, and digital direction"
+  },
+  "cookie": {
+    "accept": "Accept analytics",
+    "body": "Scalzo Studio uses PostHog to understand how visitors use the site. Essential cookies are always active. Analytics cookies are optional — you can accept or decline, and change your preference at any time.",
+    "cookiesLinkLabel": "Cookie policy",
+    "decline": "Decline",
+    "heading": "We use analytics cookies",
+    "privacyLinkLabel": "Privacy notice"
+  },
+  "mobileCtaBar": {
+    "body": "Book a calm first call.",
+    "cta": "Book a call",
+    "eyebrow": "Start the conversation"
+  },
+  "localeSwitcher": {
+    "en": "EN",
+    "es": "ES",
+    "label": "Language"
+  }
+}

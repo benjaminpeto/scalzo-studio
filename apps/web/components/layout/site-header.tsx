@@ -1,11 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
+import { Link, usePathname } from "@/lib/i18n/navigation";
 import { navigationLinks, primaryCta } from "@/components/home/content";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { captureEvent } from "@/lib/analytics/client";
 import {
   Sheet,
@@ -19,6 +20,7 @@ import { Button } from "@ui/components/ui/button";
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   return (
     <header className="sticky top-0 z-50 bg-[rgba(250,249,245,0.92)] backdrop-blur-xl">
@@ -32,22 +34,23 @@ export function SiteHeader() {
         </Link>
 
         <nav
-          aria-label="Primary"
+          aria-label={t("ariaLabel")}
           className="hidden items-center gap-10 xl:gap-16 lg:flex"
         >
           {navigationLinks.map((item) => (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               aria-current={pathname === item.href ? "page" : undefined}
               className="text-sm text-foreground transition-colors hover:text-primary"
             >
-              {item.label}
+              {t(item.labelKey as Parameters<typeof t>[0])}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-4 lg:flex">
+          <LocaleSwitcher />
           <Button
             asChild
             className="h-11 rounded-full bg-primary px-5 text-[0.78rem] uppercase tracking-[0.2em] text-primary-foreground hover:bg-primary/90"
@@ -62,7 +65,7 @@ export function SiteHeader() {
                 })
               }
             >
-              {primaryCta.label}
+              {t("bookACall")}
             </Link>
           </Button>
         </div>
@@ -71,7 +74,7 @@ export function SiteHeader() {
           <SheetTrigger asChild>
             <button
               type="button"
-              aria-label="Open menu"
+              aria-label={t("openMenu")}
               className="inline-flex size-11 items-center justify-center text-foreground lg:hidden"
             >
               <Menu className="size-6" aria-hidden="true" />
@@ -82,21 +85,22 @@ export function SiteHeader() {
             className="section-shell paper-panel surface-grain inset-x-3 top-3 rounded-[1.75rem] border p-4 pt-14 sm:inset-x-4"
           >
             <div className="sr-only">
-              <SheetTitle>Mobile navigation</SheetTitle>
-              <SheetDescription>
-                Primary site navigation and the main call to action.
-              </SheetDescription>
+              <SheetTitle>{t("mobileSheetTitle")}</SheetTitle>
+              <SheetDescription>{t("mobileSheetDescription")}</SheetDescription>
             </div>
-            <nav aria-label="Mobile" className="flex flex-col gap-2">
+            <nav
+              aria-label={t("mobileAriaLabel")}
+              className="flex flex-col gap-2"
+            >
               {navigationLinks.map((item) => (
                 <Link
-                  key={item.label}
+                  key={item.href}
                   href={item.href}
                   aria-current={pathname === item.href ? "page" : undefined}
                   className="rounded-2xl px-4 py-3 text-lg text-foreground transition-colors hover:bg-accent"
                   onClick={() => setOpen(false)}
                 >
-                  {item.label}
+                  {t(item.labelKey as Parameters<typeof t>[0])}
                 </Link>
               ))}
               <Button
@@ -104,7 +108,7 @@ export function SiteHeader() {
                 className="mt-3 h-12 rounded-full bg-primary px-6 text-[0.78rem] uppercase tracking-[0.2em] text-primary-foreground hover:bg-primary/90"
               >
                 <Link href={primaryCta.href} onClick={() => setOpen(false)}>
-                  {primaryCta.label}
+                  {t("bookACall")}
                 </Link>
               </Button>
             </nav>

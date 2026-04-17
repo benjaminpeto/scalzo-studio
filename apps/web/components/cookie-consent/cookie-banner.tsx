@@ -1,15 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 
+import { Link } from "@/lib/i18n/navigation";
 import { useCookieConsent } from "@/hooks/consent/use-cookie-consent";
-import { cookieBannerContent } from "@/constants/consent/banner";
 import { Button } from "@ui/components/ui/button";
 
 export function CookieBanner() {
   const reduceMotion = useReducedMotion();
   const { bannerVisible, handleAccept, handleDecline } = useCookieConsent();
+  const t = useTranslations("cookie");
 
   return (
     <AnimatePresence>
@@ -20,29 +21,29 @@ export function CookieBanner() {
           exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
           transition={{ duration: 0.28, ease: "easeOut" }}
           role="dialog"
-          aria-label="Cookie consent"
+          aria-label={t("heading")}
           aria-live="polite"
           className="fixed inset-x-4 bottom-4 z-[60] sm:inset-x-auto sm:right-6 sm:bottom-6 sm:left-auto sm:max-w-sm"
         >
           <div className="surface-grain rounded-[1.6rem] border border-border/70 bg-[rgba(250,249,245,0.92)] p-5 backdrop-blur-xl shadow-[0_32px_90px_rgba(27,28,26,0.18)]">
             <p className="mb-1 text-sm font-semibold text-foreground">
-              {cookieBannerContent.heading}
+              {t("heading")}
             </p>
             <p className="mb-4 text-[0.8rem] leading-relaxed text-foreground/65">
-              {cookieBannerContent.body}
+              {t("body")}
             </p>
             <div className="mb-4 flex gap-3 text-[0.72rem] text-foreground/50">
               <Link
-                href={cookieBannerContent.cookiesLinkHref}
-                className="underline underline-offset-2 hover:text-foreground/80 transition-colors"
+                href="/cookies"
+                className="underline underline-offset-2 transition-colors hover:text-foreground/80"
               >
-                {cookieBannerContent.cookiesLinkLabel}
+                {t("cookiesLinkLabel")}
               </Link>
               <Link
-                href={cookieBannerContent.privacyLinkHref}
-                className="underline underline-offset-2 hover:text-foreground/80 transition-colors"
+                href="/privacy"
+                className="underline underline-offset-2 transition-colors hover:text-foreground/80"
               >
-                {cookieBannerContent.privacyLinkLabel}
+                {t("privacyLinkLabel")}
               </Link>
             </div>
             <div className="flex gap-2">
@@ -52,14 +53,14 @@ export function CookieBanner() {
                 onClick={handleDecline}
                 className="rounded-full text-[0.75rem]"
               >
-                {cookieBannerContent.declineLabel}
+                {t("decline")}
               </Button>
               <Button
                 size="sm"
                 onClick={handleAccept}
                 className="rounded-full bg-foreground text-[0.75rem] text-background hover:bg-foreground/90"
               >
-                {cookieBannerContent.acceptLabel}
+                {t("accept")}
               </Button>
             </div>
           </div>

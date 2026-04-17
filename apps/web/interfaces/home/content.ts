@@ -2,10 +2,15 @@ import type { CmsImageAsset } from "@/interfaces/media-assets";
 
 export interface NavigationLink {
   href: string;
-  label: string;
+  labelKey: string;
 }
 
 export interface PrimaryCta {
+  href: string;
+  labelKey: string;
+}
+
+export interface FooterLink {
   href: string;
   label: string;
 }
@@ -71,8 +76,8 @@ export interface FaqItem {
 }
 
 export interface FooterLinks {
-  legal: NavigationLink[];
-  primary: NavigationLink[];
-  secondary: NavigationLink[];
-  social: NavigationLink[];
+  legal: FooterLink[];
+  primary: FooterLink[];
+  secondary: FooterLink[];
+  social: FooterLink[];
 }
