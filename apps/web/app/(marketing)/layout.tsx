@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { CookieBanner } from "@/components/cookie-consent/cookie-banner";
 import { MobileCtaBar } from "@/components/layout/mobile-cta-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -34,6 +35,7 @@ export default function MarketingLayout({
         <SiteFooter />
       </div>
       <MobileCtaBar />
+      <CookieBanner />
     </>
   );
 }

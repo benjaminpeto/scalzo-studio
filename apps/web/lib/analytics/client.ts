@@ -33,10 +33,22 @@ function mirrorEvent(payload: MirroredAnalyticsPayload) {
   });
 }
 
+function isPostHogOptedOut(): boolean {
+  try {
+    return posthog.has_opted_out_capturing();
+  } catch {
+    return true;
+  }
+}
+
 export function captureEvent<K extends keyof AnalyticsEventMap>(
   event: K,
   properties: AnalyticsEventMap[K],
 ): void {
+  if (isPostHogOptedOut()) {
+    return;
+  }
+
   posthog.capture(event, properties);
 
   if (isMirroredAnalyticsEventName(event)) {
@@ -53,6 +65,10 @@ export function captureEvent<K extends keyof AnalyticsEventMap>(
 }
 
 export function capturePageView(pagePath: string): void {
+  if (isPostHogOptedOut()) {
+    return;
+  }
+
   mirrorEvent({
     eventName: "page_view",
     pagePath,

@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   posthog: {
     capture: vi.fn(),
     get_session_id: vi.fn(),
+    has_opted_out_capturing: vi.fn(),
   },
 }));
 
@@ -15,7 +16,9 @@ describe("analytics client mirroring", () => {
   beforeEach(() => {
     mocks.posthog.capture.mockReset();
     mocks.posthog.get_session_id.mockReset();
+    mocks.posthog.has_opted_out_capturing.mockReset();
     mocks.posthog.get_session_id.mockReturnValue("session-123");
+    mocks.posthog.has_opted_out_capturing.mockReturnValue(false);
     vi.spyOn(global, "fetch").mockResolvedValue(
       new Response(JSON.stringify({ ok: true }), { status: 202 }),
     );
@@ -79,5 +82,30 @@ describe("analytics client mirroring", () => {
       keepalive: true,
       method: "POST",
     });
+  });
+
+  it("skips PostHog capture and mirror when opted out", async () => {
+    mocks.posthog.has_opted_out_capturing.mockReturnValue(true);
+
+    const { captureEvent } = await import("./client");
+
+    captureEvent("cta_click", {
+      cta_id: "book-call",
+      page_path: "/contact",
+      placement: "header",
+    });
+
+    expect(mocks.posthog.capture).not.toHaveBeenCalled();
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("skips page view mirror when opted out", async () => {
+    mocks.posthog.has_opted_out_capturing.mockReturnValue(true);
+
+    const { capturePageView } = await import("./client");
+
+    capturePageView("/insights");
+
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });
