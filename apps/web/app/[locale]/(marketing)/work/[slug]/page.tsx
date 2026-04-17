@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 
 import { getResolvedWorkDetailRouteData } from "@/actions/work/get-resolved-work-detail-route-data";
+import { getWorkDetailPageData } from "@/actions/work/get-work-detail-page-data";
 import WorkDetailFallback from "@/components/work/work-detail-fallback";
 import WorkDetailLayout from "@/components/work/work-detail-layout";
 import {
@@ -22,8 +23,7 @@ export async function generateMetadata({
   params,
 }: WorkDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const { detailPageData, isPreview } =
-    await getResolvedWorkDetailRouteData(slug);
+  const detailPageData = await getWorkDetailPageData(slug);
 
   if (!detailPageData) {
     return buildNotFoundRouteMetadata();
@@ -36,7 +36,6 @@ export async function generateMetadata({
       detailPageData.description ??
       detailPageData.outcomes,
     locale,
-    noIndex: isPreview,
     publishedTime: detailPageData.publishedAt,
     socialFallbackPath: `/work/${detailPageData.slug}/opengraph-image`,
     socialImage: detailPageData.image?.src ?? null,

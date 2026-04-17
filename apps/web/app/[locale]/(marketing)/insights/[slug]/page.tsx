@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 
+import { getInsightDetailPageData } from "@/actions/insights/get-insight-detail-page-data";
 import { getResolvedInsightDetailRouteData } from "@/actions/insights/get-resolved-insight-detail-route-data";
 import InsightDetailFallback from "@/components/insights/insight-detail-fallback";
 import InsightDetailLayout from "@/components/insights/insight-detail-layout";
@@ -22,8 +23,7 @@ export async function generateMetadata({
   params,
 }: InsightDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const { detailPageData, isPreview } =
-    await getResolvedInsightDetailRouteData(slug);
+  const detailPageData = await getInsightDetailPageData(slug);
 
   if (!detailPageData) {
     return buildNotFoundRouteMetadata();
@@ -36,7 +36,6 @@ export async function generateMetadata({
       detailPageData.excerpt ??
       detailPageData.content,
     locale,
-    noIndex: isPreview,
     openGraphType: "article",
     publishedTime: detailPageData.publishedAt,
     socialFallbackPath: `/insights/${detailPageData.slug}/opengraph-image`,
