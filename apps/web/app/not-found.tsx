@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 
 import { MobileCtaBar } from "@/components/layout/mobile-cta-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -7,6 +9,7 @@ import { SiteNotFound } from "@/components/not-found/site-not-found";
 import enMessages from "@/messages/en.json";
 
 export default function RootNotFound() {
+  setRequestLocale("en");
   return (
     <NextIntlClientProvider locale="en" messages={enMessages}>
       <a
@@ -20,7 +23,9 @@ export default function RootNotFound() {
         <main id="main-content" className="flex-1">
           <SiteNotFound />
         </main>
-        <SiteFooter />
+        <Suspense fallback={null}>
+          <SiteFooter />
+        </Suspense>
       </div>
       <MobileCtaBar />
     </NextIntlClientProvider>
