@@ -61,12 +61,19 @@ export function BriefStep({
           />
           <span className="text-sm leading-6 text-foreground">
             I agree to be contacted about this request and understand that my
-            details will be handled according to the{" "}
+            details will be handled in accordance with the{" "}
             <Link
               href="/privacy"
               className="font-medium text-foreground underline decoration-editorial-underline underline-offset-4"
             >
               Privacy notice
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/cookies"
+              className="font-medium text-foreground underline decoration-editorial-underline underline-offset-4"
+            >
+              Cookie policy
             </Link>
             .
           </span>

@@ -170,8 +170,18 @@ export default function PrivacyPage() {
               {paragraph}
             </Prose>
           ))}
+        </div>
+      </LegalSection>
+
+      <LegalSection id={sections[3].id} title={sections[3].title}>
+        <div className="space-y-5">
+          {sections[3].paragraphs.map((paragraph) => (
+            <Prose key={paragraph} measure="lg" size="lg">
+              {paragraph}
+            </Prose>
+          ))}
           <ul className="space-y-3 text-base leading-7 text-muted-foreground">
-            {sections[2].items?.map((item) => (
+            {sections[3].items?.map((item) => (
               <li key={item} className="flex gap-3">
                 <span className="mt-2 size-1.5 shrink-0 rounded-full bg-foreground/70" />
                 <span>{item}</span>
@@ -181,9 +191,9 @@ export default function PrivacyPage() {
         </div>
       </LegalSection>
 
-      <LegalSection id={sections[3].id} title={sections[3].title}>
+      <LegalSection id={sections[4].id} title={sections[4].title}>
         <div className="space-y-5">
-          {sections[3].paragraphs.map((paragraph) => (
+          {sections[4].paragraphs.map((paragraph) => (
             <Prose key={paragraph} measure="lg" size="lg">
               {paragraph}
             </Prose>

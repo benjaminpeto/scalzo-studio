@@ -1,6 +1,6 @@
 export const cookieBannerContent = {
   heading: "We use analytics cookies",
-  body: "Scalzo Studio uses PostHog to understand how visitors use the site. This helps improve the experience over time. Your choice is saved and you won't be asked again.",
+  body: "Scalzo Studio uses PostHog to understand how visitors use the site. Essential cookies are always active. Analytics cookies are optional — you can accept or decline, and change your preference at any time.",
   acceptLabel: "Accept analytics",
   declineLabel: "Decline",
   cookiesLinkLabel: "Cookie policy",

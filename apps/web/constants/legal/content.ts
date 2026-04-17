@@ -17,7 +17,7 @@ export const legalControllerDetails = {
 export const legalPolicyEffectiveDate = "March 24, 2026";
 
 export const complaintAuthority = {
-  label: "Agencia Espanola de Proteccion de Datos (AEPD)",
+  label: "Agencia Española de Protección de Datos (AEPD)",
   url: "https://www.aepd.es/",
 } as const;
 
@@ -29,26 +29,26 @@ export const privacyPageContent = {
     title:
       "A practical privacy notice for the way Scalzo Studio currently operates.",
     intro:
-      "This page explains what personal data Scalzo Studio processes through the site today, what may be added later, and the GDPR rules that apply before any non-essential tracking goes live.",
+      "This page explains what personal data Scalzo Studio processes through the site, the lawful basis for each activity, and the rights you have under GDPR and Spanish data protection law.",
     lastUpdated: legalPolicyEffectiveDate,
-    note: "Current scope: contact requests, admin authentication, and essential operational processing. Conditional disclosures below are clearly marked and are not treated as live unless the relevant feature is enabled.",
+    note: "Current scope: contact requests, admin authentication, essential operational processing, and consent-gated PostHog analytics. Conditional disclosures are clearly marked and are not treated as live unless the relevant feature is enabled.",
     summary: [
       {
         label: "Controller",
         value: legalControllerDetails.name,
-        detail: `${legalControllerDetails.address} - Tax ID ${legalControllerDetails.taxId}`,
+        detail: `${legalControllerDetails.address} — Tax ID ${legalControllerDetails.taxId}`,
       },
       {
         label: "Privacy contact",
         value: legalControllerDetails.email,
         detail:
-          "Use this address for access, correction, deletion, objection, or consent-related requests.",
+          "Use this address for access, correction, deletion, objection, or consent-related requests. We aim to respond within one calendar month.",
       },
       {
-        label: "Launch posture",
-        value: "Essential-only first",
+        label: "Analytics",
+        value: "Consent-gated",
         detail:
-          "No non-essential analytics or marketing cookies should be activated before a separate consent/preferences implementation is added.",
+          "PostHog analytics is live but only captures data after you explicitly accept via the cookie banner. You can withdraw consent at any time via the Cookie policy page.",
       },
     ] as const satisfies readonly LegalSummaryItem[],
   },
@@ -57,40 +57,52 @@ export const privacyPageContent = {
       id: "scope",
       title: "What this notice covers",
       paragraphs: [
-        "This notice applies to personal data processed through the Scalzo Studio website, especially quote requests, admin authentication and session handling, and related operational follow-up.",
-        `It is written to match the current implementation plus clearly labelled near-term services that may be enabled later, such as PostHog analytics and hCaptcha anti-spam checks${bookingEnabled ? ", alongside the live Cal.com booking flow." : ", or a future booking provider."}`,
+        "This notice is prepared in accordance with Regulation (EU) 2016/679 of the European Parliament and of the Council (GDPR) and Organic Law 3/2018 of 5 December on the Protection of Personal Data and the Guarantee of Digital Rights (LOPDGDD). Both instruments apply to personal data processed in connection with this website.",
+        "This notice applies to personal data processed through the Scalzo Studio website, especially quote requests, admin authentication and session handling, consent-gated analytics, and related operational follow-up.",
+        `It is written to match the current implementation plus clearly labelled near-term services that may be enabled later, such as hCaptcha anti-spam checks${bookingEnabled ? ", alongside the live Cal.com booking flow." : ", or a future booking provider."}`,
       ],
-      note: "If a new processor or new purpose is added, this notice should be updated before the feature is launched in production.",
+      note: "If a new processor or new purpose is added, this notice must be updated before the feature is launched in production.",
     },
     {
       id: "transfers",
       title: "International transfers",
       paragraphs: [
-        "Some service providers used for hosting, authentication, analytics, scheduling, or security may process data outside Spain or the European Economic Area.",
-        "When that happens, Scalzo Studio should rely on the provider's GDPR transfer safeguards, such as Standard Contractual Clauses or equivalent legal mechanisms, and keep the processor list on this page aligned with the live stack.",
+        "Some service providers used for hosting, authentication, analytics, scheduling, or security process data outside Spain or the European Economic Area.",
+        "When that happens, Scalzo Studio relies on the provider's GDPR transfer safeguards, such as Standard Contractual Clauses (SCCs) or equivalent legal mechanisms, and keeps the processor list on this page aligned with the live stack. You may request details of the specific safeguards in place by contacting the data controller.",
+      ],
+    },
+    {
+      id: "automated-decisions",
+      title: "Automated decision-making",
+      paragraphs: [
+        "Scalzo Studio does not carry out automated decision-making or profiling that produces legal or similarly significant effects on individuals. No personal data collected through this site is used for automated individual decision-making within the meaning of Article 22 GDPR.",
       ],
     },
     {
       id: "rights",
-      title: "Your GDPR rights",
+      title: "Your data protection rights",
       paragraphs: [
-        "Depending on the context, you may ask for access to your data, correction of inaccurate data, deletion, restriction of processing, objection to processing based on legitimate interests, or data portability where applicable.",
-        "If processing relies on consent in the future, you may withdraw that consent at any time. Withdrawal does not affect processing that happened before it was withdrawn.",
+        "Under GDPR and LOPDGDD you have the following rights in relation to personal data processed by Scalzo Studio. To exercise any of these rights, contact the data controller at the email address above.",
+        "We will respond to all valid requests within one calendar month of receipt. In complex or high-volume cases this period may be extended by a further two months; you will be notified within the first month if that applies.",
+        "If processing relies on consent, you may withdraw that consent at any time. Withdrawal does not affect the lawfulness of processing carried out before withdrawal.",
       ],
       items: [
-        "Request a copy of the personal data held about you.",
-        "Ask for inaccurate or incomplete data to be corrected.",
-        "Ask for data to be deleted when there is no valid reason to keep it.",
-        "Object to processing based on legitimate interests where your rights override that interest.",
-        "Request restriction or portability where the GDPR gives you that right.",
+        "Request a copy of the personal data held about you (right of access).",
+        "Ask for inaccurate or incomplete data to be corrected (right to rectification).",
+        "Ask for data to be erased when there is no valid reason to keep it (right to erasure).",
+        "Object to processing based on legitimate interests where your rights override that interest (right to object).",
+        "Request restriction of processing in certain circumstances (right to restriction).",
+        "Receive your data in a portable format where applicable (right to portability).",
+        "Withdraw consent for analytics at any time via the Cookie policy page. Withdrawal takes effect immediately.",
+        "Not be subject to solely automated decision-making with legal or similarly significant effects. Scalzo Studio does not perform such processing.",
       ],
     },
     {
       id: "complaints",
       title: "Questions and complaints",
       paragraphs: [
-        `Privacy requests can be sent to ${legalControllerDetails.email}.`,
-        "If you believe your data has been handled unlawfully, you also have the right to complain to the Spanish supervisory authority.",
+        `Privacy requests can be sent to ${legalControllerDetails.email}. We aim to respond within one calendar month.`,
+        "If you believe your data has been handled unlawfully, you have the right to lodge a complaint with the competent supervisory authority. In Spain this is the Agencia Española de Protección de Datos (AEPD). This right exists without prejudice to any other administrative or judicial remedy.",
       ],
     },
   ] as const satisfies readonly LegalSectionContent[],
@@ -99,7 +111,7 @@ export const privacyPageContent = {
       title: "Contact and quote requests",
       status: "Live",
       lawfulBasis:
-        "Pre-contract steps taken at your request, plus legitimate interests in handling inbound commercial enquiries.",
+        "Pre-contractual steps taken at your request (Article 6(1)(b) GDPR), and legitimate interests in handling inbound commercial enquiries (Article 6(1)(f) GDPR).",
       purpose:
         "To review scope, assess fit, reply to your request, and prepare a follow-up, quote, or call.",
       dataCategories: [
@@ -110,14 +122,14 @@ export const privacyPageContent = {
       ],
       recipients: ["Supabase"],
       retention:
-        "Typically up to 12 months after the last substantive contact unless a longer period is required to complete the requested work, keep business records, or establish or defend legal claims.",
+        "Typically up to 12 months after the last substantive contact, unless a longer period is required to complete the requested work, maintain business records, or establish or defend legal claims.",
       note: undefined,
     },
     {
       title: "Admin authentication and session security",
       status: "Live",
       lawfulBasis:
-        "Legitimate interests in securing the site and administering restricted internal routes.",
+        "Legitimate interests in securing the site and administering restricted internal routes (Article 6(1)(f) GDPR).",
       purpose:
         "To authenticate approved admins, maintain their session, and protect admin-only content and workflows.",
       dataCategories: [
@@ -134,36 +146,40 @@ export const privacyPageContent = {
       title: "Anti-spam and abuse prevention",
       status: "Conditional",
       lawfulBasis:
-        "Legitimate interests in protecting the site and forms from spam, abuse, and automated misuse.",
+        "Legitimate interests in protecting the site and forms from spam, abuse, and automated misuse (Article 6(1)(f) GDPR).",
       purpose:
-        "To assess suspicious activity and block abusive form submissions if hCaptcha or a similar service is enabled later.",
+        "To assess suspicious activity and block abusive form submissions if hCaptcha or a similar service is enabled.",
       dataCategories: [
         "IP address and browser or device signals",
         "Challenge, risk, or interaction data generated during abuse checks",
       ],
       recipients: ["hCaptcha or equivalent anti-spam provider"],
       retention:
-        "Provider-dependent. Retention should follow the live vendor configuration and documented provider terms when enabled.",
-      note: "This is not currently treated as active unless the production form is actually using the anti-spam service.",
+        "Provider-dependent. Retention follows the live vendor configuration and documented provider terms when enabled.",
+      note: "Not treated as active unless the production form is using the anti-spam service.",
     },
     {
       title: "Website analytics",
-      status: "Conditional",
-      lawfulBasis: "Consent, if non-essential analytics are enabled later.",
+      status: "Live",
+      lawfulBasis:
+        "Consent (Article 6(1)(a) GDPR). PostHog analytics is only activated after you explicitly accept via the cookie consent banner.",
       purpose:
-        "To understand site usage, page performance, and conversion behavior if PostHog is added with consent controls.",
+        "To understand site usage, page navigation, and conversion behaviour in order to improve the site experience. PostHog is initialised in opt-out mode by default and only begins capturing data after your explicit consent.",
       dataCategories: [
-        "Page views, navigation events, device and browser details, and event properties tied to site activity",
+        "Page views, navigation events, and user interaction data",
+        "Device type, browser, and operating system",
+        "Approximate geographic location derived from IP address",
+        "Session identifiers and anonymised event properties tied to site activity",
       ],
       recipients: ["PostHog"],
       retention:
-        "Subject to the final analytics configuration and consent policy. Analytics should not go live before a separate preferences mechanism exists.",
-      note: "Under the current launch posture, non-essential analytics are not treated as active.",
+        "PostHog session identifiers are stored for up to one year. You can remove them at any time by clearing your browser storage or withdrawing consent via the Cookie policy page.",
+      note: "You can withdraw analytics consent at any time via the Cookie policy page. Withdrawal takes effect immediately and no further data will be captured.",
     },
     {
       title: "Newsletter signup",
       status: "Live",
-      lawfulBasis: "Consent.",
+      lawfulBasis: "Consent (Article 6(1)(a) GDPR).",
       purpose:
         "To send editorial or studio updates to users who actively subscribe and confirm their email address through a double opt-in flow.",
       dataCategories: [
@@ -180,7 +196,7 @@ export const privacyPageContent = {
       title: "Booking requests",
       status: bookingEnabled ? "Live" : "Conditional",
       lawfulBasis:
-        "Pre-contract steps taken at your request when you choose to arrange a discovery call.",
+        "Pre-contractual steps taken at your request (Article 6(1)(b) GDPR) when you choose to arrange a discovery call.",
       purpose: bookingEnabled
         ? "To schedule, confirm, and prepare a discovery call through the embedded Cal.com booking flow."
         : "To schedule, confirm, and prepare a discovery call if a booking provider is enabled later.",
@@ -202,16 +218,16 @@ export const privacyPageContent = {
       status: "Live",
       role: "Hosting, database, and authentication processor",
       detail:
-        "Used to store inbound lead records and support authenticated admin sessions.",
+        "Used to store inbound lead records, newsletter signups, and support authenticated admin sessions. Data is processed under a Data Processing Agreement.",
       note: undefined,
     },
     {
       name: "PostHog",
-      status: "Conditional",
+      status: "Live",
       role: "Analytics processor",
       detail:
-        "Planned analytics provider if analytics are introduced with consent controls.",
-      note: "Not treated as live under the current essential-only launch posture.",
+        "Used for consent-gated site analytics. PostHog is configured to start in opt-out mode and only activates after you explicitly accept via the cookie consent banner.",
+      note: undefined,
     },
     {
       name: "hCaptcha",
@@ -233,9 +249,9 @@ export const privacyPageContent = {
     {
       name: "Resend",
       status: "Live",
-      role: "Email marketing or editorial distribution processor",
+      role: "Email delivery processor",
       detail:
-        "Used to send newsletter confirmation emails and store confirmed newsletter contacts against the configured newsletter topic.",
+        "Used to send newsletter confirmation emails and deliver confirmed newsletter content to subscribers.",
       note: undefined,
     },
   ] as const satisfies readonly LegalProcessorDisclosure[],
@@ -244,30 +260,29 @@ export const privacyPageContent = {
 export const cookiesPageContent = {
   intro: {
     kicker: "Cookies",
-    title:
-      "A cookie notice aligned to the current site and the intended EU launch posture.",
+    title: "Cookie notice aligned to GDPR and the Spanish LSSI-CE.",
     intro:
-      "This page explains which cookies or similar storage technologies are currently expected, which ones are not active yet, and what must happen before any non-essential tracking is enabled.",
+      "This page explains which cookies and similar storage technologies are active on this site, the legal basis for each, and how to manage your preferences.",
     lastUpdated: legalPolicyEffectiveDate,
-    note: "Current posture: only essential operational cookies should be considered active. Any future analytics or marketing storage requires a separate consent mechanism before production launch.",
+    note: "Essential cookies are always active. Analytics cookies require your explicit consent and only fire after you accept via the banner. You can change your preference at any time.",
     summary: [
       {
         label: "Current status",
-        value: "Essential cookies only",
+        value: "Essential + consent-gated analytics",
         detail:
-          "The live site should rely on cookies that are necessary for security, authentication, or requested functionality.",
+          "Only cookies strictly necessary for security and authentication are active by default. PostHog analytics is optional and requires explicit consent.",
       },
       {
         label: "Preference centre",
-        value: "Not needed yet",
+        value: "Cookie banner",
         detail:
-          "There is no separate cookie-preferences panel yet because non-essential cookies are not treated as active.",
+          "A consent banner on first visit lets you accept or decline PostHog analytics. You can change your preference at any time by clearing your browser storage or contacting us.",
       },
       {
-        label: "Future constraint",
-        value: "Consent required first",
+        label: "Legal basis",
+        value: "Consent (analytics) / Legitimate interest (essential)",
         detail:
-          "If PostHog or similar analytics are added later, they must stay off until a consent tool is implemented.",
+          "Non-essential cookies require prior informed consent under GDPR Article 6(1)(a) and the Spanish LSSI-CE. Essential cookies rely on legitimate interests in site security and requested functionality.",
       },
     ] as const satisfies readonly LegalSummaryItem[],
   },
@@ -276,25 +291,26 @@ export const cookiesPageContent = {
       id: "about-cookies",
       title: "What cookies and similar storage do",
       paragraphs: [
-        "Cookies are small text files stored on your device. Similar storage technologies can also include local storage, session storage, or security tokens used by authentication and embedded services.",
-        "Some of these technologies are necessary for a site to function. Others are optional and should only be activated when the legal basis and user controls are in place.",
+        "Cookies are small text files stored on your device by a website. Similar technologies include local storage, session storage, and authentication tokens used by embedded services.",
+        "Some of these technologies are strictly necessary for the site to function securely. Others — such as analytics identifiers — are optional and under Spanish and EU law require your explicit prior consent before activation.",
+        "Under the Spanish Law on Information Society Services and Electronic Commerce (LSSI-CE, implementing the EU ePrivacy Directive), websites must obtain informed prior consent before placing non-essential cookies. The cookie consent banner on this site fulfils that requirement.",
       ],
     },
     {
       id: "preferences",
-      title: "Cookie preferences",
+      title: "Your cookie preferences",
       paragraphs: [
-        "Under the current launch posture, Scalzo Studio does not treat non-essential analytics or marketing cookies as active, so there is no separate cookie-preferences centre yet.",
-        "If that changes, a dedicated consent and preferences flow must be implemented before the related scripts are activated in production.",
+        "When you first visit this site, a cookie consent banner gives you a clear choice about analytics cookies before any non-essential tracking begins. You can accept or decline in one click.",
+        "PostHog analytics is the only non-essential storage currently in use. It is initialised in opt-out mode by default and only activates after your explicit consent. Withdrawing consent is immediate — no further analytics data will be sent.",
+        `To change your preference at any time, clear your browser storage for this site or contact us at ${legalControllerDetails.email}.`,
       ],
-      note: "This ticket does not add a cookie banner or consent manager. It documents the constraint so future tracking work does not go live without consent controls.",
     },
     {
       id: "manage",
       title: "Managing cookies in your browser",
       paragraphs: [
-        "Most browsers let you review, block, or delete cookies in their privacy or security settings.",
-        "Blocking essential cookies may affect admin login flows or other requested functionality that depends on secure session handling.",
+        "Most browsers let you review, block, or delete cookies through their privacy or security settings. Consult your browser's help pages for instructions.",
+        "Blocking essential cookies may affect admin login flows or other requested functionality that depends on secure session handling. Blocking analytics cookies has no effect on the core site experience.",
       ],
     },
   ] as const satisfies readonly LegalSectionContent[],
@@ -303,46 +319,48 @@ export const cookiesPageContent = {
       title: "Strictly necessary cookies",
       status: "Active",
       purpose:
-        "To keep the site secure, maintain requested sessions, and support core authentication behavior.",
+        "To keep the site secure, maintain requested sessions, and support core authentication behaviour.",
       legalBasis:
-        "Necessary for the requested service and for legitimate security-related site operation.",
+        "Legitimate interests in site security and providing the requested service (LSSI-CE Article 22.2 exemption for technically necessary cookies). Consent is not required for this category.",
       examples: [
         "Supabase authentication and session cookies for admin access",
         "Session or security tokens needed to protect restricted routes",
       ],
-      note: "These are the only cookies that should be treated as active under the current launch posture.",
+      note: "These cookies are exempt from consent requirements under the LSSI-CE because they are strictly necessary for the site to function as requested.",
     },
     {
       title: "Analytics cookies",
-      status: "Inactive until enabled",
+      status: "Active",
       purpose:
-        "To measure usage, navigation patterns, and conversion events if PostHog or a similar analytics tool is added later.",
-      legalBasis: "Consent before activation.",
+        "To measure page visits, navigation patterns, and conversion events using PostHog, in order to improve the site experience.",
+      legalBasis:
+        "Consent (GDPR Article 6(1)(a) and LSSI-CE Article 22.2). PostHog analytics only activates after you explicitly accept via the cookie consent banner. The PostHog session identifier is stored for up to one year.",
       examples: [
-        "Future PostHog analytics cookies or local storage identifiers",
+        "PostHog session identifier stored in local storage — up to 1 year",
+        "PostHog event data and anonymised interaction properties",
       ],
-      note: "These must remain off until a separate consent and preferences implementation exists.",
+      note: "Active only when you have accepted analytics cookies via the banner. If you decline or make no choice, PostHog remains in opt-out mode and no analytics data is captured or sent.",
     },
     {
       title: "Security and anti-spam cookies",
       status: "Inactive until enabled",
       purpose:
-        "To help distinguish human traffic from abusive traffic if hCaptcha or a similar anti-spam provider is enabled later.",
+        "To distinguish human traffic from abusive traffic if hCaptcha or a similar anti-spam provider is enabled.",
       legalBasis:
-        "Legitimate interests in site security, but the final setup must be reviewed against the live vendor behaviour.",
+        "Legitimate interests in site security (Article 6(1)(f) GDPR), subject to review against the live vendor behaviour when enabled.",
       examples: [
         "Risk, challenge, or security-related storage used by an anti-spam provider",
       ],
-      note: "This category is not treated as active unless the form is actually protected by the provider in production.",
+      note: "Not treated as active unless the form is protected by the provider in production.",
     },
     {
       title: "Booking and embedded service cookies",
       status: bookingEnabled ? "Active" : "Inactive until enabled",
       purpose: bookingEnabled
         ? "To support the embedded Cal.com booking experience used for discovery-call scheduling."
-        : "To support a future embedded booking experience if a scheduling provider is added later.",
+        : "To support a future embedded booking experience if a scheduling provider is added.",
       legalBasis: bookingEnabled
-        ? "Necessary for the user-requested booking flow where the Cal.com embed needs storage to operate."
+        ? "Necessary for the user-requested booking flow (LSSI-CE Article 22.2 exemption) where the Cal.com embed requires storage to operate."
         : "Depends on the final provider setup and whether the storage is strictly necessary for a user-requested booking flow.",
       examples: [
         bookingEnabled
