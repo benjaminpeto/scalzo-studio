@@ -11,7 +11,8 @@ function isLocaleRoute(pathname: string): boolean {
     !pathname.startsWith("/admin") &&
     !pathname.startsWith("/api") &&
     !pathname.startsWith("/auth") &&
-    !pathname.startsWith("/ingest")
+    !pathname.startsWith("/ingest") &&
+    !pathname.startsWith("/protected")
   );
 }
 

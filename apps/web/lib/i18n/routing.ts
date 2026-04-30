@@ -11,6 +11,7 @@ export const routing = defineRouting({
   localeDetection: true,
   localeCookie: {
     name: "NEXT_LOCALE",
+    maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
   },
 });
