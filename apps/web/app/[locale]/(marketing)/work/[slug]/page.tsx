@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
@@ -7,6 +8,7 @@ import { getResolvedWorkDetailRouteData } from "@/actions/work/get-resolved-work
 import { getWorkDetailPageData } from "@/actions/work/get-work-detail-page-data";
 import WorkDetailFallback from "@/components/work/work-detail-fallback";
 import WorkDetailLayout from "@/components/work/work-detail-layout";
+import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import {
   buildNotFoundRouteMetadata,
   buildRouteMetadata,
@@ -48,8 +50,10 @@ export async function generateMetadata({
 }
 
 async function WorkDetailContent({ slug }: { slug: string }) {
-  const { detailPageData, isPreview } =
-    await getResolvedWorkDetailRouteData(slug);
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
+  const { detailPageData } = await getResolvedWorkDetailRouteData(slug, isPreview);
 
   if (!detailPageData) {
     notFound();
