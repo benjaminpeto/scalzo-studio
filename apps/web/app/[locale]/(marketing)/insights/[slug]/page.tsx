@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
@@ -7,6 +8,7 @@ import { getInsightDetailPageData } from "@/actions/insights/get-insight-detail-
 import { getResolvedInsightDetailRouteData } from "@/actions/insights/get-resolved-insight-detail-route-data";
 import InsightDetailFallback from "@/components/insights/insight-detail-fallback";
 import InsightDetailLayout from "@/components/insights/insight-detail-layout";
+import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import {
   buildNotFoundRouteMetadata,
   buildRouteMetadata,
@@ -49,8 +51,10 @@ export async function generateMetadata({
 }
 
 async function InsightDetailContent({ slug }: { slug: string }) {
-  const { detailPageData, isPreview } =
-    await getResolvedInsightDetailRouteData(slug);
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
+  const { detailPageData } = await getResolvedInsightDetailRouteData(slug, isPreview);
 
   if (!detailPageData) {
     notFound();
