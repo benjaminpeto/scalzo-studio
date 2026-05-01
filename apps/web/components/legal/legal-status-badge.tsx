@@ -1,7 +1,13 @@
 import type { LegalStatus } from "@/interfaces/legal/content";
 import { cn } from "@/lib/utils";
 
-export function LegalStatusBadge({ status }: { status: LegalStatus }) {
+export function LegalStatusBadge({
+  status,
+  label,
+}: {
+  status: LegalStatus;
+  label?: string;
+}) {
   return (
     <span
       className={cn(
@@ -11,7 +17,7 @@ export function LegalStatusBadge({ status }: { status: LegalStatus }) {
           : "border border-border/70 bg-white text-muted-foreground",
       )}
     >
-      {status}
+      {label ?? status}
     </span>
   );
 }

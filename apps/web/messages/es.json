@@ -3,6 +3,7 @@
     "about": "Acerca de",
     "ariaLabel": "Principal",
     "bookACall": "Reservar llamada",
+    "homeLabel": "Inicio de Scalzo Studio",
     "insights": "Artículos",
     "mobileAriaLabel": "Móvil",
     "mobileSheetDescription": "Navegación principal del sitio y llamada a la acción.",
@@ -18,6 +19,7 @@
     "description": "Para empresas que necesitan una página con más autoridad, estructura más clara y menos ruido.",
     "elsewhereLabel": "En la red",
     "exploreLabel": "Explorar",
+    "legalLabel": "Legal",
     "links": {
       "about": "Acerca de",
       "contact": "Contacto",
@@ -49,6 +51,7 @@
   "localeSwitcher": {
     "en": "EN",
     "es": "ES",
-    "label": "Idioma"
+    "label": "Idioma",
+    "switchTo": "Cambiar a {locale}"
   }
 }

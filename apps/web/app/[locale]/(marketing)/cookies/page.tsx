@@ -4,7 +4,11 @@ import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 
 import { LegalPage } from "@/components/legal/legal-page";
-import { cookiesPageContent } from "@/constants/legal/content";
+import {
+  getCookiesPageContent,
+  getCookiesPageLabels,
+  getLegalSharedContent,
+} from "@/constants/legal/content";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
@@ -22,13 +26,16 @@ export async function generateMetadata({
 export default async function CookiesPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { categories, intro, sections } = cookiesPageContent;
+  const { categories, intro, sections } = getCookiesPageContent(locale);
+  const labels = getCookiesPageLabels(locale);
+  const shared = getLegalSharedContent(locale);
 
   return (
     <LegalPage
       intro={intro.intro}
       kicker={intro.kicker}
       lastUpdated={intro.lastUpdated}
+      lastUpdatedLabel={shared.lastUpdatedLabel}
       note={intro.note}
       summary={intro.summary}
       title={intro.title}
@@ -44,8 +51,8 @@ export default async function CookiesPage({ params }: MarketingPageProps) {
       </LegalSection>
 
       <LegalSection
-        title="Cookie categories used or reserved for future features"
-        intro="The categories below distinguish between storage that is currently expected to be active and storage that must stay off until the relevant feature and legal basis exist."
+        title={labels.categoriesTitle}
+        intro={labels.categoriesIntro}
       >
         <Grid gap="lg" className="lg:grid-cols-2">
           {categories.map((category) => (
@@ -61,14 +68,14 @@ export default async function CookiesPage({ params }: MarketingPageProps) {
                       : "border border-border/70 bg-white text-muted-foreground"
                   }`}
                 >
-                  {category.status}
+                  {labels.status[category.status]}
                 </span>
               </div>
 
               <div className="mt-5 space-y-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Purpose
+                    {labels.purposeLabel}
                   </p>
                   <Prose className="mt-2" measure="lg" size="sm">
                     {category.purpose}
@@ -77,7 +84,7 @@ export default async function CookiesPage({ params }: MarketingPageProps) {
 
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Legal basis
+                    {labels.legalBasisLabel}
                   </p>
                   <Prose className="mt-2" measure="lg" size="sm" tone="strong">
                     {category.legalBasis}
@@ -86,7 +93,7 @@ export default async function CookiesPage({ params }: MarketingPageProps) {
 
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Examples
+                    {labels.examplesLabel}
                   </p>
                   <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
                     {category.examples.map((example) => (
@@ -123,13 +130,13 @@ export default async function CookiesPage({ params }: MarketingPageProps) {
               href="/privacy"
               className="inline-flex h-12 items-center rounded-full bg-foreground px-6 text-[0.78rem] uppercase tracking-[0.2em] text-background hover:bg-primary"
             >
-              Read the privacy notice
+              {labels.ctaPrimary}
             </Link>
             <Link
               href="/contact"
               className="inline-flex h-12 items-center rounded-full border border-border bg-white px-6 text-[0.78rem] uppercase tracking-[0.2em] text-foreground hover:bg-white"
             >
-              Contact Scalzo Studio
+              {labels.ctaSecondary}
             </Link>
           </div>
         </div>

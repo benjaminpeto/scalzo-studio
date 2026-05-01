@@ -9,10 +9,7 @@ import {
   RevealItem,
   ScrollFloat,
 } from "@/components/home/motion";
-import {
-  servicePackageOptions,
-  servicesFaqItems,
-} from "@/constants/services/content";
+import { getServicesPublicContent } from "@/constants/services/public-content";
 import type { ServicesIndexEntry } from "@/interfaces/services/content";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
@@ -31,10 +28,18 @@ export async function generateMetadata({
   return getMarketingRouteMetadata(locale, "services");
 }
 
-async function ServicesGridContent() {
+async function ServicesGridContent({
+  ctaLabel,
+  metadata,
+}: {
+  ctaLabel: string;
+  metadata: string;
+}) {
   const services = await getServicesIndexEntries();
 
-  return <ServicesGrid services={services} />;
+  return (
+    <ServicesGrid ctaLabel={ctaLabel} metadata={metadata} services={services} />
+  );
 }
 
 function ServicesGridFallback() {
@@ -65,8 +70,12 @@ function ServicesGridFallback() {
 }
 
 function ServicesGrid({
+  ctaLabel,
+  metadata,
   services,
 }: {
+  ctaLabel: string;
+  metadata: string;
   services: ReadonlyArray<ServicesIndexEntry>;
 }) {
   return (
@@ -77,12 +86,12 @@ function ServicesGrid({
             className="h-full rounded-[1.8rem] bg-white p-6 shadow-[0_16px_44px_rgba(27,28,26,0.05)] ring-1 ring-black/4"
             cta={{
               href: `/services/${service.slug}`,
-              label: "Explore service",
+              label: ctaLabel,
             }}
             description={service.summary}
             indexLabel={`0${index + 1}`}
             items={service.deliverables}
-            metadata="Scalzo Studio service"
+            metadata={metadata}
             outcome={service.outcome}
             showMarkers={false}
             title={service.title}
@@ -96,40 +105,30 @@ function ServicesGrid({
 export default async function ServicesPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const content = getServicesPublicContent(locale);
   return (
     <>
       <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">
         <Reveal>
           <Grid gap="2xl" className="lg:grid-cols-[0.58fr_0.42fr] lg:items-end">
             <Stack gap="lg">
-              <p className="section-kicker">Services</p>
+              <p className="section-kicker">{content.hero.kicker}</p>
               <ScrollFloat offset={24}>
                 <h1 className="max-w-5xl font-display text-[3.5rem] leading-[0.9] tracking-[-0.065em] text-foreground sm:text-[4.6rem] lg:text-[6.1rem]">
-                  Services that clarify the offer before the page starts trying
-                  to perform.
+                  {content.hero.title}
                 </h1>
               </ScrollFloat>
               <Prose size="lg" measure="lg">
-                Strategy, design direction, and rollout support for teams that
-                need a sharper commercial story, stronger structure, and a more
-                credible first impression.
+                {content.hero.intro}
               </Prose>
             </Stack>
 
             <div className="surface-grain rounded-[1.9rem] border border-border/70 bg-white/80 p-6 shadow-[0_18px_52px_rgba(27,28,26,0.05)] sm:p-8">
-              <p className="section-kicker">What changes</p>
+              <p className="section-kicker">{content.hero.sidePanelLabel}</p>
               <div className="mt-6 space-y-5 text-base leading-7 text-muted-foreground">
-                <p>
-                  The message becomes easier to understand in the first scroll.
-                </p>
-                <p>
-                  The page structure starts supporting confidence instead of
-                  noise.
-                </p>
-                <p>
-                  The visual system has room to scale into launches, content,
-                  and follow-on pages.
-                </p>
+                {content.hero.sidePanelPoints.map((point) => (
+                  <p key={point}>{point}</p>
+                ))}
               </div>
             </div>
           </Grid>
@@ -144,20 +143,19 @@ export default async function ServicesPage({ params }: MarketingPageProps) {
               className="lg:grid-cols-[0.34fr_0.66fr] lg:items-end"
             >
               <Stack gap="sm">
-                <p className="section-kicker">Service list</p>
+                <p className="section-kicker">{content.servicesList.kicker}</p>
                 <h2 className="font-display text-[2.8rem] leading-[0.93] tracking-[-0.055em] text-foreground sm:text-[3.8rem] lg:text-[4.8rem]">
-                  A compact service menu, oriented around outcomes.
+                  {content.servicesList.heading}
                 </h2>
               </Stack>
-              <Prose measure="md">
-                Each engagement is structured to reduce ambiguity, sharpen
-                decision-making, and give the site or launch a more coherent
-                commercial role.
-              </Prose>
+              <Prose measure="md">{content.servicesList.intro}</Prose>
             </Grid>
 
             <Suspense fallback={<ServicesGridFallback />}>
-              <ServicesGridContent />
+              <ServicesGridContent
+                ctaLabel={content.servicesList.ctaLabel}
+                metadata={content.servicesList.metadata}
+              />
             </Suspense>
           </Stack>
         </Reveal>
@@ -171,20 +169,20 @@ export default async function ServicesPage({ params }: MarketingPageProps) {
               className="lg:grid-cols-[0.42fr_0.58fr] lg:items-end"
             >
               <Stack gap="sm">
-                <p className="section-kicker text-white/60">Ways to work</p>
+                <p className="section-kicker text-white/60">
+                  {content.packagesSection.kicker}
+                </p>
                 <h2 className="font-display text-[2.8rem] leading-[0.93] tracking-[-0.055em] text-white sm:text-[3.8rem] lg:text-[4.8rem]">
-                  Choose the depth of support that matches the moment.
+                  {content.packagesSection.title}
                 </h2>
               </Stack>
               <Prose measure="md" tone="inverse">
-                Some teams need a diagnostic reset. Others need a full page
-                direction. Others need a consistent partner after the first
-                release is live.
+                {content.packagesSection.intro}
               </Prose>
             </Grid>
 
             <Grid cols="three" gap="md">
-              {servicePackageOptions.map((option) => (
+              {content.packages.map((option) => (
                 <article
                   key={option.label}
                   className="rounded-[1.8rem] bg-white p-6 text-foreground shadow-[0_16px_44px_rgba(0,0,0,0.16)]"
@@ -216,14 +214,13 @@ export default async function ServicesPage({ params }: MarketingPageProps) {
                 FAQ<span className="text-primary">.</span>
               </h2>
               <Prose measure="sm" className="mt-1">
-                A short clarification layer for scope, fit, and what stays in
-                this ticket versus later service-detail work.
+                {content.faq.intro}
               </Prose>
             </Stack>
 
             <RevealGroup stagger={0.08}>
               <FaqAccordion
-                items={servicesFaqItems}
+                items={content.faq.items}
                 itemWrapper={RevealItem}
                 className="space-y-4"
               />
@@ -234,22 +231,24 @@ export default async function ServicesPage({ params }: MarketingPageProps) {
 
       <MarketingCtaBand
         id="contact"
-        briefItems={[
-          "Which offer needs to feel clearer or more premium?",
-          "Where is the current page making the sale harder than it should be?",
-          "What should a stronger service page or homepage help you win next?",
-        ]}
-        briefKicker="First conversation"
+        briefItems={content.cta.briefItems}
+        briefKicker={content.cta.briefKicker}
         className="pb-24"
-        description="Most projects start with the current offer, the current page, and the point where confidence starts falling away. That is enough to define the next step."
+        description={content.cta.description}
         email={{
           href: "mailto:hello@scalzostudio.com",
           label: "hello@scalzostudio.com",
         }}
-        kicker="Scalzo Studio"
-        primaryAction={{ href: "/#contact", label: "Start a project" }}
-        secondaryAction={{ href: "/#projects", label: "See featured work" }}
-        title="Need the offer, the page, or the launch to feel more decisive?"
+        kicker={content.cta.kicker}
+        primaryAction={{
+          href: "/#contact",
+          label: content.cta.primaryActionLabel,
+        }}
+        secondaryAction={{
+          href: "/#projects",
+          label: content.cta.secondaryActionLabel,
+        }}
+        title={content.cta.title}
       />
     </>
   );

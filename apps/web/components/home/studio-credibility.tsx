@@ -7,10 +7,12 @@ import {
   RevealItem,
   ScrollFloat,
 } from "@/components/home/motion";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { MetricBlock } from "@ui/components/marketing/metric-block";
-import { studioProfiles, credibilityStats } from "@/constants/home/content";
 
-export function StudioCredibility() {
+export function StudioCredibility({ locale }: { locale: string }) {
+  const content = getHomePublicContent(locale).studioCredibility;
+
   return (
     <section id="studio" className="section-shell anchor-offset py-20 lg:py-28">
       <Reveal>
@@ -20,26 +22,28 @@ export function StudioCredibility() {
               scalzo
             </p>
             <p className="mt-5 max-w-xs text-base leading-7 text-muted-foreground">
-              Based in the Canary Islands, the studio helps ambitious brands
-              move from visually acceptable to commercially memorable.
+              {content.body}
             </p>
           </div>
 
           <div>
             <h2 className="max-w-3xl font-display text-[2.9rem] leading-[0.95] tracking-[-0.055em] text-foreground sm:text-[4.1rem] lg:text-[4.8rem]">
-              More than logos, we give your brand a clearer commercial role.
+              {content.title}
             </h2>
             <div className="mt-10 rounded-4xl bg-white p-6 shadow-[0_10px_30px_rgba(27,28,26,0.04)] ring-1 ring-black/4 sm:p-8">
               <p className="font-display text-[3.4rem] leading-[0.92] tracking-[-0.07em] text-foreground sm:text-[4.9rem]">
-                Deux expertises,
-                <br />
-                une meme vision.
+                {content.featuredStatement.split("\n").map((line, index) => (
+                  <span key={line}>
+                    {index > 0 ? <br /> : null}
+                    {line}
+                  </span>
+                ))}
               </p>
             </div>
           </div>
 
           <RevealGroup className="grid gap-4" stagger={0.1}>
-            {studioProfiles.map((profile) => (
+            {content.profiles.map((profile) => (
               <RevealItem key={profile.title}>
                 <ScrollFloat offset={16}>
                   <HoverCard>
@@ -73,7 +77,7 @@ export function StudioCredibility() {
         </div>
 
         <RevealGroup className="mt-10 grid gap-4 sm:grid-cols-3" stagger={0.08}>
-          {credibilityStats.map((item) => (
+          {content.stats.map((item) => (
             <RevealItem key={item.value}>
               <MetricBlock label={item.label} value={item.value} />
             </RevealItem>

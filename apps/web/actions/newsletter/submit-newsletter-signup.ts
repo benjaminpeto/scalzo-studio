@@ -1,6 +1,6 @@
 "use server";
 
-import { newsletterSignupContent } from "@/constants/newsletter/content";
+import { getNewsletterPublicContent } from "@/constants/newsletter/public-content";
 import type { SubmitNewsletterSignupState } from "@/interfaces/newsletter/form";
 import { serverFeatureFlags } from "@/lib/env/server";
 import { recordWatchdogEvent } from "@/lib/watchdog/server";
@@ -11,7 +11,6 @@ import {
   buildNewsletterSignupLogContext,
   serializeNewsletterErrorForLog,
 } from "./helpers";
-import { getNewsletterConfirmationMessage } from "./newsletter-emails";
 import { newsletterSignupSchema } from "./schemas";
 
 export async function submitNewsletterSignup(
@@ -25,8 +24,14 @@ export async function submitNewsletterSignup(
   });
 
   const rawEmail = formData.get("email");
+  const rawLocale = formData.get("locale");
   const rawPagePath = formData.get("pagePath");
   const rawPlacement = formData.get("placement");
+  const locale =
+    typeof rawLocale === "string" && (rawLocale === "en" || rawLocale === "es")
+      ? rawLocale
+      : "en";
+  const messages = getNewsletterPublicContent(locale).states;
   const logContext = buildNewsletterSignupLogContext({
     email: typeof rawEmail === "string" ? rawEmail : null,
     pagePath: typeof rawPagePath === "string" ? rawPagePath : null,
@@ -41,9 +46,15 @@ export async function submitNewsletterSignup(
   };
 
   if (!parsedInput.success) {
+    const fieldErrors = buildNewsletterFieldErrors(parsedInput.error);
+
+    if (fieldErrors.email) {
+      fieldErrors.email = messages.invalidEmail;
+    }
+
     return {
-      fieldErrors: buildNewsletterFieldErrors(parsedInput.error),
-      message: "Enter a valid email address to join the newsletter.",
+      fieldErrors,
+      message: messages.invalidEmail,
       status: "error",
     };
   }
@@ -67,7 +78,7 @@ export async function submitNewsletterSignup(
 
       return {
         fieldErrors: {},
-        message: newsletterSignupContent.states.emailUnavailable,
+        message: messages.emailUnavailable,
         status: "error",
       };
     }
@@ -82,7 +93,7 @@ export async function submitNewsletterSignup(
 
       return {
         fieldErrors: {},
-        message: newsletterSignupContent.states.alreadySubscribed,
+        message: messages.alreadySubscribed,
         status: "success",
       };
     }
@@ -96,7 +107,7 @@ export async function submitNewsletterSignup(
 
     return {
       fieldErrors: {},
-      message: getNewsletterConfirmationMessage(),
+      message: messages.pending,
       status: "success",
     };
   } catch (error) {
@@ -116,7 +127,7 @@ export async function submitNewsletterSignup(
 
     return {
       fieldErrors: {},
-      message: newsletterSignupContent.states.providerError,
+      message: messages.providerError,
       status: "error",
     };
   }

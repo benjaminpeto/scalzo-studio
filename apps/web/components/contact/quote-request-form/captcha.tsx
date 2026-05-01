@@ -2,6 +2,7 @@
 
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 
+import { getContactPublicContent } from "@/constants/contact/public-content";
 import type { QuoteRequestCaptchaProps } from "@/interfaces/contact/component-props";
 import { Label } from "@ui/components/ui/label";
 
@@ -10,16 +11,18 @@ import { FieldError } from "./field-error";
 export function QuoteRequestCaptcha({
   captchaError,
   captchaRef,
+  content,
   onError,
   onExpire,
   onVerify,
   siteKey,
 }: QuoteRequestCaptchaProps) {
+  const resolvedContent = content ?? getContactPublicContent("en").captcha;
+
   if (!siteKey) {
     return (
       <div className="mt-6 rounded-[1.2rem] border border-destructive/20 bg-destructive/6 px-4 py-3 text-sm text-foreground">
-        The contact form is temporarily unavailable. Email
-        hello@scalzostudio.com instead.
+        {resolvedContent.unavailable}
       </div>
     );
   }
@@ -27,18 +30,16 @@ export function QuoteRequestCaptcha({
   return (
     <div className="mt-6 rounded-[1.2rem] border border-border/70 bg-white/72 p-4">
       <Label className="text-sm font-semibold text-foreground">
-        Anti-spam check
+        {resolvedContent.label}
       </Label>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        Complete the hCaptcha check before sending the request.
+        {resolvedContent.help}
       </p>
       <div className="mt-4 overflow-x-auto">
         <HCaptcha
           ref={captchaRef}
           sitekey={siteKey}
-          onError={() =>
-            onError("The anti-spam check failed to load. Try again.")
-          }
+          onError={() => onError(resolvedContent.errorLoad)}
           onExpire={onExpire}
           onVerify={onVerify}
         />

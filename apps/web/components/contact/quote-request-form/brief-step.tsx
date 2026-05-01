@@ -1,25 +1,27 @@
-import Link from "next/link";
-
-import { contactPageContent } from "@/constants/contact/content";
+import { Link } from "@/lib/i18n/navigation";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
 import { Label } from "@ui/components/ui/label";
 
 import { FieldError } from "./field-error";
 
 export function BriefStep({
+  content,
   stepErrors,
   updateField,
   values,
 }: QuoteRequestStepProps) {
+  const resolvedContent = content ?? getContactPublicContent("en");
+
   return (
     <fieldset className="mt-6 space-y-6">
-      <legend className="sr-only">Brief and consent</legend>
+      <legend className="sr-only">{resolvedContent.labels.briefLegend}</legend>
       <div>
         <Label
           htmlFor="message"
           className="text-sm font-semibold text-foreground"
         >
-          Project brief
+          {resolvedContent.labels.projectBrief}
         </Label>
         <textarea
           id="message"
@@ -27,7 +29,7 @@ export function BriefStep({
           onChange={(event) => updateField("message", event.target.value)}
           aria-invalid={Boolean(stepErrors.message)}
           aria-describedby={stepErrors.message ? "message-error" : undefined}
-          placeholder="What needs to feel clearer, more premium, or more commercially useful?"
+          placeholder={resolvedContent.labels.briefPlaceholder}
           className="input-shell mt-3 min-h-40 w-full rounded-[1rem] px-4 py-3 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
         />
         <FieldError id="message-error" message={stepErrors.message} />
@@ -44,7 +46,7 @@ export function BriefStep({
             className="mt-1 size-4"
           />
           <span className="text-sm leading-6 text-foreground">
-            {contactPageContent.form.newsletterOptInLabel}
+            {resolvedContent.form.newsletterOptInLabel}
           </span>
         </label>
       </div>
@@ -60,20 +62,19 @@ export function BriefStep({
             className="mt-1 size-4"
           />
           <span className="text-sm leading-6 text-foreground">
-            I agree to be contacted about this request and understand that my
-            details will be handled in accordance with the{" "}
+            {resolvedContent.consent.bodyPrefix}{" "}
             <Link
               href="/privacy"
               className="font-medium text-foreground underline decoration-editorial-underline underline-offset-4"
             >
-              Privacy notice
+              {resolvedContent.consent.privacyLabel}
             </Link>{" "}
-            and{" "}
+            {resolvedContent.consent.conjunction}{" "}
             <Link
               href="/cookies"
               className="font-medium text-foreground underline decoration-editorial-underline underline-offset-4"
             >
-              Cookie policy
+              {resolvedContent.consent.cookiesLabel}
             </Link>
             .
           </span>

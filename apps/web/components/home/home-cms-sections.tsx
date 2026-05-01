@@ -4,15 +4,24 @@ import { ServicesPreview } from "@/components/home/services-preview";
 import { Testimonials } from "@/components/home/testimonials";
 import { getHomePageContent } from "@/actions/home/get-home-page-content";
 
-export async function HomeCmsSections() {
+export async function HomeCmsSections({ locale }: { locale: string }) {
   const homePageContent = await getHomePageContent();
 
   return (
     <>
-      <FeaturedWork projects={homePageContent.featuredProjects} />
-      <ServicesPreview services={homePageContent.serviceGroups} />
-      <JournalPreview entries={homePageContent.journalEntries} />
-      <Testimonials items={homePageContent.testimonials} />
+      <FeaturedWork
+        locale={locale}
+        projects={homePageContent.featuredProjects}
+      />
+      <ServicesPreview
+        locale={locale}
+        services={homePageContent.serviceGroups}
+      />
+      <JournalPreview
+        locale={locale}
+        entries={homePageContent.journalEntries}
+      />
+      <Testimonials locale={locale} items={homePageContent.testimonials} />
     </>
   );
 }

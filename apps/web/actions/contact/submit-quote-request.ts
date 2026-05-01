@@ -25,6 +25,7 @@ export async function submitQuoteRequest(
   }
 
   const availabilityState = await getQuoteRequestAvailabilityState({
+    locale: preparedSubmission.locale,
     logContext: preparedSubmission.logContext,
     watchdogContext: preparedSubmission.watchdogContext,
   });
@@ -35,6 +36,7 @@ export async function submitQuoteRequest(
 
   const captchaState = await validateQuoteRequestCaptcha({
     hCaptchaToken: preparedSubmission.hCaptchaToken,
+    locale: preparedSubmission.locale,
     logContext: preparedSubmission.logContext,
     watchdogContext: preparedSubmission.watchdogContext,
   });
@@ -45,6 +47,7 @@ export async function submitQuoteRequest(
 
   return submitValidatedQuoteRequest({
     input: preparedSubmission.input,
+    locale: preparedSubmission.locale,
     logContext: preparedSubmission.logContext,
     newsletterOptIn: preparedSubmission.newsletterOptIn,
     watchdogContext: preparedSubmission.watchdogContext,

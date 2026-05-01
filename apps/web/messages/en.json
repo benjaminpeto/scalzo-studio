@@ -3,6 +3,7 @@
     "about": "About",
     "ariaLabel": "Primary",
     "bookACall": "Book a call",
+    "homeLabel": "Scalzo Studio home",
     "insights": "Insights",
     "mobileAriaLabel": "Mobile",
     "mobileSheetDescription": "Primary site navigation and the main call to action.",
@@ -18,6 +19,7 @@
     "description": "Built for businesses that need a homepage with more authority, clearer structure, and less noise.",
     "elsewhereLabel": "Elsewhere",
     "exploreLabel": "Explore",
+    "legalLabel": "Legal",
     "links": {
       "about": "About",
       "contact": "Contact",
@@ -49,6 +51,7 @@
   "localeSwitcher": {
     "en": "EN",
     "es": "ES",
-    "label": "Language"
+    "label": "Language",
+    "switchTo": "Switch to {locale}"
   }
 }

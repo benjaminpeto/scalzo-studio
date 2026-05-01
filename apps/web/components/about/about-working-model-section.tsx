@@ -1,27 +1,28 @@
 import { Reveal } from "@/components/home/motion";
-import { aboutPageContent } from "@/constants/about/content";
-import { processSteps } from "@/constants/home/content";
+import { getAboutPublicContent } from "@/constants/about/public-content";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 
-export function AboutWorkingModelSection() {
+export function AboutWorkingModelSection({ locale }: { locale: string }) {
+  const content = getAboutPublicContent(locale).workingModel;
+  const processSteps = getHomePublicContent(locale).processSteps;
+
   return (
     <Section spacing="tight" surface="inverse">
       <Reveal>
         <Stack gap="xl">
           <Grid gap="xl" className="lg:grid-cols-[0.42fr_0.58fr] lg:items-end">
             <Stack gap="sm">
-              <p className="section-kicker text-white/60">
-                {aboutPageContent.workingModel.kicker}
-              </p>
+              <p className="section-kicker text-white/60">{content.kicker}</p>
               <h2 className="font-display text-[2.8rem] leading-[0.93] tracking-[-0.055em] text-white sm:text-[3.8rem] lg:text-[4.8rem]">
-                {aboutPageContent.workingModel.title}
+                {content.title}
               </h2>
             </Stack>
             <Prose measure="md" tone="inverse">
-              {aboutPageContent.workingModel.intro}
+              {content.intro}
             </Prose>
           </Grid>
 

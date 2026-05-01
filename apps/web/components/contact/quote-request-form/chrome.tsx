@@ -1,9 +1,7 @@
 import { ArrowRight, ChevronLeft } from "lucide-react";
-
-import {
-  contactFormSteps,
-  contactPageContent,
-} from "@/constants/contact/content";
+import { Link } from "@/lib/i18n/navigation";
+import { useLocale } from "next-intl";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 import type {
   QuoteRequestFooterProps,
   QuoteRequestHiddenFieldsProps,
@@ -16,28 +14,31 @@ import { QuoteRequestStepButton } from "./step-button";
 import { QuoteRequestSubmitButton } from "./submit-button";
 
 export function QuoteRequestSuccessState() {
+  const locale = useLocale();
+  const content = getContactPublicContent(locale).success;
+
   return (
     <div className="surface-grain rounded-4xl border border-border/70 bg-white/92 p-6 shadow-[0_22px_60px_rgba(27,28,26,0.06)] sm:p-8">
-      <p className="section-kicker">Submission received</p>
+      <p className="section-kicker">{content.kicker}</p>
       <h3 className="mt-5 font-display text-[2.3rem] leading-[0.96] tracking-[-0.05em] text-foreground sm:text-[3rem]">
-        {contactPageContent.success.title}
+        {content.title}
       </h3>
       <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground">
-        {contactPageContent.success.body}
+        {content.body}
       </p>
       <div className="mt-7 flex flex-wrap gap-3">
         <Button
           asChild
           className="h-12 rounded-full bg-foreground px-6 text-[0.78rem] uppercase tracking-[0.2em] text-background hover:bg-primary"
         >
-          <a href="/contact#booking">Book a call</a>
+          <Link href="/contact#booking">{content.ctaPrimaryLabel}</Link>
         </Button>
         <Button
           asChild
           variant="outline"
           className="h-12 rounded-full border-border bg-white px-6 text-[0.78rem] uppercase tracking-[0.2em] text-foreground hover:bg-white"
         >
-          <a href="/contact?new=1">Start another request</a>
+          <Link href="/contact?new=1">{content.ctaSecondaryLabel}</Link>
         </Button>
       </div>
     </div>
@@ -47,10 +48,11 @@ export function QuoteRequestSuccessState() {
 export function QuoteRequestStepTabs({
   activeStep,
   onStepClick,
+  steps,
 }: QuoteRequestStepTabsProps) {
   return (
     <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {contactFormSteps.map((step, index) => (
+      {steps.map((step, index) => (
         <QuoteRequestStepButton
           key={step.step}
           isActive={index === activeStep}
@@ -65,12 +67,14 @@ export function QuoteRequestStepTabs({
 }
 
 export function QuoteRequestHiddenFields({
+  locale,
   referrer,
   utmValues,
   values,
 }: QuoteRequestHiddenFieldsProps) {
   return (
     <>
+      <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="pagePath" value="/contact" />
       <input type="hidden" name="referrer" value={referrer} />
       <input type="hidden" name="utmSource" value={utmValues.utmSource} />
@@ -129,6 +133,7 @@ export function QuoteRequestFooter({
   activeStep,
   isPending,
   isSubmitDisabled = false,
+  labels,
   onNext,
   onPrevious,
   totalSteps,
@@ -147,7 +152,7 @@ export function QuoteRequestFooter({
             onClick={onPrevious}
           >
             <ChevronLeft aria-hidden="true" className="size-4" />
-            Back
+            {labels.back}
           </Button>
         ) : null}
 
@@ -158,19 +163,22 @@ export function QuoteRequestFooter({
             className="h-12 rounded-full bg-foreground px-6 text-[0.78rem] uppercase tracking-[0.2em] text-background hover:bg-primary"
             onClick={onNext}
           >
-            Continue
+            {labels.continue}
             <ArrowRight aria-hidden="true" className="size-4" />
           </Button>
         ) : null}
       </div>
 
       {isLastStep ? (
-        <QuoteRequestSubmitButton disabled={isPending || isSubmitDisabled} />
+        <QuoteRequestSubmitButton
+          disabled={isPending || isSubmitDisabled}
+          label={labels.submit}
+        />
       ) : null}
 
       {isPending ? (
         <p className="w-full text-sm text-muted-foreground sm:w-auto">
-          Submitting the request...
+          {labels.pending}
         </p>
       ) : null}
     </div>

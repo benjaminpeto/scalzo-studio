@@ -1,30 +1,32 @@
-import {
-  contactProjectTypeOptions,
-  contactServiceOptions,
-} from "@/constants/contact/content";
 import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 
 import { FieldError } from "./field-error";
 
 export function NeedStep({
+  content,
   stepErrors,
   updateField,
   values,
 }: QuoteRequestStepProps) {
+  const resolvedContent = content ?? getContactPublicContent("en");
+
   return (
     <fieldset className="mt-6 space-y-6">
-      <legend className="sr-only">What do you need?</legend>
+      <legend className="sr-only">{resolvedContent.labels.needLegend}</legend>
       <div>
-        <p className="text-sm font-semibold text-foreground">Services needed</p>
+        <p className="text-sm font-semibold text-foreground">
+          {resolvedContent.labels.servicesNeeded}
+        </p>
         <div
           className="mt-4 grid gap-3"
           aria-describedby={
             stepErrors.servicesInterest ? "services-interest-error" : undefined
           }
         >
-          {contactServiceOptions.map((option) => {
+          {resolvedContent.options.services.map((option) => {
             const checked = values.servicesInterest.includes(option.value);
 
             return (
@@ -75,10 +77,10 @@ export function NeedStep({
           htmlFor="project-type"
           className="text-sm font-semibold text-foreground"
         >
-          Project type
+          {resolvedContent.labels.projectType}
         </Label>
         <div className="mt-4 flex flex-wrap gap-3">
-          {contactProjectTypeOptions.map((option) => (
+          {resolvedContent.options.projectType.map((option) => (
             <button
               key={option.value}
               type="button"
@@ -106,7 +108,7 @@ export function NeedStep({
           htmlFor="primary-goal"
           className="text-sm font-semibold text-foreground"
         >
-          Primary goal
+          {resolvedContent.labels.primaryGoal}
         </Label>
         <Input
           id="primary-goal"
@@ -116,7 +118,7 @@ export function NeedStep({
           aria-describedby={
             stepErrors.primaryGoal ? "primary-goal-error" : undefined
           }
-          placeholder="More qualified leads, clearer positioning, a stronger launch..."
+          placeholder={resolvedContent.labels.primaryGoalPlaceholder}
           className="mt-3 h-12"
         />
         <FieldError id="primary-goal-error" message={stepErrors.primaryGoal} />

@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/home/motion";
-import { aboutPageContent } from "@/constants/about/content";
+import { getAboutPublicContent } from "@/constants/about/public-content";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -9,26 +10,28 @@ import { Stack } from "@ui/components/layout/stack";
 
 import { AboutProofContent } from "./about-proof-content";
 import { AboutProofFallback } from "./about-proof-fallback";
-import { trustMarks } from "@/constants/home/content";
 
-export function AboutProofSection() {
+export function AboutProofSection({ locale }: { locale: string }) {
+  const content = getAboutPublicContent(locale).proof;
+  const trustMarks = getHomePublicContent(locale).trustMarks;
+
   return (
     <Section id="about-proof" spacing="tight">
       <Reveal>
         <Stack gap="xl">
           <Grid gap="xl" className="lg:grid-cols-[0.34fr_0.66fr] lg:items-end">
             <Stack gap="sm">
-              <p className="section-kicker">{aboutPageContent.proof.kicker}</p>
+              <p className="section-kicker">{content.kicker}</p>
               <h2 className="font-display text-[2.8rem] leading-[0.93] tracking-[-0.055em] text-foreground sm:text-[3.8rem] lg:text-[4.8rem]">
-                {aboutPageContent.proof.title}
+                {content.title}
               </h2>
             </Stack>
-            <Prose measure="md">{aboutPageContent.proof.intro}</Prose>
+            <Prose measure="md">{content.intro}</Prose>
           </Grid>
 
           <div>
             <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              {aboutPageContent.proof.marksTitle}
+              {content.marksTitle}
             </p>
             <RevealGroup className="mt-5 flex flex-wrap gap-3" stagger={0.06}>
               {trustMarks.map((mark) => (

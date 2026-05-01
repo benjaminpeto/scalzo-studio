@@ -27,16 +27,16 @@ export default async function Home({ params }: MarketingPageProps) {
 
   return (
     <>
-      <Hero />
-      <TrustStrip />
+      <Hero locale={locale} />
+      <TrustStrip locale={locale} />
       <Suspense fallback={<HomeCmsSectionsFallback />}>
-        <HomeCmsSections />
+        <HomeCmsSections locale={locale} />
       </Suspense>
-      <ProcessMethod />
-      <StudioCredibility />
-      <FaqList />
+      <ProcessMethod locale={locale} />
+      <StudioCredibility locale={locale} />
+      <FaqList locale={locale} />
       <NewsletterSignup placement="home" />
-      <CtaBand />
+      <CtaBand locale={locale} />
     </>
   );
 }

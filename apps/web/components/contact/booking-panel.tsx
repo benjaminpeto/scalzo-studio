@@ -1,12 +1,17 @@
-import { contactPageContent } from "@/constants/contact/content";
-import { bookingProviderConfig, getBookingAction } from "@/lib/booking/config";
+import { getContactPublicContent } from "@/constants/contact/public-content";
+import { bookingProviderConfig } from "@/lib/booking/config";
 import { Button } from "@ui/components/ui/button";
 
 import { CalBookingEmbed } from "./cal-booking-embed";
 
-export function BookingPanel() {
-  const bookingContent = contactPageContent.booking;
-  const bookingAction = getBookingAction();
+export function BookingPanel({ locale = "en" }: { locale?: string }) {
+  const bookingContent = getContactPublicContent(locale).booking;
+  const bookingHref =
+    bookingProviderConfig.bookingUrl ??
+    "mailto:hello@scalzostudio.com?subject=Discovery%20call%20request";
+  const bookingLabel = bookingProviderConfig.bookingUrl
+    ? bookingContent.ctaPrimaryLabel
+    : bookingContent.fallbackLabel;
 
   return (
     <div
@@ -38,14 +43,14 @@ export function BookingPanel() {
           asChild
           className="h-12 rounded-full bg-primary px-6 text-[0.78rem] uppercase tracking-[0.2em] text-primary-foreground hover:bg-primary/90"
         >
-          <a href={bookingAction.href}>{bookingAction.label}</a>
+          <a href={bookingHref}>{bookingLabel}</a>
         </Button>
         <Button
           asChild
           variant="outline"
           className="h-12 rounded-full border-white/14 bg-transparent px-6 text-[0.78rem] uppercase tracking-[0.2em] text-white hover:bg-white/8"
         >
-          <a href="#contact-form">Request a quote instead</a>
+          <a href="#contact-form">{bookingContent.ctaSecondaryLabel}</a>
         </Button>
       </div>
     </div>

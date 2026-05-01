@@ -13,14 +13,20 @@ export function LocaleSwitcher() {
   const t = useTranslations("localeSwitcher");
 
   function handleSwitch(next: Locale) {
-    router.replace(pathname, { locale: next });
+    const suffix =
+      typeof window === "undefined"
+        ? ""
+        : `${window.location.search}${window.location.hash}`;
+
+    router.replace(`${pathname}${suffix}`, { locale: next });
   }
 
   return (
     <div
       aria-label={t("label")}
-      className="flex items-center gap-1 text-xs uppercase tracking-[0.18em]"
+      className="flex items-center gap-2 text-xs uppercase tracking-[0.18em]"
     >
+      <span className="text-muted-foreground">{t("label")}</span>
       {locales.map((l, i) => (
         <Fragment key={l}>
           {i > 0 && (
@@ -31,8 +37,9 @@ export function LocaleSwitcher() {
           <button
             type="button"
             onClick={() => handleSwitch(l)}
-            aria-label={`Switch to ${t(l)}`}
+            aria-label={t("switchTo", { locale: t(l) })}
             aria-current={l === locale ? "true" : undefined}
+            lang={l}
             className={
               l === locale
                 ? "font-semibold text-foreground"

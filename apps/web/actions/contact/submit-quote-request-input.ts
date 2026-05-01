@@ -3,6 +3,7 @@ import type {
   QuoteRequestFormSnapshot,
   QuoteRequestWatchdogContext,
 } from "@/interfaces/contact/quote-request";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 import { serverFeatureFlags } from "@/lib/env/server";
 
 import {
@@ -11,7 +12,7 @@ import {
   normalizeString,
   readLeadFormData,
 } from "./helpers";
-import { contactLeadSchema } from "./schemas";
+import { createContactLeadSchema } from "./schemas";
 
 function filterServicesInterest(entries: FormDataEntryValue[]) {
   return entries.filter(
@@ -36,17 +37,23 @@ export function createQuoteRequestErrorState(input: {
   };
 }
 
-export function createQuoteRequestSuccessState(): SubmitQuoteRequestState {
+export function createQuoteRequestSuccessState(
+  locale = "en",
+): SubmitQuoteRequestState {
+  const content = getContactPublicContent(locale);
+
   return {
     captchaError: null,
     fieldErrors: {},
-    message: "Thanks. The request is in and will be reviewed shortly.",
+    message: content.errors.success,
     status: "success",
   };
 }
 
 export function prepareQuoteRequestSubmission(formData: FormData) {
   const rawInput = readLeadFormData(formData);
+  const locale = normalizeString(formData.get("locale")) === "es" ? "es" : "en";
+  const errorMessages = getContactPublicContent(locale).errors;
   const servicesInterest = filterServicesInterest(rawInput.servicesInterest);
   const pagePath = normalizeString(rawInput.pagePath) || "/contact";
   const email = normalizeString(rawInput.email);
@@ -80,7 +87,7 @@ export function prepareQuoteRequestSubmission(formData: FormData) {
     pagePath: snapshot.pagePath,
     serviceRoleEnabled: serverFeatureFlags.serviceRoleEnabled,
   };
-  const parsedInput = contactLeadSchema.safeParse({
+  const parsedInput = createContactLeadSchema(errorMessages).safeParse({
     budgetBand: snapshot.budgetBand,
     company: snapshot.company,
     consent: snapshot.consent,
@@ -107,8 +114,9 @@ export function prepareQuoteRequestSubmission(formData: FormData) {
       logContext,
       state: createQuoteRequestErrorState({
         fieldErrors: buildFieldErrors(parsedInput.error),
-        message: "Check the highlighted fields and try again.",
+        message: errorMessages.general,
       }),
+      locale,
       validationIssueFields: Object.keys(buildFieldErrors(parsedInput.error)),
       watchdogContext,
     };
@@ -117,6 +125,7 @@ export function prepareQuoteRequestSubmission(formData: FormData) {
   return {
     hCaptchaToken: snapshot.hCaptchaToken,
     input: parsedInput.data,
+    locale,
     logContext,
     newsletterOptIn: snapshot.newsletterOptIn,
     watchdogContext,

@@ -8,15 +8,19 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { BlogPostCard } from "@ui/components/marketing/blog-post-card";
 import { JournalEntry } from "@/interfaces/home/content";
 
 export function JournalPreview({
+  locale,
   entries,
 }: {
+  locale: string;
   entries: ReadonlyArray<JournalEntry>;
 }) {
   const [featuredEntry, ...supportingEntries] = entries;
+  const content = getHomePublicContent(locale).journal;
 
   return (
     <section
@@ -27,12 +31,13 @@ export function JournalPreview({
         <ScrollFloat className="mb-12" offset={28}>
           <TextReveal>
             <h2 className="font-display text-[3.1rem] leading-[0.92] tracking-[-0.06em] text-foreground sm:text-[4.2rem] lg:text-[5.2rem]">
-              Notre Journal<span className="text-primary">.</span>
+              {content.title.replace(".", "")}
+              <span className="text-primary">.</span>
             </h2>
           </TextReveal>
           <TextReveal delay={0.08}>
             <p className="mt-3 max-w-2xl text-lg leading-8 text-foreground">
-              Insights on branding, strategy, and digital direction.
+              {content.intro}
             </p>
           </TextReveal>
         </ScrollFloat>
@@ -52,7 +57,7 @@ export function JournalPreview({
                   image={featuredEntry.image}
                   cta={{
                     href: `/insights/${featuredEntry.slug}`,
-                    label: "Read article",
+                    label: content.ctaLabel,
                   }}
                 />
               </HoverCard>
@@ -72,7 +77,7 @@ export function JournalPreview({
                       href: `/insights/${entry.slug}`,
                       label: (
                         <span className="inline-flex items-center gap-2">
-                          Read article
+                          {content.ctaLabel}
                           <ArrowUpRight className="size-4" aria-hidden="true" />
                         </span>
                       ),

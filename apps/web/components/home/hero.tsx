@@ -4,32 +4,31 @@ import {
   StaggerGroup,
   StaggerItem,
 } from "@/components/home/motion";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { MarketingHero } from "@ui/components/marketing/hero";
 
-export function Hero() {
+export function Hero({ locale }: { locale: string }) {
   const showcase = [
     { src: "/placeholders/case-coastal.svg" },
     { src: "/placeholders/case-product.svg" },
     { src: "/placeholders/case-editorial.svg" },
     { src: "/placeholders/hero-editorial.svg" },
   ] as const;
+  const content = getHomePublicContent(locale).hero;
 
   return (
     <MarketingHero
-      kicker="Agence de branding strategy first"
-      title="Open your brand wider and make the first scroll feel decisive."
-      description={
-        <>
-          Strategy, design, and digital direction fused into a homepage that
-          looks more established, reads more clearly, and moves people toward
-          contact faster.
-        </>
-      }
+      kicker={content.kicker}
+      title={content.title}
+      description={content.description}
       primaryAction={{
         href: "/#contact",
-        label: "Parlez-nous de votre projet",
+        label: content.primaryActionLabel,
       }}
-      secondaryAction={{ href: "/#projects", ariaLabel: "Scroll to projects" }}
+      secondaryAction={{
+        href: "/#projects",
+        ariaLabel: content.secondaryActionAriaLabel,
+      }}
       showcase={showcase}
       rootWrapper={FoldOnScroll}
       contentGroupWrapper={StaggerGroup}

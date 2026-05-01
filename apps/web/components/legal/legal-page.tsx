@@ -12,6 +12,7 @@ export function LegalPage({
   title,
   kicker,
   lastUpdated,
+  lastUpdatedLabel = "Last updated",
   note,
   summary,
 }: {
@@ -20,6 +21,7 @@ export function LegalPage({
   title: string;
   kicker: string;
   lastUpdated: string;
+  lastUpdatedLabel?: string;
   note?: string;
   summary: readonly LegalSummaryItem[];
 }) {
@@ -36,7 +38,7 @@ export function LegalPage({
               {intro}
             </Prose>
             <div className="inline-flex w-fit items-center rounded-full border border-border/70 bg-white/84 px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground shadow-[0_14px_40px_rgba(27,28,26,0.04)]">
-              Last updated {lastUpdated}
+              {lastUpdatedLabel} {lastUpdated}
             </div>
             {note ? (
               <div className="surface-grain max-w-3xl rounded-[1.6rem] border border-border/70 bg-white/84 p-5 shadow-[0_18px_52px_rgba(27,28,26,0.05)]">

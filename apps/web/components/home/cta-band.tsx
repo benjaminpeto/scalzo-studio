@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Reveal, ScrollFloat } from "@/components/home/motion";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 
 function ContentColumn({ children }: { children: ReactNode }) {
@@ -11,38 +12,33 @@ function BriefColumn({ children }: { children: ReactNode }) {
   return <ScrollFloat offset={38}>{children}</ScrollFloat>;
 }
 
-export function CtaBand() {
+export function CtaBand({ locale }: { locale: string }) {
+  const content = getHomePublicContent(locale).ctaBand;
+
   return (
     <MarketingCtaBand
       id="quote"
-      briefItems={[
-        "What is the business trying to look like?",
-        "Where does the current homepage lose confidence?",
-        "What should a better first impression help you win?",
-      ]}
-      briefKicker="Quick brief"
+      briefItems={content.briefItems}
+      briefKicker={content.briefKicker}
       contactId="contact"
       contentWrapper={ContentColumn}
-      description={
-        <>
-          The first step is a direct conversation about the current page, the
-          level of ambition, and what needs to feel more premium or more
-          convincing.
-        </>
-      }
+      description={content.description}
       email={{
         href: "mailto:hello@scalzostudio.com",
         label: "hello@scalzostudio.com",
       }}
       gridWrapper={Reveal}
-      kicker="Brand Organiser"
+      kicker={content.kicker}
       primaryAction={{
         href: "/contact#booking",
-        label: "Book a discovery call",
+        label: content.primaryActionLabel,
       }}
-      secondaryAction={{ href: "/#journal", label: "Read the journal" }}
+      secondaryAction={{
+        href: "/#journal",
+        label: content.secondaryActionLabel,
+      }}
       briefWrapper={BriefColumn}
-      title="Ready to sharpen the homepage and the brand behind it?"
+      title={content.title}
     />
   );
 }

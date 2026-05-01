@@ -15,6 +15,7 @@ import type {
   QuoteRequestLogContext,
   QuoteRequestWatchdogContext,
 } from "@/interfaces/contact/quote-request";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 
 import { buildLeadMessage, serializeErrorForLog } from "./helpers";
 import { sendQuoteRequestEmails } from "./quote-request-emails";
@@ -31,10 +32,13 @@ import {
 
 export async function submitValidatedQuoteRequest(input: {
   input: ContactLeadInput;
+  locale: string;
   logContext: QuoteRequestLogContext;
   newsletterOptIn: boolean;
   watchdogContext: QuoteRequestWatchdogContext;
 }): Promise<SubmitQuoteRequestState> {
+  const errorMessages = getContactPublicContent(input.locale).errors;
+
   try {
     const supabase = createServiceRoleSupabaseClient();
     const leadInsert: Database["public"]["Tables"]["leads"]["Insert"] = {
@@ -79,8 +83,7 @@ export async function submitValidatedQuoteRequest(input: {
       });
 
       return createQuoteRequestErrorState({
-        message:
-          "The request could not be saved right now. Please try again or email hello@scalzostudio.com.",
+        message: errorMessages.requestFailed,
       });
     }
 
@@ -161,7 +164,7 @@ export async function submitValidatedQuoteRequest(input: {
       status: "success",
     });
 
-    return createQuoteRequestSuccessState();
+    return createQuoteRequestSuccessState(input.locale);
   } catch (error) {
     console.error("Quote request submission threw an unexpected error", {
       ...input.logContext,
@@ -178,8 +181,7 @@ export async function submitValidatedQuoteRequest(input: {
     });
 
     return createQuoteRequestErrorState({
-      message:
-        "The request could not be saved right now. Please try again or email hello@scalzostudio.com.",
+      message: errorMessages.requestFailed,
     });
   }
 }

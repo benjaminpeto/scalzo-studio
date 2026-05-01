@@ -1,16 +1,18 @@
 "use client";
 
 import { Reveal } from "@/components/home/motion";
-import { newsletterSignupContent } from "@/constants/newsletter/content";
+import { getNewsletterPublicContent } from "@/constants/newsletter/public-content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { NewsletterSignupForm } from "./newsletter-signup-form";
 import { NewsletterSignupProps } from "@/interfaces/newsletter/form";
+import { useLocale } from "next-intl";
 
 export function NewsletterSignup({ placement }: NewsletterSignupProps) {
-  const content = newsletterSignupContent.placements[placement];
+  const locale = useLocale();
+  const content = getNewsletterPublicContent(locale).placements[placement];
 
   if (placement === "footer") {
     return (

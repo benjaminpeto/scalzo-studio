@@ -1,14 +1,16 @@
 "use client";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/home/motion";
-import { faqItems } from "@/constants/home/content";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { FaqAccordion } from "@ui/components/marketing/faq-accordion";
 
-export function FaqList() {
+export function FaqList({ locale }: { locale: string }) {
+  const content = getHomePublicContent(locale).faq;
+
   return (
     <Section id="faq">
       <Reveal>
@@ -18,14 +20,13 @@ export function FaqList() {
               FAQ<span className="text-primary">.</span>
             </h2>
             <Prose measure="sm" className="mt-1">
-              The final objections are handled here with a minimal accordion
-              layout, generous spacing, and a clear route back to contact.
+              {content.intro}
             </Prose>
           </Stack>
 
           <RevealGroup stagger={0.08}>
             <FaqAccordion
-              items={faqItems}
+              items={content.items}
               itemWrapper={RevealItem}
               className="space-y-4"
             />

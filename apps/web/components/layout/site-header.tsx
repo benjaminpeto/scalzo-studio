@@ -28,7 +28,7 @@ export function SiteHeader() {
         <Link
           href="/"
           className="min-w-0 font-display text-[1.9rem] leading-none tracking-[-0.06em] text-foreground"
-          aria-label="Scalzo Studio home"
+          aria-label={t("homeLabel")}
         >
           scalzo
         </Link>
@@ -92,6 +92,9 @@ export function SiteHeader() {
               aria-label={t("mobileAriaLabel")}
               className="flex flex-col gap-2"
             >
+              <div className="mb-2 px-4 py-2">
+                <LocaleSwitcher />
+              </div>
               {navigationLinks.map((item) => (
                 <Link
                   key={item.href}

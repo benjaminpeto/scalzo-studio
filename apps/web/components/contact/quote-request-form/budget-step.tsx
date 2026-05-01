@@ -1,28 +1,32 @@
-import {
-  contactBudgetOptions,
-  contactTimelineOptions,
-} from "@/constants/contact/content";
 import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 
 import { FieldError } from "./field-error";
 
 export function BudgetStep({
+  content,
   stepErrors,
   updateField,
   values,
 }: QuoteRequestStepProps) {
+  const resolvedContent = content ?? getContactPublicContent("en");
+
   return (
     <fieldset className="mt-6 grid gap-6 lg:grid-cols-2">
-      <legend className="sr-only">Budget and timeline</legend>
+      <legend className="sr-only">
+        {resolvedContent.labels.timelineLegend}
+      </legend>
       <div>
-        <p className="text-sm font-semibold text-foreground">Budget band</p>
+        <p className="text-sm font-semibold text-foreground">
+          {resolvedContent.labels.budgetBand}
+        </p>
         <div
           className="mt-4 space-y-3"
           aria-describedby={
             stepErrors.budgetBand ? "budget-band-error" : undefined
           }
         >
-          {contactBudgetOptions.map((option) => (
+          {resolvedContent.options.budget.map((option) => (
             <label
               key={option.value}
               className={`flex cursor-pointer items-center gap-3 rounded-[1.1rem] border px-4 py-3 transition-colors ${
@@ -44,14 +48,16 @@ export function BudgetStep({
       </div>
 
       <div>
-        <p className="text-sm font-semibold text-foreground">Timeline</p>
+        <p className="text-sm font-semibold text-foreground">
+          {resolvedContent.labels.timeline}
+        </p>
         <div
           className="mt-4 space-y-3"
           aria-describedby={
             stepErrors.timelineBand ? "timeline-band-error" : undefined
           }
         >
-          {contactTimelineOptions.map((option) => (
+          {resolvedContent.options.timeline.map((option) => (
             <label
               key={option.value}
               className={`flex cursor-pointer items-center gap-3 rounded-[1.1rem] border px-4 py-3 transition-colors ${

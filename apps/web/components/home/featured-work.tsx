@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
+import { Link } from "@/lib/i18n/navigation";
 import {
   HoverCard,
   Reveal,
@@ -15,12 +15,17 @@ import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { CaseStudyCard } from "@ui/components/marketing/case-study-card";
 import { FeaturedProject } from "@/interfaces/home/content";
+import { getHomePublicContent } from "@/constants/home/public-content";
 
 export function FeaturedWork({
+  locale,
   projects,
 }: {
+  locale: string;
   projects: ReadonlyArray<FeaturedProject>;
 }) {
+  const content = getHomePublicContent(locale).featuredWork;
+
   return (
     <Section id="projects">
       <Reveal>
@@ -32,28 +37,27 @@ export function FeaturedWork({
             <div className="pt-3">
               <p className="inline-flex items-center gap-2 text-sm text-foreground">
                 <span className="inline-block size-2 rounded-full bg-primary" />
-                Notre travail
+                {content.eyebrow}
               </p>
             </div>
             <ScrollFloat offset={28}>
               <Stack gap="sm">
                 <TextReveal>
                   <h2 className="font-display text-[4rem] leading-[0.88] tracking-[-0.07em] text-foreground sm:text-[5rem] lg:text-[6.3rem]">
-                    Projets<span className="text-primary">.</span>
+                    {content.kicker.replace(".", "")}
+                    <span className="text-primary">.</span>
                   </h2>
                 </TextReveal>
                 <TextReveal delay={0.08}>
                   <Prose size="lg" tone="strong">
-                    Ambition made visible.
+                    {content.supporting}
                   </Prose>
                 </TextReveal>
               </Stack>
             </ScrollFloat>
             <ScrollFloat offset={34}>
               <Prose measure="sm" className="lg:justify-self-end">
-                Editorial case studies with one large visual rhythm, a quieter
-                text line, and enough asymmetry to feel designed rather than
-                templated.
+                {content.intro}
               </Prose>
             </ScrollFloat>
           </Grid>
@@ -94,7 +98,7 @@ export function FeaturedWork({
               href="/#contact"
               className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.22em] text-foreground transition-colors hover:text-primary"
             >
-              Start a similar project
+              {content.ctaLabel}
               <ArrowUpRight className="size-4" aria-hidden="true" />
             </Link>
           </div>

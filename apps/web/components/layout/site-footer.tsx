@@ -107,7 +107,7 @@ export async function SiteFooter() {
             </ul>
           </nav>
           <nav
-            aria-label="Legal"
+            aria-label={t("legalLabel")}
             className="mt-8 border-t border-border/70 pt-5"
           >
             <ul className="space-y-3">

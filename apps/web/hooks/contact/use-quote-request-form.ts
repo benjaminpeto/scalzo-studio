@@ -30,12 +30,14 @@ import {
   validateQuoteValues,
 } from "@/lib/contact/quote-request-form";
 import { captureEvent } from "@/lib/analytics/client";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 
-export function useQuoteRequestForm() {
+export function useQuoteRequestForm(locale = "en") {
   const [serverState, formAction, isPending] = useActionState(
     submitQuoteRequest,
     initialSubmitQuoteRequestState,
   );
+  const errorMessages = getContactPublicContent(locale).errors;
   const [activeStep, setActiveStep] = useState(0);
   const [clientErrors, setClientErrors] = useState<QuoteRequestFieldErrors>({});
   const [dismissedServerErrors, setDismissedServerErrors] = useState<
@@ -156,7 +158,7 @@ export function useQuoteRequestForm() {
   }
 
   function validateCurrentStep(stepIndex: number) {
-    const errors = validateQuoteValues(values);
+    const errors = validateQuoteValues(values, errorMessages);
     const nextStepErrors = getStepErrors(errors, stepIndex);
 
     setClientErrors((currentErrors) => ({
@@ -189,7 +191,7 @@ export function useQuoteRequestForm() {
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    const errors = validateQuoteValues(values);
+    const errors = validateQuoteValues(values, errorMessages);
 
     if (Object.keys(errors).length) {
       event.preventDefault();
@@ -200,7 +202,7 @@ export function useQuoteRequestForm() {
 
     if (!values.captchaToken.trim()) {
       event.preventDefault();
-      setCaptchaError("Complete the hCaptcha check before submitting.");
+      setCaptchaError(errorMessages.captchaRequired);
     }
   }
 
@@ -211,7 +213,7 @@ export function useQuoteRequestForm() {
 
   function handleCaptchaExpire() {
     updateField("captchaToken", "");
-    setCaptchaError("Complete the hCaptcha check before submitting.");
+    setCaptchaError(errorMessages.captchaRequired);
   }
 
   function handleCaptchaError(message: string) {

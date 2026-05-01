@@ -6,13 +6,15 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import { processSteps } from "@/constants/home/content";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 
-export function ProcessMethod() {
+export function ProcessMethod({ locale }: { locale: string }) {
+  const content = getHomePublicContent(locale);
+
   return (
     <Section
       id="method"
@@ -26,14 +28,12 @@ export function ProcessMethod() {
             <Stack gap="lg">
               <TextReveal>
                 <h2 className="font-display text-[3rem] leading-[0.9] tracking-[-0.06em] text-white sm:text-[4rem] lg:text-[5.2rem]">
-                  Every strong homepage starts with sharper meaning.
+                  {content.processMethod.title}
                 </h2>
               </TextReveal>
               <TextReveal delay={0.08}>
                 <Prose measure="lg" size="lg" tone="inverse">
-                  The method rests on four pillars. We read the context,
-                  position the message, express the brand through the interface,
-                  and shape the navigation so the ambition becomes more legible.
+                  {content.processMethod.intro}
                 </Prose>
               </TextReveal>
             </Stack>
@@ -41,7 +41,7 @@ export function ProcessMethod() {
 
           <RevealGroup stagger={0.08}>
             <Grid cols="four" gap="md">
-              {processSteps.map((step, index) => (
+              {content.processSteps.map((step, index) => (
                 <RevealItem key={step.step}>
                   <HoverCard>
                     <article className="h-full rounded-[1.7rem] bg-white p-6 text-foreground shadow-[0_18px_40px_rgba(0,0,0,0.14)]">

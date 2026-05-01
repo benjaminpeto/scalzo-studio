@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 
-import { aboutPageContent } from "@/constants/about/content";
+import { getAboutPublicContent } from "@/constants/about/public-content";
 import { AboutCapabilitiesSection } from "@/components/about/about-capabilities-section";
 import { AboutHeroSection } from "@/components/about/about-hero-section";
 import { AboutProofSection } from "@/components/about/about-proof-section";
@@ -21,28 +21,35 @@ export async function generateMetadata({
 export default async function AboutPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const content = getAboutPublicContent(locale);
 
   return (
     <>
-      <AboutHeroSection />
-      <AboutStorySection />
-      <AboutCapabilitiesSection />
-      <AboutWorkingModelSection />
-      <AboutProofSection />
+      <AboutHeroSection locale={locale} />
+      <AboutStorySection locale={locale} />
+      <AboutCapabilitiesSection locale={locale} />
+      <AboutWorkingModelSection locale={locale} />
+      <AboutProofSection locale={locale} />
       <MarketingCtaBand
         id="contact"
-        briefItems={aboutPageContent.cta.briefItems}
-        briefKicker="First conversation"
+        briefItems={content.cta.briefItems}
+        briefKicker={content.cta.briefKicker}
         className="pb-24"
-        description={aboutPageContent.cta.description}
+        description={content.cta.description}
         email={{
           href: "mailto:hello@scalzostudio.com",
           label: "hello@scalzostudio.com",
         }}
-        kicker="Scalzo Studio"
-        primaryAction={{ href: "/contact#booking", label: "Book a call" }}
-        secondaryAction={{ href: "/services", label: "Browse services" }}
-        title={aboutPageContent.cta.title}
+        kicker={content.cta.kicker}
+        primaryAction={{
+          href: "/contact#booking",
+          label: content.cta.primaryActionLabel,
+        }}
+        secondaryAction={{
+          href: "/services",
+          label: content.cta.secondaryActionLabel,
+        }}
+        title={content.cta.title}
       />
     </>
   );

@@ -1,21 +1,26 @@
-import { contactLocationOptions } from "@/constants/contact/content";
 import type { QuoteRequestStepProps } from "@/interfaces/contact/component-props";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 
 import { FieldError } from "./field-error";
 
 export function ContextStep({
+  content,
   stepErrors,
   updateField,
   values,
 }: QuoteRequestStepProps) {
+  const resolvedContent = content ?? getContactPublicContent("en");
+
   return (
     <fieldset className="mt-6 grid gap-5 sm:grid-cols-2">
-      <legend className="sr-only">Context</legend>
+      <legend className="sr-only">
+        {resolvedContent.labels.contactStepLegend}
+      </legend>
       <div className="sm:col-span-1">
         <Label htmlFor="name" className="text-sm font-semibold text-foreground">
-          Name
+          {resolvedContent.labels.name}
         </Label>
         <Input
           id="name"
@@ -32,7 +37,7 @@ export function ContextStep({
           htmlFor="email"
           className="text-sm font-semibold text-foreground"
         >
-          Email
+          {resolvedContent.labels.email}
         </Label>
         <Input
           id="email"
@@ -50,7 +55,7 @@ export function ContextStep({
           htmlFor="company"
           className="text-sm font-semibold text-foreground"
         >
-          Company or brand
+          {resolvedContent.labels.company}
         </Label>
         <Input
           id="company"
@@ -64,7 +69,7 @@ export function ContextStep({
           htmlFor="website"
           className="text-sm font-semibold text-foreground"
         >
-          Website or Instagram
+          {resolvedContent.labels.website}
         </Label>
         <Input
           id="website"
@@ -76,10 +81,10 @@ export function ContextStep({
       </div>
       <div className="sm:col-span-2">
         <Label className="text-sm font-semibold text-foreground">
-          Where are you based?
+          {resolvedContent.labels.location}
         </Label>
         <div className="mt-4 flex flex-wrap gap-3">
-          {contactLocationOptions.map((option) => (
+          {resolvedContent.options.location.map((option) => (
             <button
               key={option.value}
               type="button"

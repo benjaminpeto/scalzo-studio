@@ -11,6 +11,7 @@ import {
   TextReveal,
 } from "@/components/home/motion";
 import type { WorkIndexEntry } from "@/interfaces/work/content";
+import { getWorkPublicContent } from "@/constants/work/public-content";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
@@ -27,10 +28,10 @@ export async function generateMetadata({
   return getMarketingRouteMetadata(locale, "work");
 }
 
-async function WorkGridContent() {
+async function WorkGridContent({ ctaLabel }: { ctaLabel: string }) {
   const entries = await getWorkIndexEntries();
 
-  return <WorkGrid entries={entries} />;
+  return <WorkGrid ctaLabel={ctaLabel} entries={entries} />;
 }
 
 function WorkGridFallback() {
@@ -54,7 +55,13 @@ function WorkGridFallback() {
   );
 }
 
-function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
+function WorkGrid({
+  ctaLabel,
+  entries,
+}: {
+  ctaLabel: string;
+  entries: ReadonlyArray<WorkIndexEntry>;
+}) {
   return (
     <RevealGroup className="grid gap-5 lg:grid-cols-2" stagger={0.08}>
       {entries.map((entry) => (
@@ -65,7 +72,7 @@ function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
             image={entry.image}
             metadata={entry.metadata}
             outcome={entry.metric}
-            cta={{ href: `/work/${entry.slug}`, label: "Read case study" }}
+            cta={{ href: `/work/${entry.slug}`, label: ctaLabel }}
           />
         </RevealItem>
       ))}
@@ -76,41 +83,30 @@ function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
 export default async function WorkPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const content = getWorkPublicContent(locale);
   return (
     <>
       <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">
         <Reveal>
           <Grid gap="2xl" className="lg:grid-cols-[0.56fr_0.44fr] lg:items-end">
             <Stack gap="lg">
-              <p className="section-kicker">Selected work</p>
+              <p className="section-kicker">{content.hero.kicker}</p>
               <ScrollFloat offset={24}>
                 <h1 className="max-w-5xl font-display text-[3.5rem] leading-[0.9] tracking-[-0.065em] text-foreground sm:text-[4.6rem] lg:text-[6.1rem]">
-                  Case studies that show what stronger clarity looks like once
-                  it is live.
+                  {content.hero.title}
                 </h1>
               </ScrollFloat>
               <Prose size="lg" measure="lg">
-                A published index of projects where positioning, page structure,
-                and visual direction were sharpened to make the work feel more
-                credible and commercially useful.
+                {content.hero.intro}
               </Prose>
             </Stack>
 
             <div className="surface-grain rounded-[1.9rem] border border-border/70 bg-white/80 p-6 shadow-[0_18px_52px_rgba(27,28,26,0.05)] sm:p-8">
-              <p className="section-kicker">What to look for</p>
+              <p className="section-kicker">{content.hero.sidePanelLabel}</p>
               <div className="mt-6 space-y-5 text-base leading-7 text-muted-foreground">
-                <p>
-                  How the offer becomes easier to understand in the first
-                  scroll.
-                </p>
-                <p>
-                  How trust, proof, and pacing are reorganized into a calmer
-                  decision path.
-                </p>
-                <p>
-                  How strategy becomes visible in the actual interface, not just
-                  the pitch.
-                </p>
+                {content.hero.sidePanelPoints.map((point) => (
+                  <p key={point}>{point}</p>
+                ))}
               </div>
             </div>
           </Grid>
@@ -124,19 +120,15 @@ export default async function WorkPage({ params }: MarketingPageProps) {
               <Stack gap="sm">
                 <TextReveal>
                   <h2 className="font-display text-[2.8rem] leading-[0.93] tracking-[-0.055em] text-foreground sm:text-[3.8rem] lg:text-[4.8rem]">
-                    The work index.
+                    {content.grid.title}
                   </h2>
                 </TextReveal>
               </Stack>
-              <Prose measure="md">
-                Each case study is listed with the sector or service context and
-                one key metric or outcome so the commercial shift is visible at
-                a glance.
-              </Prose>
+              <Prose measure="md">{content.grid.intro}</Prose>
             </Grid>
 
             <Suspense fallback={<WorkGridFallback />}>
-              <WorkGridContent />
+              <WorkGridContent ctaLabel={content.grid.ctaLabel} />
             </Suspense>
           </Stack>
         </Reveal>
@@ -144,22 +136,24 @@ export default async function WorkPage({ params }: MarketingPageProps) {
 
       <MarketingCtaBand
         id="contact"
-        briefItems={[
-          "Which page or offer currently feels weaker than the business behind it?",
-          "What should stronger positioning or a better first impression help you win next?",
-          "Where is the current site making trust harder than it needs to be?",
-        ]}
-        briefKicker="Project brief"
+        briefItems={content.cta.briefItems}
+        briefKicker={content.cta.briefKicker}
         className="pb-24"
-        description="If the work here feels close to the shift you need, the next step is a direct conversation about the current friction, the ambition, and the outcome the page should create."
+        description={content.cta.description}
         email={{
           href: "mailto:hello@scalzostudio.com",
           label: "hello@scalzostudio.com",
         }}
-        kicker="Scalzo Studio"
-        primaryAction={{ href: "/#contact", label: "Start a similar project" }}
-        secondaryAction={{ href: "/services", label: "Browse services" }}
-        title="Need a page or launch to feel more established in the first impression?"
+        kicker={content.cta.kicker}
+        primaryAction={{
+          href: "/#contact",
+          label: content.cta.primaryActionLabel,
+        }}
+        secondaryAction={{
+          href: "/services",
+          label: content.cta.secondaryActionLabel,
+        }}
+        title={content.cta.title}
       />
     </>
   );

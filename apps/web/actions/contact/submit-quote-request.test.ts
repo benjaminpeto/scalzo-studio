@@ -80,11 +80,21 @@ vi.mock("@/actions/newsletter/helpers", () => ({
 }));
 
 vi.mock("./quote-request-emails", () => ({
+  sendQuoteRequestEmails: mocks.sendQuoteRequestEmailsMock,
+}));
+
+vi.mock("./quote-request-emails.helpers", () => ({
   buildQuoteRequestEmailLogContext: mocks.buildQuoteRequestEmailLogContextMock,
   buildQuoteRequestEmailPayload: mocks.buildQuoteRequestEmailPayloadMock,
-  sendQuoteRequestEmails: mocks.sendQuoteRequestEmailsMock,
   serializeQuoteRequestEmailErrorForLog:
     mocks.serializeQuoteRequestEmailErrorForLogMock,
+}));
+
+vi.mock("@/lib/booking/config", () => ({
+  getBookingAction: () => ({
+    href: "mailto:hello@scalzostudio.com?subject=Discovery%20call%20request",
+    label: "Arrange a call by email",
+  }),
 }));
 
 function buildValidFormData() {

@@ -5,18 +5,19 @@ import type {
   QuoteRequestLogContext,
   QuoteRequestWatchdogContext,
 } from "@/interfaces/contact/quote-request";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 
 import { serializeErrorForLog } from "./helpers";
 import { createQuoteRequestErrorState } from "./submit-quote-request-input";
 import { verifyHCaptchaToken } from "./verify-hcaptcha";
 
-const unavailableMessage =
-  "The contact form is temporarily unavailable. Email hello@scalzostudio.com instead.";
-
 export async function getQuoteRequestAvailabilityState(input: {
+  locale: string;
   logContext: QuoteRequestLogContext;
   watchdogContext: QuoteRequestWatchdogContext;
 }): Promise<SubmitQuoteRequestState | null> {
+  const messages = getContactPublicContent(input.locale).errors;
+
   if (!serverFeatureFlags.serviceRoleEnabled) {
     console.error(
       "Quote request submission skipped because service-role access is disabled",
@@ -29,7 +30,7 @@ export async function getQuoteRequestAvailabilityState(input: {
       status: "error",
     });
 
-    return createQuoteRequestErrorState({ message: unavailableMessage });
+    return createQuoteRequestErrorState({ message: messages.formUnavailable });
   }
 
   if (!serverFeatureFlags.hcaptchaEnabled) {
@@ -44,7 +45,7 @@ export async function getQuoteRequestAvailabilityState(input: {
       status: "error",
     });
 
-    return createQuoteRequestErrorState({ message: unavailableMessage });
+    return createQuoteRequestErrorState({ message: messages.formUnavailable });
   }
 
   return null;
@@ -52,13 +53,16 @@ export async function getQuoteRequestAvailabilityState(input: {
 
 export async function validateQuoteRequestCaptcha(input: {
   hCaptchaToken: string;
+  locale: string;
   logContext: QuoteRequestLogContext;
   watchdogContext: QuoteRequestWatchdogContext;
 }): Promise<SubmitQuoteRequestState | null> {
+  const messages = getContactPublicContent(input.locale).errors;
+
   if (!input.hCaptchaToken) {
     return createQuoteRequestErrorState({
-      captchaError: "Complete the hCaptcha check before submitting.",
-      message: "Complete the anti-spam check and try again.",
+      captchaError: messages.captchaRequired,
+      message: messages.captchaRetry,
     });
   }
 
@@ -79,8 +83,8 @@ export async function validateQuoteRequestCaptcha(input: {
     });
 
     return createQuoteRequestErrorState({
-      captchaError: "Complete the hCaptcha check before submitting.",
-      message: "Complete the anti-spam check and try again.",
+      captchaError: messages.captchaRequired,
+      message: messages.captchaRetry,
     });
   } catch (error) {
     console.error("Quote request hCaptcha verification errored", {
@@ -98,9 +102,8 @@ export async function validateQuoteRequestCaptcha(input: {
     });
 
     return createQuoteRequestErrorState({
-      captchaError: "The anti-spam check could not be verified. Try again.",
-      message:
-        "The request could not be verified right now. Please try again or email hello@scalzostudio.com.",
+      captchaError: messages.captchaUnavailable,
+      message: messages.requestUnverified,
     });
   }
 }

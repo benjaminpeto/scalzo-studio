@@ -4,12 +4,14 @@ import {
   RevealGroup,
   RevealItem,
 } from "@/components/home/motion";
-import { trustMarks } from "@/constants/home/content";
+import { getHomePublicContent } from "@/constants/home/public-content";
 
-export function TrustStrip() {
+export function TrustStrip({ locale }: { locale: string }) {
+  const content = getHomePublicContent(locale);
+
   return (
     <section
-      aria-label="Studio proof"
+      aria-label={content.trustStripAriaLabel}
       className="section-shell anchor-offset relative z-10 pb-8 pt-0 -mt-12 lg:pb-10"
     >
       <DeckRevealOnScroll>
@@ -17,7 +19,7 @@ export function TrustStrip() {
           className="grid gap-3 md:grid-cols-3 xl:grid-cols-6"
           stagger={0.06}
         >
-          {trustMarks.map((mark) => (
+          {content.trustMarks.map((mark) => (
             <RevealItem key={mark.name}>
               <HoverCard className="h-full">
                 <div className="flex h-full min-h-36 flex-col items-center justify-center rounded-[1.55rem] bg-white px-5 py-6 text-center shadow-[0_8px_28px_rgba(27,28,26,0.04)] ring-1 ring-black/4 transition-shadow duration-300 hover:shadow-[0_20px_40px_rgba(27,28,26,0.08)]">

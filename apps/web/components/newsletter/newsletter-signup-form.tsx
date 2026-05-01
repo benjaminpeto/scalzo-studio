@@ -3,10 +3,11 @@ import { NewsletterPlacement } from "@/interfaces/newsletter/form";
 import { captureEvent } from "@/lib/analytics/client";
 import { Suspense, useEffect, useId, useRef } from "react";
 import { NewsletterSignupStatus } from "./newsletter-signup-status";
-import { newsletterSignupContent } from "@/constants/newsletter/content";
+import { getNewsletterPublicContent } from "@/constants/newsletter/public-content";
 import { Input } from "@ui/components/ui/input";
 import { Button } from "@ui/components/ui/button";
 import { usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
 
 function NewsletterPagePathField() {
   const pathname = usePathname() || "/";
@@ -24,6 +25,8 @@ export function NewsletterSignupForm({
   const emailId = useId();
   const { formAction, isPending, serverState } = useNewsletterSignupForm();
   const capturedRef = useRef(false);
+  const locale = useLocale();
+  const content = getNewsletterPublicContent(locale);
 
   useEffect(() => {
     if (serverState.status === "success" && !capturedRef.current) {
@@ -48,6 +51,7 @@ export function NewsletterSignupForm({
   return (
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="placement" value={placement} />
+      <input type="hidden" name="locale" value={locale} />
       <Suspense fallback={<input type="hidden" name="pagePath" value="/" />}>
         <NewsletterPagePathField />
       </Suspense>
@@ -61,14 +65,14 @@ export function NewsletterSignupForm({
               : "section-kicker block text-foreground"
           }
         >
-          {newsletterSignupContent.shared.inputLabel}
+          {content.shared.inputLabel}
         </label>
         <Input
           id={emailId}
           name="email"
           type="email"
           required
-          placeholder={newsletterSignupContent.shared.inputPlaceholder}
+          placeholder={content.shared.inputPlaceholder}
           className={
             variant === "compact"
               ? "h-12 rounded-full border-border bg-white/80 px-4 text-sm text-foreground shadow-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
@@ -98,9 +102,7 @@ export function NewsletterSignupForm({
               : "h-13 rounded-full bg-primary px-7 text-[0.78rem] uppercase tracking-[0.22em] text-primary-foreground hover:bg-primary/90"
           }
         >
-          {isPending
-            ? "Sending..."
-            : newsletterSignupContent.shared.buttonLabel}
+          {isPending ? content.states.sending : content.shared.buttonLabel}
         </Button>
         <p
           className={
@@ -109,7 +111,7 @@ export function NewsletterSignupForm({
               : "text-sm leading-6 text-muted-foreground"
           }
         >
-          {newsletterSignupContent.shared.legalNote}
+          {content.shared.legalNote}
         </p>
       </div>
 

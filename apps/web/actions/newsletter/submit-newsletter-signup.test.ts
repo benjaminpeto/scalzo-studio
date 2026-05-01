@@ -64,7 +64,7 @@ describe("submitNewsletterSignup", () => {
 
     expect(result).toEqual({
       fieldErrors: {
-        email: "Enter a valid email address.",
+        email: "Enter a valid email address to join the newsletter.",
       },
       message: "Enter a valid email address to join the newsletter.",
       status: "error",

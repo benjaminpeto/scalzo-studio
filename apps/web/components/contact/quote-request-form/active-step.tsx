@@ -1,5 +1,5 @@
-import { contactFormSteps } from "@/constants/contact/content";
 import type { QuoteRequestActiveStepProps } from "@/interfaces/contact/component-props";
+import { getContactPublicContent } from "@/constants/contact/public-content";
 
 import { BriefStep } from "./brief-step";
 import { BudgetStep } from "./budget-step";
@@ -8,11 +8,13 @@ import { NeedStep } from "./need-step";
 
 export function QuoteRequestActiveStep({
   activeStep,
+  content,
   stepErrors,
   updateField,
   values,
 }: QuoteRequestActiveStepProps) {
-  const step = contactFormSteps[activeStep];
+  const resolvedContent = content ?? getContactPublicContent("en");
+  const step = resolvedContent.steps[activeStep];
 
   return (
     <div className="rounded-[1.6rem] border border-border/70 bg-[rgba(27,28,26,0.03)] p-5 sm:p-6">
@@ -25,6 +27,7 @@ export function QuoteRequestActiveStep({
 
       {activeStep === 0 ? (
         <NeedStep
+          content={resolvedContent}
           stepErrors={stepErrors}
           updateField={updateField}
           values={values}
@@ -33,6 +36,7 @@ export function QuoteRequestActiveStep({
 
       {activeStep === 1 ? (
         <ContextStep
+          content={resolvedContent}
           stepErrors={stepErrors}
           updateField={updateField}
           values={values}
@@ -41,6 +45,7 @@ export function QuoteRequestActiveStep({
 
       {activeStep === 2 ? (
         <BudgetStep
+          content={resolvedContent}
           stepErrors={stepErrors}
           updateField={updateField}
           values={values}
@@ -49,6 +54,7 @@ export function QuoteRequestActiveStep({
 
       {activeStep === 3 ? (
         <BriefStep
+          content={resolvedContent}
           stepErrors={stepErrors}
           updateField={updateField}
           values={values}

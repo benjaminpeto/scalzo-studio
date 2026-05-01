@@ -6,8 +6,10 @@ import { Link } from "@/lib/i18n/navigation";
 import { LegalPage } from "@/components/legal/legal-page";
 import {
   complaintAuthority,
+  getLegalSharedContent,
+  getPrivacyPageContent,
+  getPrivacyPageLabels,
   legalControllerDetails,
-  privacyPageContent,
 } from "@/constants/legal/content";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
@@ -27,13 +29,17 @@ export async function generateMetadata({
 export default async function PrivacyPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { activities, intro, processors, sections } = privacyPageContent;
+  const { activities, intro, processors, sections } =
+    getPrivacyPageContent(locale);
+  const labels = getPrivacyPageLabels(locale);
+  const shared = getLegalSharedContent(locale);
 
   return (
     <LegalPage
       intro={intro.intro}
       kicker={intro.kicker}
       lastUpdated={intro.lastUpdated}
+      lastUpdatedLabel={shared.lastUpdatedLabel}
       note={intro.note}
       summary={intro.summary}
       title={intro.title}
@@ -56,8 +62,8 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
       </LegalSection>
 
       <LegalSection
-        title="Processing activities and lawful bases"
-        intro="Each activity below is aligned to the current site behaviour or clearly marked as conditional future processing."
+        title={labels.activitiesTitle}
+        intro={labels.activitiesIntro}
       >
         <Grid gap="lg" className="lg:grid-cols-2">
           {activities.map((activity) => (
@@ -66,13 +72,16 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
                 <h3 className="max-w-[24rem] font-display text-[1.8rem] leading-none tracking-[-0.04em] text-foreground">
                   {activity.title}
                 </h3>
-                <LegalStatusBadge status={activity.status} />
+                <LegalStatusBadge
+                  status={activity.status}
+                  label={labels.status[activity.status]}
+                />
               </div>
 
               <div className="mt-5 space-y-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Lawful basis
+                    {labels.lawfulBasisLabel}
                   </p>
                   <Prose className="mt-2" measure="lg" size="sm" tone="strong">
                     {activity.lawfulBasis}
@@ -81,7 +90,7 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
 
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Purpose
+                    {labels.purposeLabel}
                   </p>
                   <Prose className="mt-2" measure="lg" size="sm">
                     {activity.purpose}
@@ -90,7 +99,7 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
 
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Data involved
+                    {labels.dataInvolvedLabel}
                   </p>
                   <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
                     {activity.dataCategories.map((item) => (
@@ -104,7 +113,7 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
 
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Recipients
+                    {labels.recipientsLabel}
                   </p>
                   <Prose className="mt-2" measure="lg" size="sm">
                     {activity.recipients.join(", ")}
@@ -113,7 +122,7 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
 
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Retention
+                    {labels.retentionLabel}
                   </p>
                   <Prose className="mt-2" measure="lg" size="sm">
                     {activity.retention}
@@ -134,8 +143,8 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
       </LegalSection>
 
       <LegalSection
-        title="Processors and service providers"
-        intro="The list below reflects the current live stack plus clearly labelled near-term services that are not yet treated as active."
+        title={labels.processorsTitle}
+        intro={labels.processorsIntro}
       >
         <Grid gap="lg" className="lg:grid-cols-2">
           {processors.map((processor) => (
@@ -144,7 +153,10 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
                 <h3 className="font-display text-[1.7rem] leading-none tracking-[-0.04em] text-foreground">
                   {processor.name}
                 </h3>
-                <LegalStatusBadge status={processor.status} />
+                <LegalStatusBadge
+                  status={processor.status}
+                  label={labels.status[processor.status]}
+                />
               </div>
               <p className="mt-4 text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 {processor.role}
@@ -211,39 +223,37 @@ export default async function PrivacyPage({ params }: MarketingPageProps) {
         <Grid gap="lg" className="mt-8 lg:grid-cols-2">
           <LegalCard>
             <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              Contact
+              {labels.contactLabel}
             </p>
             <p className="mt-3 font-display text-[1.8rem] leading-none tracking-[-0.04em] text-foreground">
               {legalControllerDetails.email}
             </p>
             <Prose className="mt-3" measure="lg">
-              Email this address for privacy requests or questions about how
-              your personal data is used.
+              {labels.contactBody}
             </Prose>
             <Link
               href={`mailto:${legalControllerDetails.email}`}
               className="mt-5 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-foreground underline decoration-editorial-underline underline-offset-4"
             >
-              Email privacy contact
+              {labels.contactCta}
             </Link>
           </LegalCard>
 
           <LegalCard>
             <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-              Supervisory authority
+              {labels.authorityLabel}
             </p>
             <p className="mt-3 font-display text-[1.8rem] leading-none tracking-[-0.04em] text-foreground">
               {complaintAuthority.label}
             </p>
             <Prose className="mt-3" measure="lg">
-              If you believe your data protection rights have been infringed,
-              you may lodge a complaint with the Spanish supervisory authority.
+              {labels.authorityBody}
             </Prose>
             <a
               href={complaintAuthority.url}
               className="mt-5 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-foreground underline decoration-editorial-underline underline-offset-4"
             >
-              Visit the AEPD
+              {labels.authorityCta}
             </a>
           </LegalCard>
         </Grid>

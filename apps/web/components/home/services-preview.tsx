@@ -5,14 +5,19 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import { getHomePublicContent } from "@/constants/home/public-content";
 import { ServiceGroup } from "@/interfaces/home/content";
 import { ServiceCard } from "@ui/components/marketing/service-card";
 
 export function ServicesPreview({
+  locale,
   services,
 }: {
+  locale: string;
   services: ReadonlyArray<ServiceGroup>;
 }) {
+  const content = getHomePublicContent(locale).servicesPreview;
+
   return (
     <section
       id="services"
@@ -20,10 +25,10 @@ export function ServicesPreview({
     >
       <Reveal>
         <ScrollFloat className="text-center" offset={26}>
-          <p className="section-kicker">Scalzo Studio</p>
+          <p className="section-kicker">{content.kicker}</p>
           <TextReveal delay={0.06}>
             <h2 className="mx-auto mt-6 max-w-4xl text-balance font-display text-[2.6rem] leading-[1.02] tracking-[-0.05em] text-foreground sm:text-[3.3rem] lg:text-[4.2rem]">
-              Strategie • Design • Digital
+              {content.title}
             </h2>
           </TextReveal>
         </ScrollFloat>

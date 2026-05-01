@@ -49,44 +49,53 @@ function isValidEmail(value: string) {
   return emailPattern.test(value);
 }
 
+interface QuoteRequestValidationMessages {
+  budgetBand: string;
+  consent: string;
+  email: string;
+  message: string;
+  name: string;
+  primaryGoal: string;
+  servicesInterest: string;
+  timelineBand: string;
+}
+
 export function validateQuoteValues(
   values: QuoteFormValues,
+  messages: QuoteRequestValidationMessages,
 ): QuoteRequestFieldErrors {
   const errors: QuoteRequestFieldErrors = {};
 
   if (!values.servicesInterest.length) {
-    errors.servicesInterest = "Choose at least one service area.";
+    errors.servicesInterest = messages.servicesInterest;
   }
 
   if (values.primaryGoal.trim().length < 8) {
-    errors.primaryGoal = "Add the main goal or commercial shift you want.";
+    errors.primaryGoal = messages.primaryGoal;
   }
 
   if (values.name.trim().length < 2) {
-    errors.name = "Enter the name of the main contact.";
+    errors.name = messages.name;
   }
 
   if (!isValidEmail(values.email.trim())) {
-    errors.email = "Enter a valid email address.";
+    errors.email = messages.email;
   }
 
   if (!values.budgetBand) {
-    errors.budgetBand =
-      "Choose the budget band that feels closest to the project.";
+    errors.budgetBand = messages.budgetBand;
   }
 
   if (!values.timelineBand) {
-    errors.timelineBand =
-      "Choose the timeline that feels closest to the current plan.";
+    errors.timelineBand = messages.timelineBand;
   }
 
   if (values.message.trim().length < 24) {
-    errors.message =
-      "Add a bit more detail so the first response can be useful.";
+    errors.message = messages.message;
   }
 
   if (!values.consent) {
-    errors.consent = "Consent is required before submitting the request.";
+    errors.consent = messages.consent;
   }
 
   return errors;
