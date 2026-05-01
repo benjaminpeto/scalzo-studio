@@ -39,7 +39,9 @@ export default async function MarketingLayout({
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <Suspense fallback={null}>
+          <SiteFooter />
+        </Suspense>
       </div>
       <MobileCtaBar />
       <CookieBanner />
