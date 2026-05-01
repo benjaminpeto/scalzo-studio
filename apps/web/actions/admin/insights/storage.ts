@@ -76,6 +76,7 @@ export async function uploadBlogImage(input: {
   kind: "content" | "cover";
   slug: string;
 }) {
+  "use server";
   const objectPath = buildStorageObjectPath({
     bucketId: blogBucketId,
     fileName: buildUniqueStorageFileName(input.file.name),

@@ -1,7 +1,7 @@
 "use client";
 
-import { faqItems } from "@/components/home/content";
 import { Reveal, RevealGroup, RevealItem } from "@/components/home/motion";
+import { faqItems } from "@/constants/home/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

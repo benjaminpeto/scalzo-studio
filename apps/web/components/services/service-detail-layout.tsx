@@ -7,7 +7,6 @@ import {
   RevealItem,
   ScrollFloat,
 } from "@/components/home/motion";
-import type { ServiceDetailPageData } from "@/interfaces/services/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -16,10 +15,7 @@ import { CaseStudyCard } from "@ui/components/marketing/case-study-card";
 import { FaqAccordion } from "@ui/components/marketing/faq-accordion";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { ServiceCard } from "@ui/components/marketing/service-card";
-
-interface ServiceDetailLayoutProps {
-  detailPageData: ServiceDetailPageData;
-}
+import type { ServiceDetailLayoutProps } from "@/interfaces/services/content";
 
 export default function ServiceDetailLayout({
   detailPageData,

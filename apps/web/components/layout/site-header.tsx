@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/lib/i18n/navigation";
-import { navigationLinks, primaryCta } from "@/components/home/content";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { captureEvent } from "@/lib/analytics/client";
 import {
@@ -16,6 +15,7 @@ import {
   SheetTrigger,
 } from "@ui/components/ui/sheet";
 import { Button } from "@ui/components/ui/button";
+import { navigationLinks, primaryCta } from "@/constants/home/content";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);

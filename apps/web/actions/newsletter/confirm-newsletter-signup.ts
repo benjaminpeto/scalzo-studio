@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import { serverEnv, serverFeatureFlags } from "@/lib/env/server";
@@ -6,37 +8,12 @@ import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import { captureServerEvent } from "@/lib/analytics/server";
 
 import {
+  buildNewsletterConfirmedPath,
   buildNewsletterSignupLogContext,
   hashNewsletterToken,
+  normalizeEmail,
 } from "./helpers";
-import type { NewsletterSignupInput } from "./schemas";
-
-function buildNewsletterConfirmedPath(
-  status: "confirmed" | "error" | "expired" | "invalid",
-) {
-  return `/newsletter/confirmed?status=${status}`;
-}
-
-function normalizeEmail(email: string | null | undefined) {
-  const value = email?.trim().toLowerCase();
-
-  if (!value || !/^\S+@\S+\.\S+$/.test(value)) {
-    return null;
-  }
-
-  return value;
-}
-
-type SubscriberRow = {
-  confirmation_expires_at: string | null;
-  confirmation_token_hash: string | null;
-  email: string;
-  id: string;
-  page_path: string;
-  placement: NewsletterSignupInput["placement"];
-  provider_contact_id: string | null;
-  status: "pending" | "confirmed" | "unsubscribed";
-};
+import { SubscriberRow } from "@/interfaces/newsletter/form";
 
 export async function handleNewsletterConfirmRequest(input: {
   email?: string | null;

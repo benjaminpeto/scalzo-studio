@@ -12,19 +12,16 @@ import { ProcessMethod } from "@/components/home/process-method";
 import { StudioCredibility } from "@/components/home/studio-credibility";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
-
-interface HomePageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
 
 export async function generateMetadata({
   params,
-}: HomePageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "home");
 }
 
-export default async function Home({ params }: HomePageProps) {
+export default async function Home({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 

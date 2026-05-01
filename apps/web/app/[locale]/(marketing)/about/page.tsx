@@ -9,19 +9,16 @@ import { AboutStorySection } from "@/components/about/about-story-section";
 import { AboutWorkingModelSection } from "@/components/about/about-working-model-section";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
-
-interface AboutPageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
 
 export async function generateMetadata({
   params,
-}: AboutPageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "about");
 }
 
-export default async function AboutPage({ params }: AboutPageProps) {
+export default async function AboutPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 

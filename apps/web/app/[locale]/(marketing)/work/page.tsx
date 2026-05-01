@@ -18,14 +18,11 @@ import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { CaseStudyCard } from "@ui/components/marketing/case-study-card";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
-
-interface WorkPageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
 
 export async function generateMetadata({
   params,
-}: WorkPageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "work");
 }
@@ -76,7 +73,7 @@ function WorkGrid({ entries }: { entries: ReadonlyArray<WorkIndexEntry> }) {
   );
 }
 
-export default async function WorkPage({ params }: WorkPageProps) {
+export default async function WorkPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   return (

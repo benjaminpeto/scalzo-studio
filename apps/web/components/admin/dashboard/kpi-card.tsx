@@ -1,32 +1,5 @@
 import type { AdminOverviewKpiCardProps } from "@/interfaces/admin/overview-dashboard";
-
-function formatMetricValue(value: number, format: "count" | "percent") {
-  if (format === "percent") {
-    return `${value.toFixed(1)}%`;
-  }
-
-  return new Intl.NumberFormat("en-GB", {
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-function formatDeltaLabel({
-  format,
-  percentageDelta,
-  valueDelta,
-}: {
-  format: "count" | "percent";
-  percentageDelta: number | null;
-  valueDelta: number;
-}) {
-  const direction = valueDelta > 0 ? "+" : "";
-
-  if (percentageDelta === null) {
-    return `${direction}${formatMetricValue(valueDelta, format)} vs previous period`;
-  }
-
-  return `${direction}${percentageDelta.toFixed(1)}% vs previous period`;
-}
+import { formatDeltaLabel, formatMetricValue } from "@/lib/helpers";
 
 export function AdminOverviewKpiCard({
   format,

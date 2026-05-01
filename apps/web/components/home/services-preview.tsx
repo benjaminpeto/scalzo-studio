@@ -5,7 +5,7 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import type { ServiceGroup } from "@/components/home/content";
+import { ServiceGroup } from "@/interfaces/home/content";
 import { ServiceCard } from "@ui/components/marketing/service-card";
 
 export function ServicesPreview({

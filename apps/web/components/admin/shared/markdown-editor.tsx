@@ -22,146 +22,14 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-
-interface MarkdownEditorProps {
-  id?: string;
-  name: string;
-  /** Controlled mode — provide onChange too */
-  value?: string;
-  /** Uncontrolled mode */
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-  /** Forward to the underlying textarea (e.g. for snippet insertion) */
-  textareaRef?: RefObject<HTMLTextAreaElement | null>;
-  "aria-invalid"?: boolean;
-  "aria-describedby"?: string;
-  required?: boolean;
-  spellCheck?: boolean;
-  placeholder?: string;
-  /** Extra className applied to the textarea (e.g. "min-h-144") */
-  className?: string;
-}
-
-// ---------------------------------------------------------------------------
-// Insertion helpers — operate directly on the textarea DOM node so that
-// setSelectionRange works synchronously without React re-render lag.
-// ---------------------------------------------------------------------------
-
-function applyWrap(
-  textarea: HTMLTextAreaElement,
-  before: string,
-  after: string,
-  placeholder: string,
-  onUpdate: (next: string) => void,
-) {
-  const { selectionStart: start, selectionEnd: end, value } = textarea;
-  const selected = value.slice(start, end);
-  const replacement = selected || placeholder;
-  const next =
-    value.slice(0, start) + before + replacement + after + value.slice(end);
-
-  onUpdate(next);
-
-  requestAnimationFrame(() => {
-    textarea.focus();
-    const newStart = start + before.length;
-    textarea.setSelectionRange(newStart, newStart + replacement.length);
-  });
-}
-
-function applyLinePrefix(
-  textarea: HTMLTextAreaElement,
-  prefix: string,
-  onUpdate: (next: string) => void,
-) {
-  const { selectionStart, value } = textarea;
-  const lineStart = value.lastIndexOf("\n", selectionStart - 1) + 1;
-  const currentLine = value.slice(lineStart);
-
-  let next: string;
-  let nextCursor: number;
-
-  if (currentLine.startsWith(prefix)) {
-    next = value.slice(0, lineStart) + currentLine.slice(prefix.length);
-    nextCursor = Math.max(lineStart, selectionStart - prefix.length);
-  } else {
-    next = value.slice(0, lineStart) + prefix + currentLine;
-    nextCursor = selectionStart + prefix.length;
-  }
-
-  onUpdate(next);
-
-  requestAnimationFrame(() => {
-    textarea.focus();
-    textarea.setSelectionRange(nextCursor, nextCursor);
-  });
-}
-
-function applyLink(
-  textarea: HTMLTextAreaElement,
-  onUpdate: (next: string) => void,
-) {
-  const { selectionStart: start, selectionEnd: end, value } = textarea;
-  const selected = value.slice(start, end);
-  const label = selected || "link text";
-  const inserted = `[${label}](url)`;
-  const next = value.slice(0, start) + inserted + value.slice(end);
-
-  onUpdate(next);
-
-  // Position cursor on the "url" placeholder
-  requestAnimationFrame(() => {
-    textarea.focus();
-    const urlStart = start + label.length + 3; // past "[label]("
-    textarea.setSelectionRange(urlStart, urlStart + 3);
-  });
-}
-
-function applyBlock(
-  textarea: HTMLTextAreaElement,
-  block: string,
-  onUpdate: (next: string) => void,
-) {
-  const { selectionStart: start, value } = textarea;
-  const next = value.slice(0, start) + block + value.slice(start);
-
-  onUpdate(next);
-
-  requestAnimationFrame(() => {
-    textarea.focus();
-    const newPos = start + block.length;
-    textarea.setSelectionRange(newPos, newPos);
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Toolbar button
-// ---------------------------------------------------------------------------
-
-function ToolbarButton({
-  label,
-  onClick,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-    >
-      {children}
-    </button>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// MarkdownEditor
-// ---------------------------------------------------------------------------
+import { MarkdownEditorProps } from "@/interfaces/admin/overview-dashboard";
+import { ToolbarButton } from "./markdown-editor-toolbar-button";
+import {
+  applyWrap,
+  applyLink,
+  applyLinePrefix,
+  applyBlock,
+} from "./markdown-editor.helpers";
 
 export function MarkdownEditor({
   id,
@@ -233,7 +101,6 @@ export function MarkdownEditor({
 
   return (
     <div>
-      {/* Toolbar */}
       <div className="input-shell flex flex-wrap items-center gap-0.5 rounded-t-[1.15rem] rounded-b-none border-b border-border/40 px-2 py-1.5">
         <ToolbarButton
           label="Bold (Cmd+B)"
@@ -313,7 +180,6 @@ export function MarkdownEditor({
         </ToolbarButton>
       </div>
 
-      {/* Textarea */}
       <textarea
         ref={ref}
         id={id}
@@ -332,7 +198,6 @@ export function MarkdownEditor({
         )}
       />
 
-      {/* Character count */}
       <p className="mt-1.5 text-right text-xs text-muted-foreground">
         {internalValue.length.toLocaleString()} characters
       </p>

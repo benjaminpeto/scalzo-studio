@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-import { credibilityStats, studioProfiles } from "@/components/home/content";
 import {
   HoverCard,
   Reveal,
@@ -9,6 +8,7 @@ import {
   ScrollFloat,
 } from "@/components/home/motion";
 import { MetricBlock } from "@ui/components/marketing/metric-block";
+import { studioProfiles, credibilityStats } from "@/constants/home/content";
 
 export function StudioCredibility() {
   return (

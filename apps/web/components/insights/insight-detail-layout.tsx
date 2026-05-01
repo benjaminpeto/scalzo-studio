@@ -4,8 +4,6 @@ import Link from "next/link";
 import { Reveal, ScrollFloat, TextReveal } from "@/components/home/motion";
 import { InsightMarkdown } from "@/components/insights/insight-markdown";
 import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
-import type { InsightDetailPageData } from "@/interfaces/insights/content";
-import { publicEnv } from "@/lib/env/public";
 import { JsonLd } from "@/lib/seo/json-ld";
 import { buildArticleSchema } from "@/lib/seo/schema";
 import { buildCmsImageProps, cmsImageSizes } from "@/lib/media-assets/shared";
@@ -13,68 +11,9 @@ import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
-
-interface InsightDetailLayoutProps {
-  detailPageData: InsightDetailPageData;
-  isPreview: boolean;
-  previewExitHref: string | null;
-}
-
-function buildArticleUrl(slug: string) {
-  return new URL(`/insights/${slug}`, publicEnv.siteUrl).toString();
-}
-
-function buildShareLinks(title: string, articleUrl: string) {
-  const encodedUrl = encodeURIComponent(articleUrl);
-  const encodedTitle = encodeURIComponent(title);
-
-  return [
-    {
-      href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-      label: "LinkedIn",
-    },
-    {
-      href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-      label: "X",
-    },
-    {
-      href: `mailto:?subject=${encodedTitle}&body=${encodeURIComponent(
-        `${title}\n\n${articleUrl}`,
-      )}`,
-      label: "Email",
-    },
-  ] as const;
-}
-
-function InlineArticleCta({ title }: { title: string }) {
-  return (
-    <div className="surface-grain rounded-[1.9rem] border border-border/70 bg-white/85 p-6 shadow-[0_18px_52px_rgba(27,28,26,0.05)] sm:p-8">
-      <p className="section-kicker">Next step</p>
-      <h2 className="mt-5 max-w-2xl font-display text-[2.4rem] leading-[0.95] tracking-[-0.05em] text-foreground sm:text-[3rem]">
-        Want to turn {title.toLowerCase()} into a sharper page decision?
-      </h2>
-      <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-        The useful next move is usually not another abstract brainstorm. It is a
-        direct review of the current page, the trust gap, and the sequence that
-        needs to feel clearer.
-      </p>
-      <div className="mt-7 flex flex-wrap gap-3">
-        <Link
-          href="/#contact"
-          className="inline-flex items-center rounded-full bg-foreground px-5 py-3 text-xs uppercase tracking-[0.18em] text-background transition-colors hover:bg-primary"
-        >
-          Start a conversation
-        </Link>
-        <Link
-          href="/services"
-          className="inline-flex items-center rounded-full border border-border/70 bg-white px-5 py-3 text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:border-foreground"
-        >
-          Browse services
-        </Link>
-      </div>
-    </div>
-  );
-}
+import { InsightDetailLayoutProps } from "@/interfaces/insights/content";
+import { buildArticleUrl, buildShareLinks } from "@/lib/helpers";
+import { InlineArticleCta } from "./insight-article-cta";
 
 export default function InsightDetailLayout({
   detailPageData,

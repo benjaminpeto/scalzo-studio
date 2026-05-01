@@ -1,26 +1,5 @@
 import { LEAD_STATUSES } from "@/actions/admin/leads/schemas";
-
-const TERMINAL_STATUSES = new Set(["won", "lost"]);
-const PIPELINE_STEPS = ["new", "contacted", "qualified"] as const;
-
-function getStepState(step: string, currentStatus: string) {
-  const stepIndex = PIPELINE_STEPS.indexOf(
-    step as (typeof PIPELINE_STEPS)[number],
-  );
-  const currentIndex = PIPELINE_STEPS.indexOf(
-    currentStatus as (typeof PIPELINE_STEPS)[number],
-  );
-
-  if (TERMINAL_STATUSES.has(currentStatus)) {
-    if (stepIndex < PIPELINE_STEPS.length - 1) return "past";
-    if (step === "qualified") return "past";
-    return "past";
-  }
-
-  if (currentStatus === step) return "current";
-  if (currentIndex > stepIndex) return "past";
-  return "future";
-}
+import { getStepState, PIPELINE_STEPS } from "@/lib/helpers";
 
 export function LeadEditorStatusTrack({
   currentStatus,

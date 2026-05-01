@@ -3,46 +3,15 @@
 import Cal, { getCalApi } from "@calcom/embed-react";
 import { useEffect, useState } from "react";
 import { captureEvent } from "@/lib/analytics/client";
-
-import type { BookingProviderConfig } from "@/lib/booking/config";
+import {
+  BookingSuccessData,
+  BookingSuccessEvent,
+  CalBookingEmbedProps,
+} from "@/interfaces/contact/form";
+import { formatBookingStartTime } from "@/lib/helpers";
 
 const CAL_LINK_FAILED_MESSAGE =
   "The inline scheduler could not load right now. Use the direct booking link instead.";
-
-interface CalBookingEmbedProps {
-  bookingConfig: BookingProviderConfig;
-}
-
-interface BookingSuccessData {
-  endTime?: string;
-  startTime?: string;
-  status?: string;
-  title?: string;
-  uid?: string;
-}
-
-interface BookingSuccessEvent {
-  detail?: {
-    data?: BookingSuccessData;
-  };
-}
-
-function formatBookingStartTime(value?: string) {
-  if (!value) {
-    return null;
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
 
 export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

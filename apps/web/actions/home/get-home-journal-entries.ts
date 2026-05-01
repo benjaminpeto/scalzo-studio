@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import { journalEntries as fallbackJournalEntries } from "@/constants/home/content";

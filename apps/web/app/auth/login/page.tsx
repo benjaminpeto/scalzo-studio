@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="min-h-svh px-6 py-10 md:px-10">
       <div className="mx-auto grid min-h-[calc(100svh-5rem)] max-w-6xl items-center gap-8 lg:grid-cols-[minmax(0,1.05fr)_26rem]">
-        <section className="rounded-[2rem] border border-border/70 bg-[linear-gradient(145deg,rgba(255,255,255,0.7),rgba(245,244,240,0.92))] p-8 shadow-[0_28px_90px_rgba(27,28,26,0.08)] backdrop-blur md:p-10">
+        <section className="rounded-4xl border border-border/70 bg-[linear-gradient(145deg,rgba(255,255,255,0.7),rgba(245,244,240,0.92))] p-8 shadow-[0_28px_90px_rgba(27,28,26,0.08)] backdrop-blur md:p-10">
           <div className="max-w-2xl space-y-6">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
               Admin access

@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 
 import { Reveal, RevealGroup, RevealItem } from "@/components/home/motion";
-import { trustMarks } from "@/components/home/content";
 import { aboutPageContent } from "@/constants/about/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
@@ -10,6 +9,7 @@ import { Stack } from "@ui/components/layout/stack";
 
 import { AboutProofContent } from "./about-proof-content";
 import { AboutProofFallback } from "./about-proof-fallback";
+import { trustMarks } from "@/constants/home/content";
 
 export function AboutProofSection() {
   return (

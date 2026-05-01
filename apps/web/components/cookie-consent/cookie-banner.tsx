@@ -23,7 +23,7 @@ export function CookieBanner() {
           role="dialog"
           aria-label={t("heading")}
           aria-live="polite"
-          className="fixed inset-x-4 bottom-4 z-[60] sm:inset-x-auto sm:right-6 sm:bottom-6 sm:left-auto sm:max-w-sm"
+          className="fixed inset-x-4 bottom-4 z-60 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:left-auto sm:max-w-sm"
         >
           <div className="surface-grain rounded-[1.6rem] border border-border/70 bg-[rgba(250,249,245,0.92)] p-5 backdrop-blur-xl shadow-[0_32px_90px_rgba(27,28,26,0.18)]">
             <p className="mb-1 text-sm font-semibold text-foreground">

@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/lib/i18n/navigation";
-import { footerLinks } from "@/components/home/content";
 import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
+import { footerLinks } from "@/constants/home/content";
 
 export async function SiteFooter() {
   const t = await getTranslations("footer");

@@ -15,6 +15,7 @@ import { createCmsImageAsset, defaultCmsImageDimensions } from "./shared";
 const BLUR_PLACEHOLDER_WIDTH = 24;
 const BLUR_PLACEHOLDER_QUALITY = 70;
 
+// TODO move server actions out from here!!!!!!
 type MediaAssetRow = Database["public"]["Tables"]["media_assets"]["Row"];
 
 async function toBuffer(input: Buffer | File) {

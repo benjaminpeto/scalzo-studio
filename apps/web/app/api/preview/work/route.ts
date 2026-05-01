@@ -1,15 +1,8 @@
 import { draftMode } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
-
-const previewRequestSchema = z.object({
-  slug: z
-    .string()
-    .trim()
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-});
+import { previewRequestSchema } from "../schemas";
 
 export async function GET(request: NextRequest) {
   const parsedRequest = previewRequestSchema.safeParse({

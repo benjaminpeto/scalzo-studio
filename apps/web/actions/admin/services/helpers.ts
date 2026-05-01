@@ -134,6 +134,7 @@ export async function ensureUniqueServiceSlug(input: {
   serviceId?: string;
   slug: string;
 }) {
+  "use server";
   const supabase = await createServerSupabaseClient();
   let query = supabase.from("services").select("id").eq("slug", input.slug);
 
@@ -151,6 +152,7 @@ export async function ensureUniqueServiceSlug(input: {
 }
 
 export async function getNextServiceOrderIndex() {
+  "use server";
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("services")

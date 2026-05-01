@@ -1,10 +1,10 @@
-import { trustMarks } from "@/components/home/content";
 import {
   DeckRevealOnScroll,
   HoverCard,
   RevealGroup,
   RevealItem,
 } from "@/components/home/motion";
+import { trustMarks } from "@/constants/home/content";
 
 export function TrustStrip() {
   return (

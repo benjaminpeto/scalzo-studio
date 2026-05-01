@@ -5,12 +5,7 @@ import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
-
-function buildTagHref(tag: string) {
-  const params = new URLSearchParams({ tag });
-
-  return `/insights?${params.toString()}`;
-}
+import { buildTagHref } from "@/lib/helpers";
 
 export function InsightsHero({
   availableTags,

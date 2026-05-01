@@ -41,3 +41,8 @@ export interface WorkDetailPageData extends WorkIndexEntry {
   updatedAt: string | null;
   visuals: readonly WorkDetailVisual[];
 }
+
+export interface WorkSitemapEntry {
+  lastModified?: string;
+  slug: string;
+}

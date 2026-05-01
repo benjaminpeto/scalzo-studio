@@ -7,13 +7,14 @@ import { cn } from "@/lib/utils";
 import { AdminEditorField } from "../shared/admin-editor-field";
 import { AdminEditorTextarea } from "../shared/admin-editor-textarea";
 
-function UploadImageButton() {
-  return (
-    <Button type="submit" className="rounded-full px-6">
-      Upload image
-    </Button>
-  );
-}
+// TODO check if it's right, might have been here on purpose...
+// function UploadImageButton() {
+//   return (
+//     <Button type="submit" className="rounded-full px-6">
+//       Upload image
+//     </Button>
+//   );
+// }
 
 export function InsightEditorMediaHelper({
   insertUploadedSnippet,
@@ -92,7 +93,9 @@ export function InsightEditorMediaHelper({
             </AdminEditorField>
 
             <div className="flex lg:items-end">
-              <UploadImageButton />
+              <Button type="submit" className="rounded-full px-6">
+                Upload image
+              </Button>
             </div>
           </div>
 

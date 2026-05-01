@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import { serviceGroups as fallbackServiceGroups } from "@/constants/home/content";

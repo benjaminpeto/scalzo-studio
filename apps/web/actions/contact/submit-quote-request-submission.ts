@@ -1,3 +1,5 @@
+"use server";
+
 import { createOrRefreshPendingNewsletterSignup } from "@/actions/newsletter/create-or-refresh-pending-newsletter-signup";
 import {
   buildNewsletterSignupLogContext,
@@ -15,17 +17,17 @@ import type {
 } from "@/interfaces/contact/quote-request";
 
 import { buildLeadMessage, serializeErrorForLog } from "./helpers";
-import {
-  buildQuoteRequestEmailLogContext,
-  buildQuoteRequestEmailPayload,
-  sendQuoteRequestEmails,
-  serializeQuoteRequestEmailErrorForLog,
-} from "./quote-request-emails";
+import { sendQuoteRequestEmails } from "./quote-request-emails";
 import type { ContactLeadInput } from "./schemas";
 import {
   createQuoteRequestErrorState,
   createQuoteRequestSuccessState,
 } from "./submit-quote-request-input";
+import {
+  buildQuoteRequestEmailLogContext,
+  buildQuoteRequestEmailPayload,
+  serializeQuoteRequestEmailErrorForLog,
+} from "./quote-request-emails.helpers";
 
 export async function submitValidatedQuoteRequest(input: {
   input: ContactLeadInput;

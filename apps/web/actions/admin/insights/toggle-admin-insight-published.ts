@@ -1,3 +1,5 @@
+"use server";
+
 import { redirect } from "next/navigation";
 
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
@@ -7,8 +9,6 @@ import { buildInsightsReturnPath, revalidateInsightRoutes } from "./helpers";
 import { publishActionSchema } from "./schemas";
 
 export async function toggleAdminInsightPublished(formData: FormData) {
-  "use server";
-
   await requireCurrentAdminAccess("/admin/insights");
 
   const parsedInput = publishActionSchema.safeParse({

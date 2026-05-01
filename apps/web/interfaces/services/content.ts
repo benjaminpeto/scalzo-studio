@@ -44,3 +44,7 @@ export interface ServiceDetailPageData extends ServicesIndexEntry {
   timeline: readonly ServiceDetailProcessStep[];
   updatedAt: string | null;
 }
+
+export interface ServiceDetailLayoutProps {
+  detailPageData: ServiceDetailPageData;
+}

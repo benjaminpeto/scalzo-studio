@@ -155,6 +155,7 @@ export async function ensureUniqueRedirectFromPath(input: {
   fromPath: string;
   redirectId?: string;
 }) {
+  "use server";
   const supabase = await createServerSupabaseClient();
   let query = supabase
     .from("redirects")
@@ -179,6 +180,7 @@ export async function findInverseRedirect(input: {
   redirectId?: string;
   toPath: string;
 }) {
+  "use server";
   const supabase = await createServerSupabaseClient();
   let query = supabase
     .from("redirects")

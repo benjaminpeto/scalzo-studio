@@ -22,14 +22,11 @@ import { Stack } from "@ui/components/layout/stack";
 import { FaqAccordion } from "@ui/components/marketing/faq-accordion";
 import { MarketingCtaBand } from "@ui/components/marketing/cta-band";
 import { ServiceCard } from "@ui/components/marketing/service-card";
-
-interface ServicesPageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
 
 export async function generateMetadata({
   params,
-}: ServicesPageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "services");
 }
@@ -96,7 +93,7 @@ function ServicesGrid({
   );
 }
 
-export default async function ServicesPage({ params }: ServicesPageProps) {
+export default async function ServicesPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   return (

@@ -11,21 +11,19 @@ import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { Button } from "@ui/components/ui/button";
-
-interface ContactPageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
 
 export async function generateMetadata({
   params,
-}: ContactPageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "contact");
 }
 
-export default async function ContactPage({ params }: ContactPageProps) {
+export default async function ContactPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
+
   return (
     <>
       <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">

@@ -52,6 +52,7 @@ export function extractManagedCaseStudyObjectPathFromUrl(url: string) {
 }
 
 export async function deleteManagedCaseStudyObjects(objectPaths: string[]) {
+  "use server";
   const uniquePaths = Array.from(new Set(objectPaths.filter(Boolean)));
 
   if (!uniquePaths.length) {
@@ -79,6 +80,7 @@ export async function uploadCaseStudyImage(input: {
   kind: "cover" | "gallery";
   slug: string;
 }) {
+  "use server";
   const objectPath = buildStorageObjectPath({
     bucketId: caseStudyBucketId,
     fileName: buildUniqueStorageFileName(input.file.name),

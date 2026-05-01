@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import { testimonials as fallbackTestimonials } from "@/constants/home/content";

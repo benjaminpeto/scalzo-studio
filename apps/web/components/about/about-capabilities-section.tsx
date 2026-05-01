@@ -9,7 +9,7 @@ import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 
 import { AboutCapabilitiesContent } from "./about-capabilities-content";
-import { AboutCapabilitiesFallback } from "./about-capabilities-grid";
+import { AboutCapabilitiesFallback } from "./about-capabilities-grid-fallback";
 
 export function AboutCapabilitiesSection() {
   return (

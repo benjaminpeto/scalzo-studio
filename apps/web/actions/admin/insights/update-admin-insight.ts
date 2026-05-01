@@ -1,3 +1,5 @@
+"use server";
+
 import type { Database } from "@/lib/supabase/database.types";
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import { sanitizeMarkdownUrls } from "@/lib/markdown/sanitize";
@@ -31,8 +33,6 @@ export async function updateAdminInsight(
   _prevState: AdminInsightEditorState,
   formData: FormData,
 ): Promise<AdminInsightEditorState> {
-  "use server";
-
   const rawInput = readInsightEditorFormData(formData);
   const currentSlug = normalizeStringEntry(rawInput.currentSlug);
 

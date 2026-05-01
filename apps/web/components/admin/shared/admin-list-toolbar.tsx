@@ -1,37 +1,10 @@
-import type { ReactNode } from "react";
 import { useId } from "react";
 
 import Link from "next/link";
 
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
-
-interface FilterOption {
-  label: string;
-  value: string;
-}
-
-interface FilterConfig {
-  defaultValue: string;
-  name: string;
-  options: FilterOption[];
-  placeholder: string;
-}
-
-interface AdminListToolbarProps {
-  clearHref: string;
-  extraActions?: ReactNode;
-  filters?: FilterConfig[];
-  formAction: string;
-  isFiltered: boolean;
-  newHref?: string;
-  newLabel?: string;
-  query?: string;
-  searchPlaceholder?: string;
-  statusMessage?: string | null;
-  summaryText: string;
-  title: string;
-}
+import { AdminListToolbarProps } from "@/interfaces/admin/overview-dashboard";
 
 export function AdminListToolbar({
   clearHref,

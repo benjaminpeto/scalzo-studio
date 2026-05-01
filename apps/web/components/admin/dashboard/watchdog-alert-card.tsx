@@ -1,45 +1,9 @@
 import type { AdminOverviewWatchdogAlert } from "@/interfaces/admin/overview-dashboard";
-
-function formatLastCheckedAt(value: string | null) {
-  if (!value) {
-    return "No recent audit event recorded.";
-  }
-
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
-function getStatusClassName(status: AdminOverviewWatchdogAlert["status"]) {
-  switch (status) {
-    case "critical":
-      return "border-destructive/20 bg-destructive/8 text-destructive";
-    case "healthy":
-      return "border-emerald-200/80 bg-emerald-50 text-emerald-700";
-    case "inactive":
-      return "border-border/70 bg-muted/40 text-muted-foreground";
-    case "warning":
-      return "border-amber-200/80 bg-amber-50 text-amber-700";
-  }
-}
-
-function getStatusLabel(status: AdminOverviewWatchdogAlert["status"]) {
-  switch (status) {
-    case "critical":
-      return "Critical";
-    case "healthy":
-      return "Healthy";
-    case "inactive":
-      return "Inactive";
-    case "warning":
-      return "Warning";
-  }
-}
+import {
+  getStatusClassName,
+  getStatusLabel,
+  formatLastCheckedAt,
+} from "@/lib/helpers";
 
 export function AdminOverviewWatchdogAlertCard({
   alert,

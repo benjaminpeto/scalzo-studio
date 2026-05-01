@@ -20,3 +20,9 @@ export interface InsightDetailPageData extends InsightIndexEntry {
   publishedAt: string | null;
   updatedAt: string | null;
 }
+
+export interface InsightDetailLayoutProps {
+  detailPageData: InsightDetailPageData;
+  isPreview: boolean;
+  previewExitHref: string | null;
+}

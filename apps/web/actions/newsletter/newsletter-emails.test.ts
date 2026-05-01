@@ -14,14 +14,12 @@ vi.mock("@/lib/resend/client", () => ({
 }));
 
 import {
+  buildNewsletterConfirmationEmail,
+  buildNewsletterConfirmationEmailPayload,
   buildNewsletterSignupLogContext,
   serializeNewsletterErrorForLog,
 } from "./helpers";
-import {
-  buildNewsletterConfirmationEmail,
-  buildNewsletterConfirmationEmailPayload,
-  getNewsletterConfirmationMessage,
-} from "./newsletter-emails";
+import { getNewsletterConfirmationMessage } from "./newsletter-emails";
 
 describe("newsletter email helpers", () => {
   it("builds the confirmation email with the expected CTA and metadata", () => {

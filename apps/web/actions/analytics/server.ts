@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import type { MirroredAnalyticsEventName } from "@/interfaces/analytics/mirror";

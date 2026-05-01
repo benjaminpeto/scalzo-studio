@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import type { Database } from "@/lib/supabase/database.types";

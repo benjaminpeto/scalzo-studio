@@ -5,9 +5,9 @@ import { setRequestLocale } from "next-intl/server";
 import { InsightsPageContent } from "@/components/insights/insights-index-layout";
 import { InsightsIndexFallback } from "@/components/insights/insights-index-fallback";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
+import { MarketingPageProps } from "@/interfaces/home/content";
 
-interface InsightsPageProps {
-  params: Promise<{ locale: string }>;
+interface InsightsPageProps extends MarketingPageProps {
   searchParams: Promise<{ tag?: string }>;
 }
 

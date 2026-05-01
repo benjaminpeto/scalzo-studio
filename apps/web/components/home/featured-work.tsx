@@ -9,12 +9,12 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import type { FeaturedProject } from "@/components/home/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { CaseStudyCard } from "@ui/components/marketing/case-study-card";
+import { FeaturedProject } from "@/interfaces/home/content";
 
 export function FeaturedWork({
   projects,

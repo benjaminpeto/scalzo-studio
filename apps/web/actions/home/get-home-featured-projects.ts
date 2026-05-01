@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 
 import { featuredProjects as fallbackFeaturedProjects } from "@/constants/home/content";

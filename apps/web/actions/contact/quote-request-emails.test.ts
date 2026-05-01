@@ -1,6 +1,13 @@
 // @vitest-environment node
 
 import { describe, expect, it, vi } from "vitest";
+import {
+  buildQuoteRequestEmailPayload,
+  buildQuoteRequestConfirmationEmail,
+  buildInternalQuoteRequestEmail,
+  buildQuoteRequestEmailLogContext,
+  serializeQuoteRequestEmailErrorForLog,
+} from "./quote-request-emails.helpers";
 
 const mocks = vi.hoisted(() => ({
   getBookingActionMock: vi.fn(),
@@ -13,14 +20,6 @@ vi.mock("@/lib/booking/config", () => ({
 vi.mock("@/lib/resend/client", () => ({
   sendResendEmail: vi.fn(),
 }));
-
-import {
-  buildInternalQuoteRequestEmail,
-  buildQuoteRequestConfirmationEmail,
-  buildQuoteRequestEmailLogContext,
-  buildQuoteRequestEmailPayload,
-  serializeQuoteRequestEmailErrorForLog,
-} from "./quote-request-emails";
 
 function buildPayload() {
   return buildQuoteRequestEmailPayload(

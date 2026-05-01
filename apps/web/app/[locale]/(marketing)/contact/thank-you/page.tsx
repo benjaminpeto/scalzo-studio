@@ -9,23 +9,21 @@ import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
-
-interface ContactThankYouPageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
 
 export async function generateMetadata({
   params,
-}: ContactThankYouPageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "contactThankYou");
 }
 
 export default async function ContactThankYouPage({
   params,
-}: ContactThankYouPageProps) {
+}: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
+
   return (
     <>
       <Section spacing="tight" className="overflow-hidden pb-14 lg:pb-18">

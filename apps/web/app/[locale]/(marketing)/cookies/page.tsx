@@ -3,28 +3,23 @@ import { setRequestLocale } from "next-intl/server";
 
 import { Link } from "@/lib/i18n/navigation";
 
-import {
-  LegalCard,
-  LegalPage,
-  LegalSection,
-} from "@/components/legal/legal-page";
+import { LegalPage } from "@/components/legal/legal-page";
 import { cookiesPageContent } from "@/constants/legal/content";
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
-
-interface CookiesPageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
+import { LegalSection } from "@/components/legal/legal-section";
+import { LegalCard } from "@/components/legal/legal-card";
 
 export async function generateMetadata({
   params,
-}: CookiesPageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "cookies");
 }
 
-export default async function CookiesPage({ params }: CookiesPageProps) {
+export default async function CookiesPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const { categories, intro, sections } = cookiesPageContent;

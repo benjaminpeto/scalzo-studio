@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { LegalStatus, LegalSummaryItem } from "@/interfaces/legal/content";
-import { cn } from "@/lib/utils";
+import type { LegalSummaryItem } from "@/interfaces/legal/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
@@ -73,69 +72,5 @@ export function LegalPage({
         <Stack gap="2xl">{children}</Stack>
       </Section>
     </>
-  );
-}
-
-export function LegalSection({
-  children,
-  id,
-  title,
-  intro,
-}: {
-  children: ReactNode;
-  id?: string;
-  title: string;
-  intro?: string;
-}) {
-  return (
-    <section id={id} className="scroll-mt-32">
-      <div className="rounded-4xl border border-border/70 bg-white/84 p-6 shadow-[0_18px_52px_rgba(27,28,26,0.05)] sm:p-8">
-        <div className="max-w-3xl">
-          <h2 className="font-display text-[2.3rem] leading-[0.95] tracking-[-0.05em] text-foreground sm:text-[3rem]">
-            {title}
-          </h2>
-          {intro ? (
-            <Prose className="mt-4" measure="lg" size="lg">
-              {intro}
-            </Prose>
-          ) : null}
-        </div>
-        <div className="mt-8">{children}</div>
-      </div>
-    </section>
-  );
-}
-
-export function LegalCard({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <article
-      className={cn(
-        "rounded-[1.55rem] border border-border/70 bg-[rgba(255,255,255,0.72)] p-5 shadow-[0_16px_40px_rgba(27,28,26,0.04)]",
-        className,
-      )}
-    >
-      {children}
-    </article>
-  );
-}
-
-export function LegalStatusBadge({ status }: { status: LegalStatus }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex w-fit rounded-full px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em]",
-        status === "Live"
-          ? "bg-[#111311] text-white"
-          : "border border-border/70 bg-white text-muted-foreground",
-      )}
-    >
-      {status}
-    </span>
   );
 }

@@ -8,8 +8,8 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import type { JournalEntry } from "@/components/home/content";
 import { BlogPostCard } from "@ui/components/marketing/blog-post-card";
+import { JournalEntry } from "@/interfaces/home/content";
 
 export function JournalPreview({
   entries,

@@ -9,17 +9,12 @@ import {
 import { InsightsHero } from "@/components/insights/insights-hero";
 import { NewsletterSignup } from "@/components/newsletter/newsletter-signup";
 import type { InsightIndexEntry } from "@/interfaces/insights/content";
+import { getEntryMetadata } from "@/lib/helpers";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { BlogPostCard } from "@ui/components/marketing/blog-post-card";
-
-function getEntryMetadata(entry: InsightIndexEntry) {
-  const primaryTag = entry.tags[0];
-
-  return primaryTag ? `${entry.date} / ${primaryTag}` : entry.date;
-}
 
 function InsightsIndexLayout({
   entries,

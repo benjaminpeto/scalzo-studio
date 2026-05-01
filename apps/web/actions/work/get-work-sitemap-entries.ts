@@ -1,12 +1,10 @@
+"use server";
+
 import "server-only";
 
 import { fallbackWorkIndexEntries } from "@/constants/work/content";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-
-interface WorkSitemapEntry {
-  lastModified?: string;
-  slug: string;
-}
+import { WorkSitemapEntry } from "@/interfaces/work/content";
 
 export async function getWorkSitemapEntries(): Promise<WorkSitemapEntry[]> {
   const supabase = await createServerSupabaseClient();

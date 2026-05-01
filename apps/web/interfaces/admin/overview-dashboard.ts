@@ -1,4 +1,5 @@
 import type { Json } from "@/lib/supabase/database.types";
+import { ReactNode, RefObject } from "react";
 
 export const adminOverviewRangePresets = [
   "7d",
@@ -116,4 +117,50 @@ export interface AdminOverviewKpiCardProps {
   format: "count" | "percent";
   label: string;
   metric: AdminOverviewKpi;
+}
+
+interface FilterOption {
+  label: string;
+  value: string;
+}
+
+interface FilterConfig {
+  defaultValue: string;
+  name: string;
+  options: FilterOption[];
+  placeholder: string;
+}
+
+export interface AdminListToolbarProps {
+  clearHref: string;
+  extraActions?: ReactNode;
+  filters?: FilterConfig[];
+  formAction: string;
+  isFiltered: boolean;
+  newHref?: string;
+  newLabel?: string;
+  query?: string;
+  searchPlaceholder?: string;
+  statusMessage?: string | null;
+  summaryText: string;
+  title: string;
+}
+
+export interface MarkdownEditorProps {
+  id?: string;
+  name: string;
+  /** Controlled mode — provide onChange too */
+  value?: string;
+  /** Uncontrolled mode */
+  defaultValue?: string;
+  onChange?: (value: string) => void;
+  /** Forward to the underlying textarea (e.g. for snippet insertion) */
+  textareaRef?: RefObject<HTMLTextAreaElement | null>;
+  "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
+  required?: boolean;
+  spellCheck?: boolean;
+  placeholder?: string;
+  /** Extra className applied to the textarea (e.g. "min-h-144") */
+  className?: string;
 }

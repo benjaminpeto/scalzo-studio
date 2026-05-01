@@ -3,13 +3,7 @@ import { Grid } from "@ui/components/layout/grid";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 
-interface ServiceDetailFallbackProps {
-  slug: string;
-}
-
-export default function ServiceDetailFallback({
-  slug,
-}: ServiceDetailFallbackProps) {
+export default function ServiceDetailFallback({ slug }: { slug: string }) {
   const detailPageData = getFallbackServiceDetailPageData(slug);
 
   return (

@@ -5,7 +5,7 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
-import type { Testimonial } from "@/components/home/content";
+import { Testimonial } from "@/interfaces/home/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";

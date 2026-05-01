@@ -3,12 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 
 import { Link } from "@/lib/i18n/navigation";
 
-import {
-  LegalCard,
-  LegalPage,
-  LegalSection,
-  LegalStatusBadge,
-} from "@/components/legal/legal-page";
+import { LegalPage } from "@/components/legal/legal-page";
 import {
   complaintAuthority,
   legalControllerDetails,
@@ -17,19 +12,19 @@ import {
 import { getMarketingRouteMetadata } from "@/lib/seo/marketing-route-metadata";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
-
-interface PrivacyPageProps {
-  params: Promise<{ locale: string }>;
-}
+import { MarketingPageProps } from "@/interfaces/home/content";
+import { LegalCard } from "@/components/legal/legal-card";
+import { LegalSection } from "@/components/legal/legal-section";
+import { LegalStatusBadge } from "@/components/legal/legal-status-badge";
 
 export async function generateMetadata({
   params,
-}: PrivacyPageProps): Promise<Metadata> {
+}: MarketingPageProps): Promise<Metadata> {
   const { locale } = await params;
   return getMarketingRouteMetadata(locale, "privacy");
 }
 
-export default async function PrivacyPage({ params }: PrivacyPageProps) {
+export default async function PrivacyPage({ params }: MarketingPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const { activities, intro, processors, sections } = privacyPageContent;

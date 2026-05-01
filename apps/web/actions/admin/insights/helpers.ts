@@ -174,6 +174,7 @@ export async function ensureUniqueInsightSlug(input: {
   postId?: string;
   slug: string;
 }) {
+  "use server";
   const supabase = await createServerSupabaseClient();
   let query = supabase.from("posts").select("id").eq("slug", input.slug);
 

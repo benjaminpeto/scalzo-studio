@@ -1,3 +1,5 @@
+"use server";
+
 import { requireCurrentAdminAccess } from "@/actions/admin/server";
 import type { AdminInsightMediaState } from "@/interfaces/admin/insight-editor";
 
@@ -15,8 +17,6 @@ export async function uploadAdminInsightContentImage(
   _prevState: AdminInsightMediaState,
   formData: FormData,
 ): Promise<AdminInsightMediaState> {
-  "use server";
-
   const rawInput = readContentImageUploadFormData(formData);
   const currentSlug = normalizeStringEntry(rawInput.currentSlug);
 

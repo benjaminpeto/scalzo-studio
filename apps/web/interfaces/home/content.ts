@@ -81,3 +81,7 @@ export interface FooterLinks {
   secondary: FooterLink[];
   social: FooterLink[];
 }
+
+export interface MarketingPageProps {
+  params: Promise<{ locale: string }>;
+}

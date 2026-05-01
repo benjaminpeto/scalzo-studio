@@ -45,3 +45,29 @@ export interface QuoteRequestSavedLead {
   createdAt: string;
   id: string;
 }
+
+export interface QuoteRequestEmailPayload {
+  bookingFallbackHref: string;
+  bookingFallbackLabel: string;
+  bookingResponseNote: string;
+  budgetBandLabel: string;
+  company: string | null;
+  email: string;
+  leadId: string;
+  locationLabel: string | null;
+  message: string;
+  name: string;
+  pagePath: string;
+  primaryGoal: string;
+  projectTypeLabel: string | null;
+  referrer: string | null;
+  servicesInterestLabels: string[];
+  submittedAt: string;
+  timelineBandLabel: string;
+  utmCampaign: string | null;
+  utmContent: string | null;
+  utmMedium: string | null;
+  utmSource: string | null;
+  utmTerm: string | null;
+  website: string | null;
+}

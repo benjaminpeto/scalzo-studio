@@ -11,9 +11,9 @@ import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 import { Button } from "@ui/components/ui/button";
+import { MarketingPageProps } from "@/interfaces/home/content";
 
-interface NewsletterConfirmedPageProps {
-  params: Promise<{ locale: string }>;
+interface NewsletterConfirmedPageProps extends MarketingPageProps {
   searchParams: Promise<{ status?: string }>;
 }
 

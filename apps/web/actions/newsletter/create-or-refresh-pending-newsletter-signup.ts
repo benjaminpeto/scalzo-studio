@@ -3,74 +3,18 @@ import "server-only";
 import { serverFeatureFlags } from "@/lib/env/server";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 
+import { sendNewsletterConfirmationEmail } from "./newsletter-emails";
 import {
   buildNewsletterConfirmationEmailPayload,
-  sendNewsletterConfirmationEmail,
-} from "./newsletter-emails";
-import {
   createNewsletterConfirmationToken,
+  createPersistenceError,
   hashNewsletterToken,
 } from "./helpers";
 import type { NewsletterSignupInput } from "./schemas";
-
-type ExistingSubscriberRow = {
-  confirmation_expires_at: string | null;
-  confirmation_sent_at: string | null;
-  confirmed_at: string | null;
-  email: string;
-  id: string;
-  page_path: string;
-  placement: NewsletterSignupInput["placement"];
-  provider_contact_id: string | null;
-  status: "pending" | "confirmed" | "unsubscribed";
-  unsubscribed_at: string | null;
-};
-
-type NewsletterPersistenceErrorInput = {
-  code?: string | null;
-  details?: string | null;
-  hint?: string | null;
-  message: string;
-  name: string;
-};
-
-class NewsletterPersistenceError extends Error {
-  code: string | null;
-  details: string | null;
-  hint: string | null;
-
-  constructor(input: NewsletterPersistenceErrorInput) {
-    super(input.message);
-
-    this.name = input.name;
-    this.code = input.code ?? null;
-    this.details = input.details ?? null;
-    this.hint = input.hint ?? null;
-  }
-}
-
-function createPersistenceError(
-  name: NewsletterPersistenceErrorInput["name"],
-  error: {
-    code?: string | null;
-    details?: string | null;
-    hint?: string | null;
-    message: string;
-  },
-) {
-  return new NewsletterPersistenceError({
-    code: error.code,
-    details: error.details,
-    hint: error.hint,
-    message: error.message,
-    name,
-  });
-}
-
-export type PendingNewsletterSignupResult =
-  | "already-subscribed"
-  | "disabled"
-  | "pending";
+import {
+  ExistingSubscriberRow,
+  PendingNewsletterSignupResult,
+} from "@/interfaces/newsletter/form";
 
 export async function createOrRefreshPendingNewsletterSignup(
   input: NewsletterSignupInput,

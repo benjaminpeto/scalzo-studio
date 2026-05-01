@@ -1,4 +1,3 @@
-import { processSteps } from "@/components/home/content";
 import {
   HoverCard,
   Reveal,
@@ -7,6 +6,7 @@ import {
   ScrollFloat,
   TextReveal,
 } from "@/components/home/motion";
+import { processSteps } from "@/constants/home/content";
 import { Grid } from "@ui/components/layout/grid";
 import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
