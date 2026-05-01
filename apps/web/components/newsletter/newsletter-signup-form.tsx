@@ -8,6 +8,12 @@ import { Input } from "@ui/components/ui/input";
 import { Button } from "@ui/components/ui/button";
 import { usePathname } from "next/navigation";
 
+function NewsletterPagePathField() {
+  const pathname = usePathname() || "/";
+
+  return <input type="hidden" name="pagePath" value={pathname} />;
+}
+
 export function NewsletterSignupForm({
   placement,
   variant,
@@ -18,7 +24,6 @@ export function NewsletterSignupForm({
   const emailId = useId();
   const { formAction, isPending, serverState } = useNewsletterSignupForm();
   const capturedRef = useRef(false);
-  const pathname = usePathname() || "/";
 
   useEffect(() => {
     if (serverState.status === "success" && !capturedRef.current) {
@@ -44,7 +49,7 @@ export function NewsletterSignupForm({
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="placement" value={placement} />
       <Suspense fallback={<input type="hidden" name="pagePath" value="/" />}>
-        <input type="hidden" name="pagePath" value={pathname} />
+        <NewsletterPagePathField />
       </Suspense>
 
       <div className={variant === "compact" ? "space-y-2" : "space-y-3"}>

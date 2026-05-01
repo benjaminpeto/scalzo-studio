@@ -53,7 +53,10 @@ async function WorkDetailContent({ slug }: { slug: string }) {
   const preview = await draftMode();
   const { isAdmin } = await getCurrentUserAdminState();
   const isPreview = preview.isEnabled && isAdmin;
-  const { detailPageData } = await getResolvedWorkDetailRouteData(slug, isPreview);
+  const { detailPageData } = await getResolvedWorkDetailRouteData(
+    slug,
+    isPreview,
+  );
 
   if (!detailPageData) {
     notFound();
@@ -77,7 +80,8 @@ async function WorkDetailContent({ slug }: { slug: string }) {
 }
 
 async function ResolvedWorkDetailPage({ params }: WorkDetailPageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
 
   return (
     <Suspense fallback={<WorkDetailFallback slug={slug} />}>
@@ -86,10 +90,7 @@ async function ResolvedWorkDetailPage({ params }: WorkDetailPageProps) {
   );
 }
 
-export default async function WorkDetailPage(props: WorkDetailPageProps) {
-  const { locale } = await props.params;
-  setRequestLocale(locale);
-
+export default function WorkDetailPage(props: WorkDetailPageProps) {
   return (
     <Suspense fallback={<WorkDetailFallback slug="featured-1" />}>
       <ResolvedWorkDetailPage {...props} />

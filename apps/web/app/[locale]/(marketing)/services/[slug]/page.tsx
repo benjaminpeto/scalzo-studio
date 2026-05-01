@@ -55,7 +55,8 @@ async function ServiceDetailContent({ slug }: { slug: string }) {
 }
 
 async function ResolvedServiceDetailPage({ params }: ServiceDetailPageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
 
   return (
     <Suspense fallback={<ServiceDetailFallback slug={slug} />}>
@@ -64,10 +65,7 @@ async function ResolvedServiceDetailPage({ params }: ServiceDetailPageProps) {
   );
 }
 
-export default async function ServiceDetailPage(props: ServiceDetailPageProps) {
-  const { locale } = await props.params;
-  setRequestLocale(locale);
-
+export default function ServiceDetailPage(props: ServiceDetailPageProps) {
   return (
     <Suspense fallback={<ServiceDetailFallback slug="service-detail" />}>
       <ResolvedServiceDetailPage {...props} />

@@ -54,7 +54,10 @@ async function InsightDetailContent({ slug }: { slug: string }) {
   const preview = await draftMode();
   const { isAdmin } = await getCurrentUserAdminState();
   const isPreview = preview.isEnabled && isAdmin;
-  const { detailPageData } = await getResolvedInsightDetailRouteData(slug, isPreview);
+  const { detailPageData } = await getResolvedInsightDetailRouteData(
+    slug,
+    isPreview,
+  );
 
   if (!detailPageData) {
     notFound();
@@ -78,7 +81,8 @@ async function InsightDetailContent({ slug }: { slug: string }) {
 }
 
 async function ResolvedInsightDetailPage({ params }: InsightDetailPageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
 
   return (
     <Suspense fallback={<InsightDetailFallback slug={slug} />}>
@@ -87,10 +91,7 @@ async function ResolvedInsightDetailPage({ params }: InsightDetailPageProps) {
   );
 }
 
-export default async function InsightDetailPage(props: InsightDetailPageProps) {
-  const { locale } = await props.params;
-  setRequestLocale(locale);
-
+export default function InsightDetailPage(props: InsightDetailPageProps) {
   return (
     <Suspense
       fallback={
