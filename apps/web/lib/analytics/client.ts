@@ -44,12 +44,15 @@ function isPostHogOptedOut(): boolean {
 export function captureEvent<K extends keyof AnalyticsEventMap>(
   event: K,
   properties: AnalyticsEventMap[K],
+  locale?: string,
 ): void {
   if (isPostHogOptedOut()) {
     return;
   }
 
-  posthog.capture(event, properties);
+  const enriched = locale ? { ...properties, locale } : properties;
+
+  posthog.capture(event, enriched);
 
   if (isMirroredAnalyticsEventName(event)) {
     mirrorEvent({
@@ -57,14 +60,14 @@ export function captureEvent<K extends keyof AnalyticsEventMap>(
       pagePath:
         resolvePagePath(properties as Record<string, unknown>) ??
         window.location.pathname,
-      properties: sanitizeMirroredProperties(properties),
+      properties: sanitizeMirroredProperties(enriched),
       referrer: document.referrer || null,
       sessionId: resolveSessionId(),
     });
   }
 }
 
-export function capturePageView(pagePath: string): void {
+export function capturePageView(pagePath: string, locale?: string): void {
   if (isPostHogOptedOut()) {
     return;
   }
@@ -72,7 +75,7 @@ export function capturePageView(pagePath: string): void {
   mirrorEvent({
     eventName: "page_view",
     pagePath,
-    properties: null,
+    properties: locale ? { locale } : null,
     referrer: document.referrer || null,
     sessionId: resolveSessionId(),
   });

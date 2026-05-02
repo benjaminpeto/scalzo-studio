@@ -7,6 +7,7 @@ import {
   fallbackInsightImage,
 } from "@/constants/insights/content";
 import { formatPublishedDate, titleCaseFromSlug } from "@/lib/content/format";
+import type { Locale } from "@/lib/i18n/routing";
 import {
   extractInsightHeadings,
   extractInsightImageUrls,
@@ -20,13 +21,15 @@ export async function getInsightDetailPageData(
   slug: string,
   options?: {
     includeDraft?: boolean;
+    locale?: Locale;
   },
 ) {
+  const isEs = options?.locale === "es";
   const supabase = await createServerSupabaseClient();
   let query = supabase
     .from("posts")
     .select(
-      "content_md, cover_image_url, created_at, excerpt, published, published_at, seo_description, seo_title, slug, tags, title, updated_at",
+      "content_md, content_md_es, cover_image_url, created_at, excerpt, excerpt_es, published, published_at, seo_description, seo_description_es, seo_title, seo_title_es, slug, tags, title, title_es, updated_at",
     )
     .eq("slug", slug);
 
@@ -45,7 +48,9 @@ export async function getInsightDetailPageData(
   }
 
   const resolvedTitle =
-    post?.title ?? fallbackEntry?.title ?? titleCaseFromSlug(slug);
+    (isEs ? post?.title_es || post?.title : post?.title) ??
+    fallbackEntry?.title ??
+    titleCaseFromSlug(slug);
   const imageAssets = await resolveCmsImageAssetMap([
     {
       fallbackAlt:
@@ -57,8 +62,11 @@ export async function getInsightDetailPageData(
     (post?.cover_image_url ? imageAssets[post.cover_image_url] : undefined) ??
     fallbackEntry?.image ??
     fallbackInsightImage;
+  const resolvedRawContent = isEs
+    ? post?.content_md_es || post?.content_md
+    : post?.content_md;
   const resolvedContent =
-    post?.content_md ??
+    resolvedRawContent ??
     fallbackEntry?.content ??
     buildFallbackInsightContent(resolvedTitle, resolvedImage.src);
   const contentImages = await resolveCmsImageAssetMap(
@@ -76,16 +84,23 @@ export async function getInsightDetailPageData(
       fallbackEntry?.date ?? "Editorial note",
     ),
     excerpt:
-      post?.excerpt ??
+      (isEs ? post?.excerpt_es || post?.excerpt : post?.excerpt) ??
       fallbackEntry?.excerpt ??
       "Editorial note on how positioning, content structure, and visual signals shape the quality of the first impression.",
     headings: extractInsightHeadings(resolvedContent),
     image: resolvedImage,
     published: post?.published ?? true,
     publishedAt: post?.published_at ?? null,
-    seoDescription:
-      post?.seo_description ?? fallbackEntry?.seoDescription ?? null,
-    seoTitle: post?.seo_title ?? fallbackEntry?.seoTitle ?? null,
+    seoDescription: isEs
+      ? ((post?.seo_description_es || post?.seo_description) ??
+        fallbackEntry?.seoDescription ??
+        null)
+      : (post?.seo_description ?? fallbackEntry?.seoDescription ?? null),
+    seoTitle: isEs
+      ? ((post?.seo_title_es || post?.seo_title) ??
+        fallbackEntry?.seoTitle ??
+        null)
+      : (post?.seo_title ?? fallbackEntry?.seoTitle ?? null),
     slug,
     tags: post?.tags?.filter((tag): tag is string => Boolean(tag?.trim())) ?? [
       ...(fallbackEntry?.tags ?? ["Editorial"]),

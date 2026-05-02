@@ -49,8 +49,10 @@ export async function updateAdminTestimonial(
     name: normalizeStringEntry(rawInput.name),
     published: rawInput.published,
     quote: normalizeStringEntry(rawInput.quote),
+    quoteEs: normalizeStringEntry(rawInput.quoteEs),
     removeAvatar: rawInput.removeAvatar,
     role: normalizeStringEntry(rawInput.role),
+    roleEs: normalizeStringEntry(rawInput.roleEs),
     testimonialId,
   });
 
@@ -133,7 +135,9 @@ export async function updateAdminTestimonial(
         name: normalizedInput.payload.name,
         published: normalizedInput.payload.published,
         quote: normalizedInput.payload.quote,
+        quote_es: normalizedInput.payload.quote_es,
         role: normalizedInput.payload.role,
+        role_es: normalizedInput.payload.role_es,
       };
     const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase

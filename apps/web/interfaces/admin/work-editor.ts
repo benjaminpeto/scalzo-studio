@@ -17,7 +17,9 @@ export interface GalleryUploadRowState {
 
 export interface AdminCaseStudyEditorFieldErrors {
   approach?: string;
+  approachEs?: string;
   challenge?: string;
+  challengeEs?: string;
   clientName?: string;
   coverImage?: string;
   coverImageAlt?: string;
@@ -26,11 +28,15 @@ export interface AdminCaseStudyEditorFieldErrors {
   industry?: string;
   metrics?: string;
   outcomes?: string;
+  outcomesEs?: string;
   seoDescription?: string;
+  seoDescriptionEs?: string;
   seoTitle?: string;
+  seoTitleEs?: string;
   services?: string;
   slug?: string;
   title?: string;
+  titleEs?: string;
 }
 
 export type AdminCaseStudyEditorState =
@@ -38,7 +44,9 @@ export type AdminCaseStudyEditorState =
 
 export interface AdminCaseStudyEditorRecord {
   approach: string;
+  approachEs: string;
   challenge: string;
+  challengeEs: string;
   clientName: string;
   coverImage: CmsImageAsset | null;
   galleryImages: CmsImageAsset[];
@@ -46,13 +54,17 @@ export interface AdminCaseStudyEditorRecord {
   industry: string;
   metrics: AdminCaseStudyMetricRow[];
   outcomes: string;
+  outcomesEs: string;
   published: boolean;
   publishedAt: string | null;
   seoDescription: string;
+  seoDescriptionEs: string;
   seoTitle: string;
+  seoTitleEs: string;
   services: string[];
   slug: string;
   title: string;
+  titleEs: string;
   updatedAt: string;
 }
 

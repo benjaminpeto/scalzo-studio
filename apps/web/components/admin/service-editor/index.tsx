@@ -24,12 +24,17 @@ export function AdminServiceEditor({
     initialAdminServiceEditorState,
   );
   const titleId = useId();
+  const titleEsId = useId();
   const slugId = useId();
   const summaryId = useId();
+  const summaryEsId = useId();
   const contentId = useId();
+  const contentEsId = useId();
   const deliverablesId = useId();
   const seoTitleId = useId();
+  const seoTitleEsId = useId();
   const seoDescriptionId = useId();
+  const seoDescriptionEsId = useId();
   const statusMessage =
     status && status in adminServiceEditorStatusMessageByCode
       ? adminServiceEditorStatusMessageByCode[
@@ -97,14 +102,19 @@ export function AdminServiceEditor({
 
           <ServiceEditorFormSections
             contentId={contentId}
+            contentEsId={contentEsId}
             deliverablesId={deliverablesId}
             errors={errors}
             seoDescriptionId={seoDescriptionId}
+            seoDescriptionEsId={seoDescriptionEsId}
             seoTitleId={seoTitleId}
+            seoTitleEsId={seoTitleEsId}
             service={service}
             slugId={slugId}
             summaryId={summaryId}
+            summaryEsId={summaryEsId}
             titleId={titleId}
+            titleEsId={titleEsId}
           />
         </div>
 

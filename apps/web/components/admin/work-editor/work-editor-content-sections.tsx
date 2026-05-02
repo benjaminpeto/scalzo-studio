@@ -8,15 +8,19 @@ import { AdminEditorTextarea } from "../shared/admin-editor-textarea";
 
 export function WorkEditorContentSections({
   approachId,
+  approachEsId,
   caseStudy,
   challengeId,
+  challengeEsId,
   clientNameId,
   errors,
   industryId,
   outcomesId,
+  outcomesEsId,
   servicesId,
   slugId,
   titleId,
+  titleEsId,
 }: WorkEditorContentSectionsProps) {
   return (
     <>
@@ -203,6 +207,102 @@ export function WorkEditorContentSections({
               placeholder="Describe the shift in trust, quality of enquiries, clarity, or internal confidence."
             />
           </AdminEditorField>
+        </div>
+
+        <div className="mt-5 border-t border-border/50 pt-5">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Spanish (ES)
+          </p>
+
+          <div className="grid gap-5">
+            <AdminEditorField
+              error={errors.titleEs}
+              hint="Spanish title shown to Spanish-locale visitors."
+              htmlFor={titleEsId}
+              label="Title (ES)"
+              optionalLabel="Optional"
+            >
+              <AdminEditorTextarea
+                id={titleEsId}
+                name="titleEs"
+                defaultValue={caseStudy?.titleEs ?? ""}
+                aria-invalid={Boolean(errors.titleEs)}
+                aria-describedby={buildDescribedBy({
+                  error: errors.titleEs,
+                  hint: "Spanish title shown to Spanish-locale visitors.",
+                  id: titleEsId,
+                })}
+                className="min-h-20"
+                placeholder="Relanzamiento de hospitalidad costera"
+              />
+            </AdminEditorField>
+
+            <AdminEditorField
+              error={errors.challengeEs}
+              hint="Spanish challenge shown to Spanish-locale visitors."
+              htmlFor={challengeEsId}
+              label="Challenge (ES)"
+              optionalLabel="Optional"
+            >
+              <AdminEditorTextarea
+                id={challengeEsId}
+                name="challengeEs"
+                defaultValue={caseStudy?.challengeEs ?? ""}
+                aria-invalid={Boolean(errors.challengeEs)}
+                aria-describedby={buildDescribedBy({
+                  error: errors.challengeEs,
+                  hint: "Spanish challenge shown to Spanish-locale visitors.",
+                  id: challengeEsId,
+                })}
+                className="min-h-40"
+                placeholder="¿Qué bloqueaba la confianza, claridad o impulso?"
+              />
+            </AdminEditorField>
+
+            <AdminEditorField
+              error={errors.approachEs}
+              hint="Spanish approach shown to Spanish-locale visitors."
+              htmlFor={approachEsId}
+              label="Approach (ES)"
+              optionalLabel="Optional"
+            >
+              <AdminEditorTextarea
+                id={approachEsId}
+                name="approachEs"
+                defaultValue={caseStudy?.approachEs ?? ""}
+                aria-invalid={Boolean(errors.approachEs)}
+                aria-describedby={buildDescribedBy({
+                  error: errors.approachEs,
+                  hint: "Spanish approach shown to Spanish-locale visitors.",
+                  id: approachEsId,
+                })}
+                className="min-h-40"
+                placeholder="¿Cómo se tradujo la dirección en una superficie pública más clara?"
+              />
+            </AdminEditorField>
+
+            <AdminEditorField
+              error={errors.outcomesEs}
+              hint="Spanish outcomes shown to Spanish-locale visitors."
+              htmlFor={outcomesEsId}
+              label="Outcomes (ES)"
+              optionalLabel="Optional"
+            >
+              <AdminEditorTextarea
+                id={outcomesEsId}
+                name="outcomesEs"
+                defaultValue={caseStudy?.outcomesEs ?? ""}
+                aria-invalid={Boolean(errors.outcomesEs)}
+                aria-describedby={buildDescribedBy({
+                  error: errors.outcomesEs,
+                  hint: "Spanish outcomes shown to Spanish-locale visitors.",
+                  id: outcomesEsId,
+                })}
+                className="min-h-40"
+                placeholder="Describe el cambio en confianza, calidad de consultas, claridad o confianza interna."
+              />
+            </AdminEditorField>
+          </div>
         </div>
       </section>
     </>

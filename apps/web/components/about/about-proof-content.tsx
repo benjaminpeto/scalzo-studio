@@ -1,9 +1,10 @@
 import { RevealGroup, RevealItem } from "@/components/home/motion";
 import { getHomeTestimonials } from "@/actions/home/get-home-testimonials";
+import type { Locale } from "@/lib/i18n/routing";
 import { TestimonialCard } from "@ui/components/marketing/testimonial-card";
 
-export async function AboutProofContent() {
-  const testimonials = await getHomeTestimonials();
+export async function AboutProofContent({ locale }: { locale: Locale }) {
+  const testimonials = await getHomeTestimonials(locale);
 
   return (
     <RevealGroup

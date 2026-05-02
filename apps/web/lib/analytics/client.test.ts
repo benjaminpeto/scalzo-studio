@@ -63,6 +63,46 @@ describe("analytics client mirroring", () => {
     });
   });
 
+  it("includes locale in PostHog capture and mirror when provided", async () => {
+    const { captureEvent } = await import("./client");
+
+    captureEvent(
+      "cta_click",
+      {
+        cta_id: "book-call",
+        page_path: "/contact",
+        placement: "header",
+      },
+      "es",
+    );
+
+    expect(mocks.posthog.capture).toHaveBeenCalledWith("cta_click", {
+      cta_id: "book-call",
+      locale: "es",
+      page_path: "/contact",
+      placement: "header",
+    });
+    expect(global.fetch).toHaveBeenCalledWith("/api/analytics/events", {
+      body: JSON.stringify({
+        eventName: "cta_click",
+        pagePath: "/contact",
+        properties: {
+          cta_id: "book-call",
+          page_path: "/contact",
+          placement: "header",
+          locale: "es",
+        },
+        referrer: "https://google.com",
+        sessionId: "session-123",
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+      keepalive: true,
+      method: "POST",
+    });
+  });
+
   it("mirrors page views with the current pathname", async () => {
     const { capturePageView } = await import("./client");
 
@@ -73,6 +113,27 @@ describe("analytics client mirroring", () => {
         eventName: "page_view",
         pagePath: "/insights",
         properties: null,
+        referrer: "https://google.com",
+        sessionId: "session-123",
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+      keepalive: true,
+      method: "POST",
+    });
+  });
+
+  it("includes locale in page view mirror when provided", async () => {
+    const { capturePageView } = await import("./client");
+
+    capturePageView("/es/servicios", "es");
+
+    expect(global.fetch).toHaveBeenCalledWith("/api/analytics/events", {
+      body: JSON.stringify({
+        eventName: "page_view",
+        pagePath: "/es/servicios",
+        properties: { locale: "es" },
         referrer: "https://google.com",
         sessionId: "session-123",
       }),

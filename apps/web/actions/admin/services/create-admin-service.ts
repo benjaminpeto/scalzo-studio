@@ -27,13 +27,18 @@ export async function createAdminService(
   const rawInput = readServiceEditorFormData(formData);
   const parsedInput = serviceEditorSchema.safeParse({
     contentMd: normalizeStringEntry(rawInput.contentMd),
+    contentMdEs: normalizeStringEntry(rawInput.contentMdEs),
     deliverables: normalizeStringEntry(rawInput.deliverables),
     published: rawInput.published,
     seoDescription: normalizeStringEntry(rawInput.seoDescription),
+    seoDescriptionEs: normalizeStringEntry(rawInput.seoDescriptionEs),
     seoTitle: normalizeStringEntry(rawInput.seoTitle),
+    seoTitleEs: normalizeStringEntry(rawInput.seoTitleEs),
     slug: normalizeStringEntry(rawInput.slug),
     summary: normalizeStringEntry(rawInput.summary),
+    summaryEs: normalizeStringEntry(rawInput.summaryEs),
     title: normalizeStringEntry(rawInput.title),
+    titleEs: normalizeStringEntry(rawInput.titleEs),
   });
 
   if (!parsedInput.success) {
@@ -67,14 +72,19 @@ export async function createAdminService(
     const supabase = await createServerSupabaseClient();
     const insertPayload: ServiceInsertPayload = {
       content_md: normalizedInput.payload.contentMd,
+      content_md_es: normalizedInput.payload.contentMdEs,
       deliverables: normalizedInput.payload.deliverables,
       order_index: nextOrderIndex,
       published: normalizedInput.payload.published,
       seo_description: normalizedInput.payload.seoDescription,
+      seo_description_es: normalizedInput.payload.seoDescriptionEs,
       seo_title: normalizedInput.payload.seoTitle,
+      seo_title_es: normalizedInput.payload.seoTitleEs,
       slug: normalizedInput.payload.slug,
       summary: normalizedInput.payload.summary,
+      summary_es: normalizedInput.payload.summaryEs,
       title: normalizedInput.payload.title,
+      title_es: normalizedInput.payload.titleEs,
     };
     const { error } = await supabase.from("services").insert(insertPayload);
 

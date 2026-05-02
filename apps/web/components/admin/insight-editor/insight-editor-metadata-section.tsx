@@ -8,16 +8,19 @@ import { AdminEditorTextarea } from "../shared/admin-editor-textarea";
 export function InsightEditorMetadataSection({
   errors,
   excerptId,
+  excerptEsId,
   excerptValue,
   onExcerptChange,
   onSlugChange,
   onTagsChange,
   onTitleChange,
+  post,
   slugId,
   slugValue,
   tagsId,
   tagsValue,
   titleId,
+  titleEsId,
   titleValue,
 }: InsightEditorMetadataSectionProps) {
   return (
@@ -114,6 +117,57 @@ export function InsightEditorMetadataSection({
             placeholder={"Positioning\nTrust\nHomepage strategy"}
           />
         </AdminEditorField>
+      </div>
+
+      <div className="mt-5 border-t border-border/50 pt-5">
+        <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Spanish (ES)
+        </p>
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          <AdminEditorField
+            error={errors.titleEs}
+            hint="Spanish title shown to Spanish-locale visitors."
+            htmlFor={titleEsId}
+            label="Title (ES)"
+            optionalLabel="Optional"
+          >
+            <Input
+              id={titleEsId}
+              name="titleEs"
+              defaultValue={post?.titleEs ?? ""}
+              aria-invalid={Boolean(errors.titleEs)}
+              aria-describedby={buildDescribedBy({
+                error: errors.titleEs,
+                hint: "Spanish title shown to Spanish-locale visitors.",
+                id: titleEsId,
+              })}
+              placeholder="Por qué las marcas de servicio premium necesitan prueba antes que explicación"
+            />
+          </AdminEditorField>
+
+          <AdminEditorField
+            error={errors.excerptEs}
+            hint="Spanish excerpt shown to Spanish-locale visitors."
+            htmlFor={excerptEsId}
+            label="Excerpt (ES)"
+            optionalLabel="Optional"
+          >
+            <AdminEditorTextarea
+              id={excerptEsId}
+              name="excerptEs"
+              defaultValue={post?.excerptEs ?? ""}
+              aria-invalid={Boolean(errors.excerptEs)}
+              aria-describedby={buildDescribedBy({
+                error: errors.excerptEs,
+                hint: "Spanish excerpt shown to Spanish-locale visitors.",
+                id: excerptEsId,
+              })}
+              className="min-h-28"
+              placeholder="Un resumen editorial breve para tarjetas, el hero del artículo y respaldos SEO."
+            />
+          </AdminEditorField>
+        </div>
       </div>
     </section>
   );

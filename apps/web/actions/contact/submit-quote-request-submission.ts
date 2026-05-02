@@ -103,6 +103,7 @@ export async function submitValidatedQuoteRequest(input: {
         utm_source: input.input.utmSource ?? null,
       },
       {
+        locale: input.locale,
         pagePath: input.input.pagePath,
         referrer: input.input.referrer ?? null,
       },

@@ -29,7 +29,9 @@ export function AdminTestimonialEditor({
   const companyId = useId();
   const nameId = useId();
   const quoteId = useId();
+  const quoteEsId = useId();
   const roleId = useId();
+  const roleEsId = useId();
   const statusMessage =
     status && status in adminTestimonialEditorStatusMessageByCode
       ? adminTestimonialEditorStatusMessageByCode[
@@ -91,7 +93,9 @@ export function AdminTestimonialEditor({
               errors={errors}
               nameId={nameId}
               quoteId={quoteId}
+              quoteEsId={quoteEsId}
               roleId={roleId}
+              roleEsId={roleEsId}
               testimonial={testimonial}
             />
           </div>

@@ -41,13 +41,18 @@ const optionalCaseStudyString = (maxLength: number) =>
 
 const caseStudyBaseSchema = z.object({
   approach: optionalCaseStudyString(CASE_STUDY_TEXT_MAX_LENGTH),
+  approachEs: optionalCaseStudyString(CASE_STUDY_TEXT_MAX_LENGTH),
   challenge: optionalCaseStudyString(CASE_STUDY_TEXT_MAX_LENGTH),
+  challengeEs: optionalCaseStudyString(CASE_STUDY_TEXT_MAX_LENGTH),
   clientName: optionalCaseStudyString(CASE_STUDY_CLIENT_MAX_LENGTH),
   industry: optionalCaseStudyString(CASE_STUDY_INDUSTRY_MAX_LENGTH),
   outcomes: optionalCaseStudyString(CASE_STUDY_OUTCOMES_MAX_LENGTH),
+  outcomesEs: optionalCaseStudyString(CASE_STUDY_OUTCOMES_MAX_LENGTH),
   published: z.boolean(),
   seoDescription: optionalCaseStudyString(SEO_DESCRIPTION_MAX_LENGTH),
+  seoDescriptionEs: optionalCaseStudyString(SEO_DESCRIPTION_MAX_LENGTH),
   seoTitle: optionalCaseStudyString(SEO_TITLE_MAX_LENGTH),
+  seoTitleEs: optionalCaseStudyString(SEO_TITLE_MAX_LENGTH),
   serviceLines: optionalCaseStudyString(
     CASE_STUDY_SERVICES_LIMIT * (CASE_STUDY_SERVICE_MAX_LENGTH + 1),
   ),
@@ -60,6 +65,7 @@ const caseStudyBaseSchema = z.object({
       CASE_STUDY_TITLE_MAX_LENGTH,
       `Keep the title under ${CASE_STUDY_TITLE_MAX_LENGTH} characters.`,
     ),
+  titleEs: optionalCaseStudyString(CASE_STUDY_TITLE_MAX_LENGTH),
 });
 
 export const caseStudyCreateSchema = caseStudyBaseSchema;

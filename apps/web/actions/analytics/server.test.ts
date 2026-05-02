@@ -95,6 +95,47 @@ describe("captureServerEvent", () => {
     });
   });
 
+  it("includes locale in PostHog properties and Supabase mirror when provided", async () => {
+    const { captureServerEvent } = await import("./server");
+
+    await captureServerEvent(
+      "hello@example.com",
+      "quote_request_submitted",
+      {
+        budget_band: "1000-3000",
+        lead_id: "lead-123",
+        newsletter_opt_in: true,
+        page_path: "/es/contacto",
+        services_interest: ["strategy"],
+        timeline_band: "2-4-weeks",
+        utm_campaign: null,
+        utm_medium: null,
+        utm_source: null,
+      },
+      {
+        locale: "es",
+        pagePath: "/es/contacto",
+        referrer: null,
+      },
+    );
+
+    expect(mocks.posthogCaptureMock).toHaveBeenCalledWith({
+      distinctId: "hello@example.com",
+      event: "quote_request_submitted",
+      properties: expect.objectContaining({
+        lead_id: "lead-123",
+        locale: "es",
+      }),
+    });
+    expect(mocks.insertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        properties: expect.objectContaining({
+          locale: "es",
+        }),
+      }),
+    );
+  });
+
   it("skips the Supabase mirror when service-role access is unavailable", async () => {
     mocks.serverFeatureFlags.serviceRoleEnabled = false;
     const { captureServerEvent } = await import("./server");

@@ -15,7 +15,7 @@ export async function getAdminServiceBySlug(
   const { data, error } = await supabase
     .from("services")
     .select(
-      "content_md, deliverables, id, order_index, published, seo_description, seo_title, slug, summary, title, updated_at",
+      "content_md, content_md_es, deliverables, id, order_index, published, seo_description, seo_description_es, seo_title, seo_title_es, slug, summary, summary_es, title, title_es, updated_at",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -26,15 +26,20 @@ export async function getAdminServiceBySlug(
 
   return {
     contentMd: data.content_md ?? "",
+    contentMdEs: data.content_md_es ?? "",
     deliverables: data.deliverables ?? [],
     id: data.id,
     orderIndex: data.order_index,
     published: data.published,
     seoDescription: data.seo_description ?? "",
+    seoDescriptionEs: data.seo_description_es ?? "",
     seoTitle: data.seo_title ?? "",
+    seoTitleEs: data.seo_title_es ?? "",
     slug: data.slug,
     summary: data.summary ?? "",
+    summaryEs: data.summary_es ?? "",
     title: data.title,
+    titleEs: data.title_es ?? "",
     updatedAt: data.updated_at,
   };
 }

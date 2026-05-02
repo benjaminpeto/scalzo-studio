@@ -14,6 +14,7 @@ import { getPostHogClient } from "@/lib/posthog-server";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 
 interface ServerAnalyticsContext {
+  locale?: string | null;
   pagePath?: string | null;
   referrer?: string | null;
   sessionId?: string | null;
@@ -22,7 +23,7 @@ interface ServerAnalyticsContext {
 
 async function mirrorServerEvent<K extends keyof AnalyticsEventMap>(
   event: K,
-  properties: AnalyticsEventMap[K],
+  properties: unknown,
   context?: ServerAnalyticsContext,
 ) {
   if (
@@ -63,6 +64,9 @@ export async function captureServerEvent<K extends keyof AnalyticsEventMap>(
   properties: AnalyticsEventMap[K],
   context?: ServerAnalyticsContext,
 ): Promise<void> {
-  getPostHogClient().capture({ distinctId, event, properties });
-  await mirrorServerEvent(event, properties, context);
+  const enriched = context?.locale
+    ? { ...properties, locale: context.locale }
+    : properties;
+  getPostHogClient().capture({ distinctId, event, properties: enriched });
+  await mirrorServerEvent(event, enriched, context);
 }

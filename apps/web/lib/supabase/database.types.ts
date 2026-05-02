@@ -30,7 +30,9 @@ export type Database = {
       case_studies: {
         Row: {
           approach: string | null;
+          approach_es: string | null;
           challenge: string | null;
+          challenge_es: string | null;
           client_name: string | null;
           cover_image_url: string | null;
           created_at: string;
@@ -38,19 +40,25 @@ export type Database = {
           id: string;
           industry: string | null;
           outcomes: string | null;
+          outcomes_es: string | null;
           outcomes_metrics: Json | null;
           published: boolean;
           published_at: string | null;
           seo_description: string | null;
+          seo_description_es: string | null;
           seo_title: string | null;
+          seo_title_es: string | null;
           services: string[] | null;
           slug: string;
           title: string;
+          title_es: string | null;
           updated_at: string;
         };
         Insert: {
           approach?: string | null;
+          approach_es?: string | null;
           challenge?: string | null;
+          challenge_es?: string | null;
           client_name?: string | null;
           cover_image_url?: string | null;
           created_at?: string;
@@ -58,19 +66,25 @@ export type Database = {
           id?: string;
           industry?: string | null;
           outcomes?: string | null;
+          outcomes_es?: string | null;
           outcomes_metrics?: Json | null;
           published?: boolean;
           published_at?: string | null;
           seo_description?: string | null;
+          seo_description_es?: string | null;
           seo_title?: string | null;
+          seo_title_es?: string | null;
           services?: string[] | null;
           slug: string;
           title: string;
+          title_es?: string | null;
           updated_at?: string;
         };
         Update: {
           approach?: string | null;
+          approach_es?: string | null;
           challenge?: string | null;
+          challenge_es?: string | null;
           client_name?: string | null;
           cover_image_url?: string | null;
           created_at?: string;
@@ -78,14 +92,18 @@ export type Database = {
           id?: string;
           industry?: string | null;
           outcomes?: string | null;
+          outcomes_es?: string | null;
           outcomes_metrics?: Json | null;
           published?: boolean;
           published_at?: string | null;
           seo_description?: string | null;
+          seo_description_es?: string | null;
           seo_title?: string | null;
+          seo_title_es?: string | null;
           services?: string[] | null;
           slug?: string;
           title?: string;
+          title_es?: string | null;
           updated_at?: string;
         };
         Relationships: [];
@@ -297,47 +315,62 @@ export type Database = {
       posts: {
         Row: {
           content_md: string;
+          content_md_es: string | null;
           cover_image_url: string | null;
           created_at: string;
           excerpt: string | null;
+          excerpt_es: string | null;
           id: string;
           published: boolean;
           published_at: string | null;
           seo_description: string | null;
+          seo_description_es: string | null;
           seo_title: string | null;
+          seo_title_es: string | null;
           slug: string;
           tags: string[] | null;
           title: string;
+          title_es: string | null;
           updated_at: string;
         };
         Insert: {
           content_md: string;
+          content_md_es?: string | null;
           cover_image_url?: string | null;
           created_at?: string;
           excerpt?: string | null;
+          excerpt_es?: string | null;
           id?: string;
           published?: boolean;
           published_at?: string | null;
           seo_description?: string | null;
+          seo_description_es?: string | null;
           seo_title?: string | null;
+          seo_title_es?: string | null;
           slug: string;
           tags?: string[] | null;
           title: string;
+          title_es?: string | null;
           updated_at?: string;
         };
         Update: {
           content_md?: string;
+          content_md_es?: string | null;
           cover_image_url?: string | null;
           created_at?: string;
           excerpt?: string | null;
+          excerpt_es?: string | null;
           id?: string;
           published?: boolean;
           published_at?: string | null;
           seo_description?: string | null;
+          seo_description_es?: string | null;
           seo_title?: string | null;
+          seo_title_es?: string | null;
           slug?: string;
           tags?: string[] | null;
           title?: string;
+          title_es?: string | null;
           updated_at?: string;
         };
         Relationships: [];
@@ -372,44 +405,59 @@ export type Database = {
       services: {
         Row: {
           content_md: string | null;
+          content_md_es: string | null;
           created_at: string;
           deliverables: string[] | null;
           id: string;
           order_index: number;
           published: boolean;
           seo_description: string | null;
+          seo_description_es: string | null;
           seo_title: string | null;
+          seo_title_es: string | null;
           slug: string;
           summary: string | null;
+          summary_es: string | null;
           title: string;
+          title_es: string | null;
           updated_at: string;
         };
         Insert: {
           content_md?: string | null;
+          content_md_es?: string | null;
           created_at?: string;
           deliverables?: string[] | null;
           id?: string;
           order_index?: number;
           published?: boolean;
           seo_description?: string | null;
+          seo_description_es?: string | null;
           seo_title?: string | null;
+          seo_title_es?: string | null;
           slug: string;
           summary?: string | null;
+          summary_es?: string | null;
           title: string;
+          title_es?: string | null;
           updated_at?: string;
         };
         Update: {
           content_md?: string | null;
+          content_md_es?: string | null;
           created_at?: string;
           deliverables?: string[] | null;
           id?: string;
           order_index?: number;
           published?: boolean;
           seo_description?: string | null;
+          seo_description_es?: string | null;
           seo_title?: string | null;
+          seo_title_es?: string | null;
           slug?: string;
           summary?: string | null;
+          summary_es?: string | null;
           title?: string;
+          title_es?: string | null;
           updated_at?: string;
         };
         Relationships: [];
@@ -424,7 +472,9 @@ export type Database = {
           name: string;
           published: boolean;
           quote: string;
+          quote_es: string | null;
           role: string | null;
+          role_es: string | null;
           updated_at: string;
         };
         Insert: {
@@ -436,7 +486,9 @@ export type Database = {
           name: string;
           published?: boolean;
           quote: string;
+          quote_es?: string | null;
           role?: string | null;
+          role_es?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -448,7 +500,9 @@ export type Database = {
           name?: string;
           published?: boolean;
           quote?: string;
+          quote_es?: string | null;
           role?: string | null;
+          role_es?: string | null;
           updated_at?: string;
         };
         Relationships: [];

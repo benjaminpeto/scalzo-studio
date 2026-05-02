@@ -13,7 +13,9 @@ export function WorkEditorAssetsSeoSections({
   galleryUploadRows,
   removeGalleryUploadRow,
   seoDescriptionId,
+  seoDescriptionEsId,
   seoTitleId,
+  seoTitleEsId,
   updateGalleryUploadRow,
 }: WorkEditorAssetsSeoSectionsProps) {
   return (
@@ -42,7 +44,9 @@ export function WorkEditorAssetsSeoSections({
         caseStudy={caseStudy}
         errors={errors}
         seoDescriptionId={seoDescriptionId}
+        seoDescriptionEsId={seoDescriptionEsId}
         seoTitleId={seoTitleId}
+        seoTitleEsId={seoTitleEsId}
       />
     </>
   );

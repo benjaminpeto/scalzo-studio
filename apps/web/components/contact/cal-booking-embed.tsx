@@ -2,6 +2,7 @@
 
 import Cal, { getCalApi } from "@calcom/embed-react";
 import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { captureEvent } from "@/lib/analytics/client";
 import {
   BookingSuccessData,
@@ -18,6 +19,7 @@ export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
   const [isReady, setIsReady] = useState(false);
   const [bookingSuccess, setBookingSuccess] =
     useState<BookingSuccessData | null>(null);
+  const locale = useLocale();
   const calLink = bookingConfig.calLink;
 
   useEffect(() => {
@@ -78,12 +80,16 @@ export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
             }
 
             const data = event.detail?.data ?? {};
-            captureEvent("booking_complete", {
-              booking_title: data.title ?? null,
-              booking_uid: data.uid ?? null,
-              provider: "cal.com",
-              start_time: data.startTime ?? null,
-            });
+            captureEvent(
+              "booking_complete",
+              {
+                booking_title: data.title ?? null,
+                booking_uid: data.uid ?? null,
+                provider: "cal.com",
+                start_time: data.startTime ?? null,
+              },
+              locale,
+            );
             readyOrFailed = true;
             setBookingSuccess(data);
             setErrorMessage(null);
@@ -125,6 +131,7 @@ export function CalBookingEmbed({ bookingConfig }: CalBookingEmbedProps) {
         window.clearTimeout(loadTimeoutId);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingConfig.embedEnabled, bookingConfig.namespace]);
 
   if (!bookingConfig.embedEnabled || !calLink) {

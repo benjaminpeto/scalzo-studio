@@ -42,16 +42,21 @@ export async function updateAdminInsight(
 
   const parsedInput = insightUpdateSchema.safeParse({
     contentMd: normalizeStringEntry(rawInput.contentMd),
+    contentMdEs: normalizeStringEntry(rawInput.contentMdEs),
     currentSlug,
     excerpt: normalizeStringEntry(rawInput.excerpt),
+    excerptEs: normalizeStringEntry(rawInput.excerptEs),
     postId: normalizeStringEntry(rawInput.postId),
     published: rawInput.published,
     removeCoverImage: rawInput.removeCoverImage,
     seoDescription: normalizeStringEntry(rawInput.seoDescription),
+    seoDescriptionEs: normalizeStringEntry(rawInput.seoDescriptionEs),
     seoTitle: normalizeStringEntry(rawInput.seoTitle),
+    seoTitleEs: normalizeStringEntry(rawInput.seoTitleEs),
     slug: normalizeStringEntry(rawInput.slug),
     tagLines: normalizeStringEntry(rawInput.tagLines),
     title: normalizeStringEntry(rawInput.title),
+    titleEs: normalizeStringEntry(rawInput.titleEs),
   });
 
   if (!parsedInput.success) {
@@ -158,15 +163,20 @@ export async function updateAdminInsight(
       : null;
     const updatePayload: Database["public"]["Tables"]["posts"]["Update"] = {
       content_md: sanitizeMarkdownUrls(normalizedInput.payload.contentMd),
+      content_md_es: normalizedInput.payload.contentMdEs,
       cover_image_url: nextCoverImageUrl,
       excerpt: normalizedInput.payload.excerpt,
+      excerpt_es: normalizedInput.payload.excerptEs,
       published: normalizedInput.payload.published,
       published_at: nextPublishedAt,
       seo_description: normalizedInput.payload.seoDescription,
+      seo_description_es: normalizedInput.payload.seoDescriptionEs,
       seo_title: normalizedInput.payload.seoTitle,
+      seo_title_es: normalizedInput.payload.seoTitleEs,
       slug: normalizedInput.payload.slug,
       tags: normalizedInput.payload.tags,
       title: normalizedInput.payload.title,
+      title_es: normalizedInput.payload.titleEs,
     };
     const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase

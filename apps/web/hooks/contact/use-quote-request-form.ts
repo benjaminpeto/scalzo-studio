@@ -85,14 +85,18 @@ export function useQuoteRequestForm(locale = "en") {
   useEffect(() => {
     if (serverState.status === "success" && !formSubmittedRef.current) {
       formSubmittedRef.current = true;
-      captureEvent("form_submit", {
-        budget_band: values.budgetBand || undefined,
-        form_id: "quote_request",
-        service_interest: values.servicesInterest.length
-          ? values.servicesInterest
-          : undefined,
-        timeline_band: values.timelineBand || undefined,
-      });
+      captureEvent(
+        "form_submit",
+        {
+          budget_band: values.budgetBand || undefined,
+          form_id: "quote_request",
+          service_interest: values.servicesInterest.length
+            ? values.servicesInterest
+            : undefined,
+          timeline_band: values.timelineBand || undefined,
+        },
+        locale,
+      );
     }
     // values intentionally excluded — snapshot at submission time
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,7 +132,7 @@ export function useQuoteRequestForm(locale = "en") {
   ) {
     if (!formStartedRef.current) {
       formStartedRef.current = true;
-      captureEvent("form_start", { form_id: "quote_request" });
+      captureEvent("form_start", { form_id: "quote_request" }, locale);
     }
 
     setValues((currentValues) => ({
@@ -172,16 +176,20 @@ export function useQuoteRequestForm(locale = "en") {
   function handleNextStep(totalSteps: number) {
     if (validateCurrentStep(activeStep)) {
       const nextStep = Math.min(activeStep + 1, totalSteps - 1);
-      captureEvent("form_step_complete", {
-        budget_band: values.budgetBand || undefined,
-        form_id: "quote_request",
-        from_step: activeStep,
-        service_interest: values.servicesInterest.length
-          ? values.servicesInterest
-          : undefined,
-        to_step: nextStep,
-        total_steps: totalSteps,
-      });
+      captureEvent(
+        "form_step_complete",
+        {
+          budget_band: values.budgetBand || undefined,
+          form_id: "quote_request",
+          from_step: activeStep,
+          service_interest: values.servicesInterest.length
+            ? values.servicesInterest
+            : undefined,
+          to_step: nextStep,
+          total_steps: totalSteps,
+        },
+        locale,
+      );
       setActiveStep(nextStep);
     }
   }

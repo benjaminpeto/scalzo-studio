@@ -19,7 +19,7 @@ export async function getAdminCaseStudyBySlug(
   const { data, error } = await supabase
     .from("case_studies")
     .select(
-      "approach, challenge, client_name, cover_image_url, gallery_urls, id, industry, outcomes, outcomes_metrics, published, published_at, seo_description, seo_title, services, slug, title, updated_at",
+      "approach, approach_es, challenge, challenge_es, client_name, cover_image_url, gallery_urls, id, industry, outcomes, outcomes_es, outcomes_metrics, published, published_at, seo_description, seo_description_es, seo_title, seo_title_es, services, slug, title, title_es, updated_at",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -35,7 +35,9 @@ export async function getAdminCaseStudyBySlug(
 
   return {
     approach: data.approach ?? "",
+    approachEs: data.approach_es ?? "",
     challenge: data.challenge ?? "",
+    challengeEs: data.challenge_es ?? "",
     clientName: data.client_name ?? "",
     coverImage: data.cover_image_url
       ? (() => {
@@ -65,13 +67,17 @@ export async function getAdminCaseStudyBySlug(
     industry: data.industry ?? "",
     metrics: buildEditorMetricsRows(data.outcomes_metrics),
     outcomes: data.outcomes ?? "",
+    outcomesEs: data.outcomes_es ?? "",
     published: data.published,
     publishedAt: data.published_at,
     seoDescription: data.seo_description ?? "",
+    seoDescriptionEs: data.seo_description_es ?? "",
     seoTitle: data.seo_title ?? "",
+    seoTitleEs: data.seo_title_es ?? "",
     services: data.services ?? [],
     slug: data.slug,
     title: data.title,
+    titleEs: data.title_es ?? "",
     updatedAt: data.updated_at,
   };
 }

@@ -17,7 +17,7 @@ export async function getAdminInsightBySlug(
   const { data, error } = await supabase
     .from("posts")
     .select(
-      "content_md, cover_image_url, excerpt, id, published, published_at, seo_description, seo_title, slug, tags, title, updated_at",
+      "content_md, content_md_es, cover_image_url, excerpt, excerpt_es, id, published, published_at, seo_description, seo_description_es, seo_title, seo_title_es, slug, tags, title, title_es, updated_at",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -32,6 +32,7 @@ export async function getAdminInsightBySlug(
 
   return {
     contentMd: data.content_md,
+    contentMdEs: data.content_md_es ?? "",
     coverImage: data.cover_image_url
       ? (() => {
           const image = imageAssets.get(data.cover_image_url);
@@ -46,14 +47,18 @@ export async function getAdminInsightBySlug(
         })()
       : null,
     excerpt: data.excerpt ?? "",
+    excerptEs: data.excerpt_es ?? "",
     id: data.id,
     published: data.published,
     publishedAt: data.published_at,
     seoDescription: data.seo_description ?? "",
+    seoDescriptionEs: data.seo_description_es ?? "",
     seoTitle: data.seo_title ?? "",
+    seoTitleEs: data.seo_title_es ?? "",
     slug: data.slug,
     tags: data.tags?.map((tag) => tag.trim()).filter(Boolean) ?? [],
     title: data.title,
+    titleEs: data.title_es ?? "",
     updatedAt: data.updated_at,
   };
 }

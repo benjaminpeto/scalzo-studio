@@ -31,12 +31,16 @@ export function NewsletterSignupForm({
   useEffect(() => {
     if (serverState.status === "success" && !capturedRef.current) {
       capturedRef.current = true;
-      captureEvent("newsletter_subscribe", {
-        page_path: window.location.pathname,
-        placement,
-      });
+      captureEvent(
+        "newsletter_subscribe",
+        {
+          page_path: window.location.pathname,
+          placement,
+        },
+        locale,
+      );
     }
-  }, [serverState.status, placement]);
+  }, [serverState.status, placement, locale]);
 
   if (serverState.status === "success") {
     return (

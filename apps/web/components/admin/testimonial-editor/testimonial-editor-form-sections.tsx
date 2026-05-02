@@ -15,7 +15,9 @@ export function TestimonialEditorFormSections({
   errors,
   nameId,
   quoteId,
+  quoteEsId,
   roleId,
+  roleEsId,
   testimonial,
 }: TestimonialEditorFormSectionsProps) {
   return (
@@ -110,6 +112,57 @@ export function TestimonialEditorFormSections({
               required
             />
           </AdminEditorField>
+        </div>
+
+        <div className="mt-5 border-t border-border/50 pt-5">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Spanish (ES)
+          </p>
+
+          <AdminEditorField
+            error={errors.roleEs}
+            hint="Spanish role label shown to Spanish-locale visitors."
+            htmlFor={roleEsId}
+            label="Role (ES)"
+            optionalLabel="Optional"
+          >
+            <Input
+              id={roleEsId}
+              name="roleEs"
+              defaultValue={testimonial?.roleEs ?? ""}
+              aria-describedby={buildDescribedBy({
+                error: errors.roleEs,
+                hint: "Spanish role label shown to Spanish-locale visitors.",
+                id: roleEsId,
+              })}
+              aria-invalid={Boolean(errors.roleEs)}
+              placeholder="Fundador"
+            />
+          </AdminEditorField>
+
+          <div className="mt-5">
+            <AdminEditorField
+              error={errors.quoteEs}
+              hint="Spanish quote shown to Spanish-locale visitors."
+              htmlFor={quoteEsId}
+              label="Quote (ES)"
+              optionalLabel="Optional"
+            >
+              <AdminEditorTextarea
+                id={quoteEsId}
+                name="quoteEs"
+                defaultValue={testimonial?.quoteEs ?? ""}
+                aria-describedby={buildDescribedBy({
+                  error: errors.quoteEs,
+                  hint: "Spanish quote shown to Spanish-locale visitors.",
+                  id: quoteEsId,
+                })}
+                aria-invalid={Boolean(errors.quoteEs)}
+                className="min-h-40"
+                placeholder="Trabajar con Scalzo Studio nos dio claridad, ritmo y un sistema visual que por fin se sentía comercial."
+              />
+            </AdminEditorField>
+          </div>
         </div>
       </section>
 

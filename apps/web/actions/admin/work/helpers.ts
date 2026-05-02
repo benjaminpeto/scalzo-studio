@@ -173,8 +173,10 @@ export function buildCaseStudyEditorFieldErrors(
 export function readCaseStudyEditorFormData(formData: FormData) {
   return {
     approach: formData.get("approach"),
+    approachEs: formData.get("approachEs"),
     caseStudyId: formData.get("caseStudyId"),
     challenge: formData.get("challenge"),
+    challengeEs: formData.get("challengeEs"),
     clientName: formData.get("clientName"),
     coverImage: formData.get("coverImage"),
     coverImageAlt: formData.get("coverImageAlt"),
@@ -188,13 +190,17 @@ export function readCaseStudyEditorFormData(formData: FormData) {
     metricLabels: formData.getAll("metricLabel"),
     metricValues: formData.getAll("metricValue"),
     outcomes: formData.get("outcomes"),
+    outcomesEs: formData.get("outcomesEs"),
     published: formData.has("published"),
     removeCoverImage: formData.has("removeCoverImage"),
     seoDescription: formData.get("seoDescription"),
+    seoDescriptionEs: formData.get("seoDescriptionEs"),
     seoTitle: formData.get("seoTitle"),
+    seoTitleEs: formData.get("seoTitleEs"),
     serviceLines: formData.get("services"),
     slug: formData.get("slug"),
     title: formData.get("title"),
+    titleEs: formData.get("titleEs"),
   };
 }
 
@@ -305,17 +311,23 @@ export function buildNormalizedCaseStudyPayload(
     errorState: null,
     payload: {
       approach: normalizeOptionalText(input.approach),
+      approachEs: normalizeOptionalText(input.approachEs),
       challenge: normalizeOptionalText(input.challenge),
+      challengeEs: normalizeOptionalText(input.challengeEs),
       clientName: normalizeOptionalText(input.clientName),
       industry: normalizeOptionalText(input.industry),
       metrics: metricsResult.metrics,
       outcomes: normalizeOptionalText(input.outcomes),
+      outcomesEs: normalizeOptionalText(input.outcomesEs),
       published: input.published,
       seoDescription: normalizeOptionalText(input.seoDescription),
+      seoDescriptionEs: normalizeOptionalText(input.seoDescriptionEs),
       seoTitle: normalizeOptionalText(input.seoTitle),
+      seoTitleEs: normalizeOptionalText(input.seoTitleEs),
       services: servicesResult.items,
       slug: normalizedSlug,
       title: input.title.trim(),
+      titleEs: normalizeOptionalText(input.titleEs),
     },
   };
 }

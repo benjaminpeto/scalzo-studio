@@ -8,11 +8,13 @@ import { getInsightDetailPageData } from "@/actions/insights/get-insight-detail-
 import { getResolvedInsightDetailRouteData } from "@/actions/insights/get-resolved-insight-detail-route-data";
 import InsightDetailFallback from "@/components/insights/insight-detail-fallback";
 import InsightDetailLayout from "@/components/insights/insight-detail-layout";
+import type { Locale } from "@/lib/i18n/routing";
 import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import {
   buildNotFoundRouteMetadata,
   buildRouteMetadata,
 } from "@/lib/seo/route-metadata";
+import { getDetailSectionLabel } from "@/lib/seo/marketing-route-metadata";
 
 interface InsightDetailPageProps {
   params: Promise<{
@@ -25,11 +27,17 @@ export async function generateMetadata({
   params,
 }: InsightDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const detailPageData = await getInsightDetailPageData(slug);
+  const detailPageData = await getInsightDetailPageData(slug, {
+    locale: locale as Locale,
+  });
 
   if (!detailPageData) {
-    return buildNotFoundRouteMetadata();
+    return buildNotFoundRouteMetadata(locale);
   }
+
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
 
   return buildRouteMetadata({
     canonical: `/insights/${detailPageData.slug}`,
@@ -38,6 +46,7 @@ export async function generateMetadata({
       detailPageData.excerpt ??
       detailPageData.content,
     locale,
+    noIndex: isPreview,
     openGraphType: "article",
     publishedTime: detailPageData.publishedAt,
     socialFallbackPath: `/insights/${detailPageData.slug}/opengraph-image`,
@@ -45,18 +54,25 @@ export async function generateMetadata({
     socialImageAlt: detailPageData.image?.alt,
     title:
       detailPageData.seoTitle ??
-      `${detailPageData.title} | Insights | Scalzo Studio`,
+      `${detailPageData.title} | ${getDetailSectionLabel(locale, "insights")} | Scalzo Studio`,
     updatedTime: detailPageData.updatedAt,
   });
 }
 
-async function InsightDetailContent({ slug }: { slug: string }) {
+async function InsightDetailContent({
+  locale,
+  slug,
+}: {
+  locale: Locale;
+  slug: string;
+}) {
   const preview = await draftMode();
   const { isAdmin } = await getCurrentUserAdminState();
   const isPreview = preview.isEnabled && isAdmin;
   const { detailPageData } = await getResolvedInsightDetailRouteData(
     slug,
     isPreview,
+    locale,
   );
 
   if (!detailPageData) {
@@ -86,7 +102,7 @@ async function ResolvedInsightDetailPage({ params }: InsightDetailPageProps) {
 
   return (
     <Suspense fallback={<InsightDetailFallback slug={slug} />}>
-      <InsightDetailContent slug={slug} />
+      <InsightDetailContent locale={locale as Locale} slug={slug} />
     </Suspense>
   );
 }

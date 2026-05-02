@@ -33,13 +33,18 @@ export async function createAdminInsight(
   const rawInput = readInsightEditorFormData(formData);
   const parsedInput = insightEditorSchema.safeParse({
     contentMd: normalizeStringEntry(rawInput.contentMd),
+    contentMdEs: normalizeStringEntry(rawInput.contentMdEs),
     excerpt: normalizeStringEntry(rawInput.excerpt),
+    excerptEs: normalizeStringEntry(rawInput.excerptEs),
     published: rawInput.published,
     seoDescription: normalizeStringEntry(rawInput.seoDescription),
+    seoDescriptionEs: normalizeStringEntry(rawInput.seoDescriptionEs),
     seoTitle: normalizeStringEntry(rawInput.seoTitle),
+    seoTitleEs: normalizeStringEntry(rawInput.seoTitleEs),
     slug: normalizeStringEntry(rawInput.slug),
     tagLines: normalizeStringEntry(rawInput.tagLines),
     title: normalizeStringEntry(rawInput.title),
+    titleEs: normalizeStringEntry(rawInput.titleEs),
   });
 
   if (!parsedInput.success) {
@@ -109,15 +114,20 @@ export async function createAdminInsight(
 
     const insertPayload: Database["public"]["Tables"]["posts"]["Insert"] = {
       content_md: sanitizeMarkdownUrls(normalizedInput.payload.contentMd),
+      content_md_es: normalizedInput.payload.contentMdEs,
       cover_image_url: coverImageUrl,
       excerpt: normalizedInput.payload.excerpt,
+      excerpt_es: normalizedInput.payload.excerptEs,
       published: normalizedInput.payload.published,
       published_at: normalizedInput.payload.publishedAt,
       seo_description: normalizedInput.payload.seoDescription,
+      seo_description_es: normalizedInput.payload.seoDescriptionEs,
       seo_title: normalizedInput.payload.seoTitle,
+      seo_title_es: normalizedInput.payload.seoTitleEs,
       slug: normalizedInput.payload.slug,
       tags: normalizedInput.payload.tags,
       title: normalizedInput.payload.title,
+      title_es: normalizedInput.payload.titleEs,
     };
     const supabase = await createServerSupabaseClient();
     const { error } = await supabase.from("posts").insert(insertPayload);

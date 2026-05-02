@@ -3,16 +3,20 @@
 import "server-only";
 
 import { testimonials as fallbackTestimonials } from "@/constants/home/content";
+import type { Locale } from "@/lib/i18n/routing";
 import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import { cloneFallbackTestimonials } from "./helpers";
 
-export async function getHomeTestimonials() {
+export async function getHomeTestimonials(locale: Locale = "en") {
+  const isEs = locale === "es";
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("testimonials")
-    .select("avatar_url, company, featured, name, quote, role, updated_at")
+    .select(
+      "avatar_url, company, featured, name, quote, quote_es, role, role_es, updated_at",
+    )
     .eq("published", true)
     .order("featured", { ascending: false })
     .order("updated_at", { ascending: false })
@@ -38,7 +42,11 @@ export async function getHomeTestimonials() {
       ? avatarAssets[testimonial.avatar_url]
       : fallbackTestimonials[index]?.image,
     name: testimonial.name,
-    quote: testimonial.quote,
-    role: testimonial.role ?? fallbackTestimonials[index]?.role ?? "Client",
+    quote: isEs ? testimonial.quote_es || testimonial.quote : testimonial.quote,
+    role: isEs
+      ? ((testimonial.role_es || testimonial.role) ??
+        fallbackTestimonials[index]?.role ??
+        "Client")
+      : (testimonial.role ?? fallbackTestimonials[index]?.role ?? "Client"),
   }));
 }

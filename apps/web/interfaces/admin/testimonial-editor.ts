@@ -7,7 +7,9 @@ export interface AdminTestimonialEditorFieldErrors {
   company?: string;
   name?: string;
   quote?: string;
+  quoteEs?: string;
   role?: string;
+  roleEs?: string;
 }
 
 export type AdminTestimonialEditorState =
@@ -21,7 +23,9 @@ export interface AdminTestimonialEditorRecord {
   name: string;
   published: boolean;
   quote: string;
+  quoteEs: string;
   role: string;
+  roleEs: string;
   updatedAt: string;
 }
 

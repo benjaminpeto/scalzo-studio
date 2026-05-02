@@ -8,6 +8,8 @@ import { Prose } from "@ui/components/layout/prose";
 import { Section } from "@ui/components/layout/section";
 import { Stack } from "@ui/components/layout/stack";
 
+import type { Locale } from "@/lib/i18n/routing";
+
 import { AboutProofContent } from "./about-proof-content";
 import { AboutProofFallback } from "./about-proof-fallback";
 
@@ -50,7 +52,7 @@ export function AboutProofSection({ locale }: { locale: string }) {
           </div>
 
           <Suspense fallback={<AboutProofFallback />}>
-            <AboutProofContent />
+            <AboutProofContent locale={locale as Locale} />
           </Suspense>
         </Stack>
       </Reveal>

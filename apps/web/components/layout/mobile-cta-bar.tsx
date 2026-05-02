@@ -8,7 +8,7 @@ import {
   useScroll,
 } from "motion/react";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { Link } from "@/lib/i18n/navigation";
 import { captureEvent } from "@/lib/analytics/client";
@@ -19,6 +19,7 @@ export function MobileCtaBar() {
   const [visible, setVisible] = useState(false);
   const { scrollY } = useScroll();
   const t = useTranslations("mobileCtaBar");
+  const locale = useLocale();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setVisible(latest > 480);
@@ -48,11 +49,15 @@ export function MobileCtaBar() {
               <Link
                 href="/contact#booking"
                 onClick={() =>
-                  captureEvent("cta_click", {
-                    cta_id: "mobile-bar-booking",
-                    page_path: window.location.pathname,
-                    placement: "mobile-bar",
-                  })
+                  captureEvent(
+                    "cta_click",
+                    {
+                      cta_id: "mobile-bar-booking",
+                      page_path: window.location.pathname,
+                      placement: "mobile-bar",
+                    },
+                    locale,
+                  )
                 }
               >
                 {t("cta")}

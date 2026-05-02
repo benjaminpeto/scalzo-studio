@@ -17,11 +17,13 @@ export interface InsightEditorOverviewProps {
 
 export interface InsightEditorContentSectionsProps {
   contentId: string;
+  contentEsId: string;
   contentMdValue: string;
   contentTextareaRef: RefObject<HTMLTextAreaElement | null>;
   coverImageId: string;
   errors: AdminInsightEditorFieldErrors;
   excerptId: string;
+  excerptEsId: string;
   excerptValue: string;
   onContentChange: (value: string) => void;
   onExcerptChange: (value: string) => void;
@@ -35,22 +37,26 @@ export interface InsightEditorContentSectionsProps {
   tagsId: string;
   tagsValue: string;
   titleId: string;
+  titleEsId: string;
   titleValue: string;
 }
 
 export interface InsightEditorMetadataSectionProps {
   errors: AdminInsightEditorFieldErrors;
   excerptId: string;
+  excerptEsId: string;
   excerptValue: string;
   onExcerptChange: (value: string) => void;
   onSlugChange: (value: string) => void;
   onTagsChange: (value: string) => void;
   onTitleChange: (value: string) => void;
+  post?: AdminInsightEditorRecord;
   slugId: string;
   slugValue: string;
   tagsId: string;
   tagsValue: string;
   titleId: string;
+  titleEsId: string;
   titleValue: string;
 }
 
@@ -78,12 +84,15 @@ export interface InsightEditorSidebarProps {
   mode: "create" | "edit";
   onSeoDescriptionChange: (value: string) => void;
   onSeoTitleChange: (value: string) => void;
+  post?: AdminInsightEditorRecord;
   postId?: string;
   publicPath: string;
   published?: boolean;
   seoDescriptionId: string;
+  seoDescriptionEsId: string;
   seoDescriptionValue: string;
   seoTitleId: string;
+  seoTitleEsId: string;
   seoTitleValue: string;
 }
 

@@ -3,14 +3,19 @@ import type { AdminEditorState } from "@/interfaces/admin/shared";
 
 export interface AdminInsightEditorFieldErrors {
   contentMd?: string;
+  contentMdEs?: string;
   coverImage?: string;
   coverImageAlt?: string;
   excerpt?: string;
+  excerptEs?: string;
   seoDescription?: string;
+  seoDescriptionEs?: string;
   seoTitle?: string;
+  seoTitleEs?: string;
   slug?: string;
   tags?: string;
   title?: string;
+  titleEs?: string;
 }
 
 export type AdminInsightEditorState =
@@ -25,16 +30,21 @@ export interface AdminInsightMediaState {
 
 export interface AdminInsightEditorRecord {
   contentMd: string;
+  contentMdEs: string;
   coverImage: CmsImageAsset | null;
   excerpt: string;
+  excerptEs: string;
   id: string;
   published: boolean;
   publishedAt: string | null;
   seoDescription: string;
+  seoDescriptionEs: string;
   seoTitle: string;
+  seoTitleEs: string;
   slug: string;
   tags: string[];
   title: string;
+  titleEs: string;
   updatedAt: string;
 }
 

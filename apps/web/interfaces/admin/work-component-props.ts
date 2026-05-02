@@ -15,15 +15,19 @@ export interface WorkEditorOverviewProps {
 
 export interface WorkEditorContentSectionsProps {
   approachId: string;
+  approachEsId: string;
   caseStudy?: AdminCaseStudyEditorRecord;
   challengeId: string;
+  challengeEsId: string;
   clientNameId: string;
   errors: AdminCaseStudyEditorFieldErrors;
   industryId: string;
   outcomesId: string;
+  outcomesEsId: string;
   servicesId: string;
   slugId: string;
   titleId: string;
+  titleEsId: string;
 }
 
 export interface WorkEditorMetricsSectionProps {
@@ -48,7 +52,9 @@ export interface WorkEditorAssetsSeoSectionsProps {
   galleryUploadRows: GalleryUploadRowState[];
   removeGalleryUploadRow: (id: string) => void;
   seoDescriptionId: string;
+  seoDescriptionEsId: string;
   seoTitleId: string;
+  seoTitleEsId: string;
   updateGalleryUploadRow: (id: string, value: string) => void;
 }
 
@@ -72,7 +78,9 @@ export interface WorkEditorSeoSectionProps {
   caseStudy?: AdminCaseStudyEditorRecord;
   errors: AdminCaseStudyEditorFieldErrors;
   seoDescriptionId: string;
+  seoDescriptionEsId: string;
   seoTitleId: string;
+  seoTitleEsId: string;
 }
 
 export interface WorkEditorSidebarProps {

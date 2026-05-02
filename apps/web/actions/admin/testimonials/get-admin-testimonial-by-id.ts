@@ -17,7 +17,7 @@ export async function getAdminTestimonialById(
   const { data, error } = await supabase
     .from("testimonials")
     .select(
-      "avatar_url, company, featured, id, name, published, quote, role, updated_at",
+      "avatar_url, company, featured, id, name, published, quote, quote_es, role, role_es, updated_at",
     )
     .eq("id", id)
     .maybeSingle();
@@ -50,7 +50,9 @@ export async function getAdminTestimonialById(
     name: data.name,
     published: data.published,
     quote: data.quote,
+    quoteEs: data.quote_es ?? "",
     role: data.role ?? "",
+    roleEs: data.role_es ?? "",
     updatedAt: data.updated_at,
   };
 }

@@ -62,7 +62,9 @@ export const testimonialEditorSchema = z.object({
       TESTIMONIAL_QUOTE_MAX_LENGTH,
       `Keep the quote under ${TESTIMONIAL_QUOTE_MAX_LENGTH} characters.`,
     ),
+  quoteEs: optionalTestimonialString(TESTIMONIAL_QUOTE_MAX_LENGTH),
   role: optionalTestimonialString(TESTIMONIAL_ROLE_MAX_LENGTH),
+  roleEs: optionalTestimonialString(TESTIMONIAL_ROLE_MAX_LENGTH),
 });
 
 export const testimonialUpdateSchema = testimonialEditorSchema.extend({

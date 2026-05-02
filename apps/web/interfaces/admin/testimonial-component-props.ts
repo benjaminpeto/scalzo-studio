@@ -16,7 +16,9 @@ export interface TestimonialEditorFormSectionsProps {
   errors: AdminTestimonialEditorFieldErrors;
   nameId: string;
   quoteId: string;
+  quoteEsId: string;
   roleId: string;
+  roleEsId: string;
   testimonial?: AdminTestimonialEditorRecord;
 }
 

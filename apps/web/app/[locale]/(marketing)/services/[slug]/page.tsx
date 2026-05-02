@@ -6,10 +6,12 @@ import { setRequestLocale } from "next-intl/server";
 import { getResolvedServiceDetailRouteData } from "@/actions/services/get-resolved-service-detail-route-data";
 import ServiceDetailFallback from "@/components/services/service-detail-fallback";
 import ServiceDetailLayout from "@/components/services/service-detail-layout";
+import type { Locale } from "@/lib/i18n/routing";
 import {
   buildNotFoundRouteMetadata,
   buildRouteMetadata,
 } from "@/lib/seo/route-metadata";
+import { getDetailSectionLabel } from "@/lib/seo/marketing-route-metadata";
 
 interface ServiceDetailPageProps {
   params: Promise<{
@@ -22,10 +24,13 @@ export async function generateMetadata({
   params,
 }: ServiceDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const detailPageData = await getResolvedServiceDetailRouteData(slug);
+  const detailPageData = await getResolvedServiceDetailRouteData(
+    slug,
+    locale as Locale,
+  );
 
   if (!detailPageData) {
-    return buildNotFoundRouteMetadata();
+    return buildNotFoundRouteMetadata(locale);
   }
 
   return buildRouteMetadata({
@@ -36,16 +41,22 @@ export async function generateMetadata({
       detailPageData.problem,
     locale,
     socialFallbackPath: `/services/${detailPageData.slug}/opengraph-image`,
-    socialImageAlt: `${detailPageData.title} service | Scalzo Studio`,
+    socialImageAlt: `${detailPageData.title} | Scalzo Studio`,
     title:
       detailPageData.seoTitle ??
-      `${detailPageData.title} | Services | Scalzo Studio`,
+      `${detailPageData.title} | ${getDetailSectionLabel(locale, "services")} | Scalzo Studio`,
     updatedTime: detailPageData.updatedAt,
   });
 }
 
-async function ServiceDetailContent({ slug }: { slug: string }) {
-  const detailPageData = await getResolvedServiceDetailRouteData(slug);
+async function ServiceDetailContent({
+  locale,
+  slug,
+}: {
+  locale: Locale;
+  slug: string;
+}) {
+  const detailPageData = await getResolvedServiceDetailRouteData(slug, locale);
 
   if (!detailPageData) {
     notFound();
@@ -60,7 +71,7 @@ async function ResolvedServiceDetailPage({ params }: ServiceDetailPageProps) {
 
   return (
     <Suspense fallback={<ServiceDetailFallback slug={slug} />}>
-      <ServiceDetailContent slug={slug} />
+      <ServiceDetailContent locale={locale as Locale} slug={slug} />
     </Suspense>
   );
 }

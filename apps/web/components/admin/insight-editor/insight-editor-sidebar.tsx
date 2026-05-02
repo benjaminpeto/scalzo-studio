@@ -13,12 +13,15 @@ export function InsightEditorSidebar({
   mode,
   onSeoDescriptionChange,
   onSeoTitleChange,
+  post,
   postId,
   publicPath,
   published,
   seoDescriptionId,
+  seoDescriptionEsId,
   seoDescriptionValue,
   seoTitleId,
+  seoTitleEsId,
   seoTitleValue,
 }: InsightEditorSidebarProps) {
   return (
@@ -76,6 +79,57 @@ export function InsightEditorSidebar({
               placeholder="Description used for search and social cards."
             />
           </AdminEditorField>
+
+          <div className="border-t border-border/50 pt-5">
+            <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Spanish (ES)
+            </p>
+
+            <div className="space-y-5">
+              <AdminEditorField
+                error={errors.seoTitleEs}
+                hint="Spanish SEO title. Leave blank to fall back to the English version."
+                htmlFor={seoTitleEsId}
+                label="SEO title (ES)"
+                optionalLabel="Optional"
+              >
+                <Input
+                  id={seoTitleEsId}
+                  name="seoTitleEs"
+                  defaultValue={post?.seoTitleEs ?? ""}
+                  aria-invalid={Boolean(errors.seoTitleEs)}
+                  aria-describedby={buildDescribedBy({
+                    error: errors.seoTitleEs,
+                    hint: "Spanish SEO title. Leave blank to fall back to the English version.",
+                    id: seoTitleEsId,
+                  })}
+                  placeholder="Título de búsqueda específico del artículo"
+                />
+              </AdminEditorField>
+
+              <AdminEditorField
+                error={errors.seoDescriptionEs}
+                hint="Spanish SEO description. Leave blank to fall back to the English version."
+                htmlFor={seoDescriptionEsId}
+                label="SEO description (ES)"
+                optionalLabel="Optional"
+              >
+                <AdminEditorTextarea
+                  id={seoDescriptionEsId}
+                  name="seoDescriptionEs"
+                  defaultValue={post?.seoDescriptionEs ?? ""}
+                  aria-invalid={Boolean(errors.seoDescriptionEs)}
+                  aria-describedby={buildDescribedBy({
+                    error: errors.seoDescriptionEs,
+                    hint: "Spanish SEO description. Leave blank to fall back to the English version.",
+                    id: seoDescriptionEsId,
+                  })}
+                  className="min-h-32"
+                  placeholder="Descripción para búsqueda y tarjetas sociales."
+                />
+              </AdminEditorField>
+            </div>
+          </div>
         </div>
       </section>
 

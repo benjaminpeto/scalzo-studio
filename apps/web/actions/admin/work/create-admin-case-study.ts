@@ -36,16 +36,22 @@ export async function createAdminCaseStudy(
   const rawInput = readCaseStudyEditorFormData(formData);
   const parsedInput = caseStudyCreateSchema.safeParse({
     approach: normalizeStringEntry(rawInput.approach),
+    approachEs: normalizeStringEntry(rawInput.approachEs),
     challenge: normalizeStringEntry(rawInput.challenge),
+    challengeEs: normalizeStringEntry(rawInput.challengeEs),
     clientName: normalizeStringEntry(rawInput.clientName),
     industry: normalizeStringEntry(rawInput.industry),
     outcomes: normalizeStringEntry(rawInput.outcomes),
+    outcomesEs: normalizeStringEntry(rawInput.outcomesEs),
     published: rawInput.published,
     seoDescription: normalizeStringEntry(rawInput.seoDescription),
+    seoDescriptionEs: normalizeStringEntry(rawInput.seoDescriptionEs),
     seoTitle: normalizeStringEntry(rawInput.seoTitle),
+    seoTitleEs: normalizeStringEntry(rawInput.seoTitleEs),
     serviceLines: normalizeStringEntry(rawInput.serviceLines),
     slug: normalizeStringEntry(rawInput.slug),
     title: normalizeStringEntry(rawInput.title),
+    titleEs: normalizeStringEntry(rawInput.titleEs),
   });
 
   if (!parsedInput.success) {
@@ -167,12 +173,15 @@ export async function createAdminCaseStudy(
     const insertPayload: Database["public"]["Tables"]["case_studies"]["Insert"] =
       {
         approach: normalizedInput.payload.approach,
+        approach_es: normalizedInput.payload.approachEs,
         challenge: normalizedInput.payload.challenge,
+        challenge_es: normalizedInput.payload.challengeEs,
         client_name: normalizedInput.payload.clientName,
         cover_image_url: coverImageUrl,
         gallery_urls: uploadedGalleryUrls,
         industry: normalizedInput.payload.industry,
         outcomes: normalizedInput.payload.outcomes,
+        outcomes_es: normalizedInput.payload.outcomesEs,
         outcomes_metrics: normalizedInput.payload.metrics,
         published: normalizedInput.payload.published,
         published_at: buildPublishedAtValue({
@@ -180,10 +189,13 @@ export async function createAdminCaseStudy(
           nextPublished: normalizedInput.payload.published,
         }),
         seo_description: normalizedInput.payload.seoDescription,
+        seo_description_es: normalizedInput.payload.seoDescriptionEs,
         seo_title: normalizedInput.payload.seoTitle,
+        seo_title_es: normalizedInput.payload.seoTitleEs,
         services: normalizedInput.payload.services,
         slug: normalizedInput.payload.slug,
         title: normalizedInput.payload.title,
+        title_es: normalizedInput.payload.titleEs,
       };
     const supabase = await createServerSupabaseClient();
     const { error } = await supabase.from("case_studies").insert(insertPayload);

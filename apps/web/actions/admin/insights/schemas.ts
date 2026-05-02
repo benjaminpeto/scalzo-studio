@@ -46,10 +46,14 @@ export const insightEditorSchema = z.object({
       (value) => value.trim().length > 0,
       "Enter article markdown before saving.",
     ),
+  contentMdEs: optionalInsightString(POST_CONTENT_MAX_LENGTH),
   excerpt: optionalInsightString(POST_EXCERPT_MAX_LENGTH),
+  excerptEs: optionalInsightString(POST_EXCERPT_MAX_LENGTH),
   published: z.boolean(),
   seoDescription: optionalInsightString(SEO_DESCRIPTION_MAX_LENGTH),
+  seoDescriptionEs: optionalInsightString(SEO_DESCRIPTION_MAX_LENGTH),
   seoTitle: optionalInsightString(SEO_TITLE_MAX_LENGTH),
+  seoTitleEs: optionalInsightString(SEO_TITLE_MAX_LENGTH),
   slug: optionalInsightString(POST_SLUG_MAX_LENGTH),
   tagLines: optionalInsightString(POST_TAG_LIMIT * (POST_TAG_MAX_LENGTH + 1)),
   title: z
@@ -60,6 +64,7 @@ export const insightEditorSchema = z.object({
       POST_TITLE_MAX_LENGTH,
       `Keep the title under ${POST_TITLE_MAX_LENGTH} characters.`,
     ),
+  titleEs: optionalInsightString(POST_TITLE_MAX_LENGTH),
 });
 
 export const insightUpdateSchema = insightEditorSchema.extend({

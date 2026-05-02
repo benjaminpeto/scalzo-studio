@@ -154,3 +154,21 @@ export function getMarketingRouteMetadata(
 
   return buildRouteMetadata({ ...entrySet[key], locale });
 }
+
+const detailSectionLabelsByLocale = {
+  en: { insights: "Insights", services: "Services", work: "Work" },
+  es: { insights: "Artículos", services: "Servicios", work: "Trabajo" },
+} as const;
+
+export type DetailSectionKey = keyof (typeof detailSectionLabelsByLocale)["en"];
+
+export function getDetailSectionLabel(
+  locale: string,
+  section: DetailSectionKey,
+): string {
+  const labels =
+    detailSectionLabelsByLocale[
+      locale as keyof typeof detailSectionLabelsByLocale
+    ] ?? detailSectionLabelsByLocale.en;
+  return labels[section];
+}

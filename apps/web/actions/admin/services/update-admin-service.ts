@@ -31,15 +31,20 @@ export async function updateAdminService(
 
   const parsedInput = serviceUpdateSchema.safeParse({
     contentMd: normalizeStringEntry(rawInput.contentMd),
+    contentMdEs: normalizeStringEntry(rawInput.contentMdEs),
     currentSlug,
     deliverables: normalizeStringEntry(rawInput.deliverables),
     published: rawInput.published,
     seoDescription: normalizeStringEntry(rawInput.seoDescription),
+    seoDescriptionEs: normalizeStringEntry(rawInput.seoDescriptionEs),
     seoTitle: normalizeStringEntry(rawInput.seoTitle),
+    seoTitleEs: normalizeStringEntry(rawInput.seoTitleEs),
     serviceId: normalizeStringEntry(rawInput.serviceId),
     slug: normalizeStringEntry(rawInput.slug),
     summary: normalizeStringEntry(rawInput.summary),
+    summaryEs: normalizeStringEntry(rawInput.summaryEs),
     title: normalizeStringEntry(rawInput.title),
+    titleEs: normalizeStringEntry(rawInput.titleEs),
   });
 
   if (!parsedInput.success) {
@@ -75,13 +80,20 @@ export async function updateAdminService(
       content_md: normalizedInput.payload.contentMd
         ? sanitizeMarkdownUrls(normalizedInput.payload.contentMd)
         : null,
+      content_md_es: normalizedInput.payload.contentMdEs
+        ? sanitizeMarkdownUrls(normalizedInput.payload.contentMdEs)
+        : null,
       deliverables: normalizedInput.payload.deliverables,
       published: normalizedInput.payload.published,
       seo_description: normalizedInput.payload.seoDescription,
+      seo_description_es: normalizedInput.payload.seoDescriptionEs,
       seo_title: normalizedInput.payload.seoTitle,
+      seo_title_es: normalizedInput.payload.seoTitleEs,
       slug: normalizedInput.payload.slug,
       summary: normalizedInput.payload.summary,
+      summary_es: normalizedInput.payload.summaryEs,
       title: normalizedInput.payload.title,
+      title_es: normalizedInput.payload.titleEs,
     };
     const { data, error } = await supabase
       .from("services")

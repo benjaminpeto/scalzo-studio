@@ -38,14 +38,18 @@ const optionalServiceString = (maxLength: number) =>
 
 export const serviceEditorSchema = z.object({
   contentMd: optionalServiceString(SERVICE_CONTENT_MAX_LENGTH),
+  contentMdEs: optionalServiceString(SERVICE_CONTENT_MAX_LENGTH),
   deliverables: optionalServiceString(
     SERVICE_DELIVERABLE_LIMIT * (SERVICE_DELIVERABLE_MAX_LENGTH + 1),
   ),
   published: z.boolean(),
   seoDescription: optionalServiceString(SEO_DESCRIPTION_MAX_LENGTH),
+  seoDescriptionEs: optionalServiceString(SEO_DESCRIPTION_MAX_LENGTH),
   seoTitle: optionalServiceString(SEO_TITLE_MAX_LENGTH),
+  seoTitleEs: optionalServiceString(SEO_TITLE_MAX_LENGTH),
   slug: optionalServiceString(SERVICE_SLUG_MAX_LENGTH),
   summary: optionalServiceString(SERVICE_SUMMARY_MAX_LENGTH),
+  summaryEs: optionalServiceString(SERVICE_SUMMARY_MAX_LENGTH),
   title: z
     .string()
     .trim()
@@ -54,6 +58,7 @@ export const serviceEditorSchema = z.object({
       SERVICE_TITLE_MAX_LENGTH,
       `Keep the title under ${SERVICE_TITLE_MAX_LENGTH} characters.`,
     ),
+  titleEs: optionalServiceString(SERVICE_TITLE_MAX_LENGTH),
 });
 
 export const serviceUpdateSchema = serviceEditorSchema.extend({

@@ -2,7 +2,7 @@
 
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
@@ -21,6 +21,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const locale = useLocale();
 
   return (
     <header className="sticky top-0 z-50 bg-[rgba(250,249,245,0.92)] backdrop-blur-xl">
@@ -58,11 +59,15 @@ export function SiteHeader() {
             <Link
               href={primaryCta.href}
               onClick={() =>
-                captureEvent("cta_click", {
-                  cta_id: "header-contact",
-                  page_path: window.location.pathname,
-                  placement: "header",
-                })
+                captureEvent(
+                  "cta_click",
+                  {
+                    cta_id: "header-contact",
+                    page_path: window.location.pathname,
+                    placement: "header",
+                  },
+                  locale,
+                )
               }
             >
               {t("bookACall")}

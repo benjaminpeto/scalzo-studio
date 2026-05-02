@@ -53,13 +53,18 @@ export function AdminInsightEditor({
     titleValue,
   } = useAdminInsightFormState(post);
   const titleId = useId();
+  const titleEsId = useId();
   const slugId = useId();
   const excerptId = useId();
+  const excerptEsId = useId();
   const tagsId = useId();
   const contentId = useId();
+  const contentEsId = useId();
   const coverImageId = useId();
   const seoTitleId = useId();
+  const seoTitleEsId = useId();
   const seoDescriptionId = useId();
+  const seoDescriptionEsId = useId();
   const errors: AdminInsightEditorFieldErrors = serverState.fieldErrors;
   const currentPath =
     mode === "create"
@@ -157,11 +162,13 @@ export function AdminInsightEditor({
 
           <InsightEditorContentSections
             contentId={contentId}
+            contentEsId={contentEsId}
             contentMdValue={contentMdValue}
             contentTextareaRef={contentTextareaRef}
             coverImageId={coverImageId}
             errors={errors}
             excerptId={excerptId}
+            excerptEsId={excerptEsId}
             excerptValue={excerptValue}
             onContentChange={setContentMdValue}
             onExcerptChange={setExcerptValue}
@@ -175,6 +182,7 @@ export function AdminInsightEditor({
             tagsId={tagsId}
             tagsValue={tagsValue}
             titleId={titleId}
+            titleEsId={titleEsId}
             titleValue={titleValue}
           />
         </div>
@@ -185,6 +193,7 @@ export function AdminInsightEditor({
           mode={mode}
           onSeoDescriptionChange={setSeoDescriptionValue}
           onSeoTitleChange={setSeoTitleValue}
+          post={post}
           postId={post?.id}
           publicPath={
             mode === "create"
@@ -193,8 +202,10 @@ export function AdminInsightEditor({
           }
           published={post?.published}
           seoDescriptionId={seoDescriptionId}
+          seoDescriptionEsId={seoDescriptionEsId}
           seoDescriptionValue={seoDescriptionValue}
           seoTitleId={seoTitleId}
+          seoTitleEsId={seoTitleEsId}
           seoTitleValue={seoTitleValue}
         />
       </form>

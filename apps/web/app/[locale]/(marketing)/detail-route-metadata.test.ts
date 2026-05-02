@@ -115,6 +115,16 @@ async function loadServicePageModule(
         .mockResolvedValue(detailPageData),
     }),
   );
+  vi.doMock("@/lib/env/public", () => ({
+    publicEnv: {
+      siteUrl: "https://scalzostudio.com",
+    },
+    publicFeatureFlags: {
+      analyticsEnabled: false,
+      calBookingEnabled: false,
+      hcaptchaEnabled: false,
+    },
+  }));
 
   return import("./services/[slug]/page");
 }
@@ -126,11 +136,21 @@ async function loadWorkPageModule({
   detailPageData: ReturnType<typeof buildWorkDetail> | null;
   isPreview: boolean;
 }) {
+  vi.doMock("@/actions/work/get-work-detail-page-data", () => ({
+    getWorkDetailPageData: vi.fn().mockResolvedValue(detailPageData),
+  }));
   vi.doMock("@/actions/work/get-resolved-work-detail-route-data", () => ({
     getResolvedWorkDetailRouteData: vi.fn().mockResolvedValue({
       detailPageData,
       isPreview,
     }),
+  }));
+  vi.doMock("next/headers", () => ({
+    draftMode: vi.fn().mockResolvedValue({ isEnabled: isPreview }),
+    cookies: vi.fn().mockResolvedValue(new Map()),
+  }));
+  vi.doMock("@/lib/supabase/auth", () => ({
+    getCurrentUserAdminState: vi.fn().mockResolvedValue({ isAdmin: isPreview }),
   }));
   vi.doMock("@/lib/env/public", () => ({
     publicEnv: {
@@ -153,6 +173,9 @@ async function loadInsightPageModule({
   detailPageData: ReturnType<typeof buildInsightDetail> | null;
   isPreview: boolean;
 }) {
+  vi.doMock("@/actions/insights/get-insight-detail-page-data", () => ({
+    getInsightDetailPageData: vi.fn().mockResolvedValue(detailPageData),
+  }));
   vi.doMock(
     "@/actions/insights/get-resolved-insight-detail-route-data",
     () => ({
@@ -162,6 +185,13 @@ async function loadInsightPageModule({
       }),
     }),
   );
+  vi.doMock("next/headers", () => ({
+    draftMode: vi.fn().mockResolvedValue({ isEnabled: isPreview }),
+    cookies: vi.fn().mockResolvedValue(new Map()),
+  }));
+  vi.doMock("@/lib/supabase/auth", () => ({
+    getCurrentUserAdminState: vi.fn().mockResolvedValue({ isAdmin: isPreview }),
+  }));
   vi.doMock("@/lib/env/public", () => {
     return {
       publicEnv: {
@@ -252,6 +282,37 @@ describe("service detail metadata", () => {
         index: false,
       },
       title: "Not found | Scalzo Studio",
+    });
+  });
+
+  it("uses locale-aware section label in fallback title for es locale", async () => {
+    const pageModule = await loadServicePageModule(
+      buildServiceDetail({ summary: "Resumen del servicio" }),
+    );
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ locale: "es", slug: "strategy-sprints" }),
+      }),
+    ).resolves.toMatchObject({
+      title: "Strategy Sprints | Servicios | Scalzo Studio",
+    });
+  });
+
+  it("returns Spanish not-found metadata for unknown slugs in es locale", async () => {
+    const pageModule = await loadServicePageModule(null);
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ locale: "es", slug: "missing-service" }),
+      }),
+    ).resolves.toEqual({
+      description: "No se pudo encontrar esta página.",
+      robots: {
+        follow: false,
+        index: false,
+      },
+      title: "No encontrado | Scalzo Studio",
     });
   });
 });
@@ -364,6 +425,41 @@ describe("work detail metadata", () => {
       title: "Not found | Scalzo Studio",
     });
   });
+
+  it("uses locale-aware section label in fallback title for es locale", async () => {
+    const pageModule = await loadWorkPageModule({
+      detailPageData: buildWorkDetail(),
+      isPreview: false,
+    });
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ locale: "es", slug: "featured-1" }),
+      }),
+    ).resolves.toMatchObject({
+      title: "Featured Case Study | Trabajo | Scalzo Studio",
+    });
+  });
+
+  it("returns Spanish not-found metadata for unknown work slugs in es locale", async () => {
+    const pageModule = await loadWorkPageModule({
+      detailPageData: null,
+      isPreview: false,
+    });
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ locale: "es", slug: "missing-work" }),
+      }),
+    ).resolves.toEqual({
+      description: "No se pudo encontrar esta página.",
+      robots: {
+        follow: false,
+        index: false,
+      },
+      title: "No encontrado | Scalzo Studio",
+    });
+  });
 });
 
 describe("insight detail metadata", () => {
@@ -474,6 +570,41 @@ describe("insight detail metadata", () => {
         index: false,
       },
       title: "Not found | Scalzo Studio",
+    });
+  });
+
+  it("uses locale-aware section label in fallback title for es locale", async () => {
+    const pageModule = await loadInsightPageModule({
+      detailPageData: buildInsightDetail(),
+      isPreview: false,
+    });
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ locale: "es", slug: "editorial-systems" }),
+      }),
+    ).resolves.toMatchObject({
+      title: "Editorial Systems | Artículos | Scalzo Studio",
+    });
+  });
+
+  it("returns Spanish not-found metadata for unknown insight slugs in es locale", async () => {
+    const pageModule = await loadInsightPageModule({
+      detailPageData: null,
+      isPreview: false,
+    });
+
+    await expect(
+      pageModule.generateMetadata({
+        params: Promise.resolve({ locale: "es", slug: "missing-insight" }),
+      }),
+    ).resolves.toEqual({
+      description: "No se pudo encontrar esta página.",
+      robots: {
+        follow: false,
+        index: false,
+      },
+      title: "No encontrado | Scalzo Studio",
     });
   });
 });

@@ -33,16 +33,22 @@ export function AdminWorkEditor({
       metrics: caseStudy?.metrics,
     });
   const titleId = useId();
+  const titleEsId = useId();
   const slugId = useId();
   const clientNameId = useId();
   const industryId = useId();
   const servicesId = useId();
   const challengeId = useId();
+  const challengeEsId = useId();
   const approachId = useId();
+  const approachEsId = useId();
   const outcomesId = useId();
+  const outcomesEsId = useId();
   const metricsId = useId();
   const seoTitleId = useId();
+  const seoTitleEsId = useId();
   const seoDescriptionId = useId();
+  const seoDescriptionEsId = useId();
   const coverImageId = useId();
   const coverImageAltId = useId();
   const statusMessage =
@@ -125,15 +131,19 @@ export function AdminWorkEditor({
 
           <WorkEditorContentSections
             approachId={approachId}
+            approachEsId={approachEsId}
             caseStudy={caseStudy}
             challengeId={challengeId}
+            challengeEsId={challengeEsId}
             clientNameId={clientNameId}
             errors={errors}
             industryId={industryId}
             outcomesId={outcomesId}
+            outcomesEsId={outcomesEsId}
             servicesId={servicesId}
             slugId={slugId}
             titleId={titleId}
+            titleEsId={titleEsId}
           />
 
           <WorkEditorMetricsSection
@@ -154,7 +164,9 @@ export function AdminWorkEditor({
             galleryUploadRows={galleryUploadRows}
             removeGalleryUploadRow={removeGalleryUploadRow}
             seoDescriptionId={seoDescriptionId}
+            seoDescriptionEsId={seoDescriptionEsId}
             seoTitleId={seoTitleId}
+            seoTitleEsId={seoTitleEsId}
             updateGalleryUploadRow={updateGalleryUploadRow}
           />
         </div>

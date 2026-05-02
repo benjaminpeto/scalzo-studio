@@ -8,6 +8,7 @@ import {
 } from "@/constants/services/content";
 import type { ServicesFaqItem } from "@/interfaces/services/content";
 import { resolveCmsImageAssetMap } from "@/lib/media-assets/server";
+import type { Locale } from "@/lib/i18n/routing";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 import {
@@ -17,12 +18,16 @@ import {
   extractProblemFromContent,
 } from "./helpers";
 
-export async function getServiceDetailPageData(slug: string) {
+export async function getServiceDetailPageData(
+  slug: string,
+  locale: Locale = "en",
+) {
+  const isEs = locale === "es";
   const supabase = await createServerSupabaseClient();
   const { data: service, error } = await supabase
     .from("services")
     .select(
-      "content_md, deliverables, seo_description, seo_title, slug, summary, title, updated_at",
+      "content_md, content_md_es, deliverables, seo_description, seo_description_es, seo_title, seo_title_es, slug, summary, summary_es, title, title_es, updated_at",
     )
     .eq("published", true)
     .eq("slug", slug)
@@ -35,8 +40,14 @@ export async function getServiceDetailPageData(slug: string) {
     return null;
   }
 
-  const resolvedTitle = service?.title ?? fallbackService?.title ?? "Service";
-  const resolvedSummary = service?.summary ?? fallbackService?.summary ?? "";
+  const resolvedTitle =
+    (isEs ? service?.title_es || service?.title : service?.title) ??
+    fallbackService?.title ??
+    "Service";
+  const resolvedSummary =
+    (isEs ? service?.summary_es || service?.summary : service?.summary) ??
+    fallbackService?.summary ??
+    "";
   const serviceFallback =
     fallbackServiceDetailBySlug[slug] ??
     ({
@@ -85,8 +96,12 @@ export async function getServiceDetailPageData(slug: string) {
       })()
     : buildFallbackRelatedWork();
 
+  const resolvedContent = isEs
+    ? ((service?.content_md_es || service?.content_md) ?? null)
+    : (service?.content_md ?? null);
+
   return {
-    content: service?.content_md ?? null,
+    content: resolvedContent,
     deliverables: service?.deliverables?.length
       ? service.deliverables
       : [...(fallbackService?.deliverables ?? [])],
@@ -95,12 +110,16 @@ export async function getServiceDetailPageData(slug: string) {
       fallbackService?.outcome ??
       "Designed to make the offer easier to understand and easier to trust.",
     problem: extractProblemFromContent(
-      service?.content_md ?? null,
+      resolvedContent,
       serviceFallback.problem,
     ),
     relatedWork,
-    seoDescription: service?.seo_description ?? null,
-    seoTitle: service?.seo_title ?? null,
+    seoDescription: isEs
+      ? ((service?.seo_description_es || service?.seo_description) ?? null)
+      : (service?.seo_description ?? null),
+    seoTitle: isEs
+      ? ((service?.seo_title_es || service?.seo_title) ?? null)
+      : (service?.seo_title ?? null),
     slug,
     summary: resolvedSummary,
     timeline: serviceFallback.timeline,

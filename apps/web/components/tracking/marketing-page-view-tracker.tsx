@@ -2,11 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { useLocale } from "next-intl";
 
 import { capturePageView } from "@/lib/analytics/client";
 
 export function MarketingPageViewTracker() {
   const pathname = usePathname() || "/";
+  const locale = useLocale();
   const lastTrackedPathRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -15,8 +17,8 @@ export function MarketingPageViewTracker() {
     }
 
     lastTrackedPathRef.current = pathname;
-    capturePageView(pathname);
-  }, [pathname]);
+    capturePageView(pathname, locale);
+  }, [pathname, locale]);
 
   return null;
 }

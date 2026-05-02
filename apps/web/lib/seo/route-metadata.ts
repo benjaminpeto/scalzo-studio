@@ -125,10 +125,25 @@ export function buildRouteMetadata({
   };
 }
 
-export function buildNotFoundRouteMetadata(): Metadata {
-  return {
+const notFoundTextByLocale: Record<
+  string,
+  { description: string; title: string }
+> = {
+  en: {
     description: "This page could not be found.",
-    robots: nonIndexRobots,
     title: "Not found | Scalzo Studio",
+  },
+  es: {
+    description: "No se pudo encontrar esta página.",
+    title: "No encontrado | Scalzo Studio",
+  },
+};
+
+export function buildNotFoundRouteMetadata(locale = "en"): Metadata {
+  const text = notFoundTextByLocale[locale] ?? notFoundTextByLocale.en;
+  return {
+    description: text.description,
+    robots: nonIndexRobots,
+    title: text.title,
   };
 }

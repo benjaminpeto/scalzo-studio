@@ -147,18 +147,23 @@ export function buildInsightEditorFieldErrors(
 export function readInsightEditorFormData(formData: FormData) {
   return {
     contentMd: formData.get("contentMd"),
+    contentMdEs: formData.get("contentMdEs"),
     coverImage: formData.get("coverImage"),
     coverImageAlt: formData.get("coverImageAlt"),
     currentSlug: formData.get("currentSlug"),
     excerpt: formData.get("excerpt"),
+    excerptEs: formData.get("excerptEs"),
     postId: formData.get("postId"),
     published: formData.has("published"),
     removeCoverImage: formData.has("removeCoverImage"),
     seoDescription: formData.get("seoDescription"),
+    seoDescriptionEs: formData.get("seoDescriptionEs"),
     seoTitle: formData.get("seoTitle"),
+    seoTitleEs: formData.get("seoTitleEs"),
     slug: formData.get("slug"),
     tagLines: formData.get("tags"),
     title: formData.get("title"),
+    titleEs: formData.get("titleEs"),
   };
 }
 
@@ -236,14 +241,19 @@ export function buildNormalizedInsightPayload(input: InsightEditorInput) {
     errorState: null,
     payload: {
       contentMd: input.contentMd,
+      contentMdEs: normalizeOptionalText(input.contentMdEs),
       excerpt: normalizeOptionalText(input.excerpt),
+      excerptEs: normalizeOptionalText(input.excerptEs),
       published: input.published,
       publishedAt: input.published ? new Date().toISOString() : null,
       seoDescription: normalizeOptionalText(input.seoDescription),
+      seoDescriptionEs: normalizeOptionalText(input.seoDescriptionEs),
       seoTitle: normalizeOptionalText(input.seoTitle),
+      seoTitleEs: normalizeOptionalText(input.seoTitleEs),
       slug: normalizedSlug,
       tags: tagsResult.tags,
       title: input.title.trim(),
+      titleEs: normalizeOptionalText(input.titleEs),
     },
   };
 }

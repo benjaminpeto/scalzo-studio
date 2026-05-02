@@ -16,7 +16,6 @@ import type {
   AdminTestimonialEditorFieldErrors,
   AdminTestimonialEditorState,
 } from "@/interfaces/admin/testimonial-editor";
-import type { Database } from "@/lib/supabase/database.types";
 
 import type { TestimonialEditorInput, TestimonialUpdateInput } from "./schemas";
 import {
@@ -55,8 +54,10 @@ export function readTestimonialEditorFormData(formData: FormData) {
     name: formData.get("name"),
     published: formData.has("published"),
     quote: formData.get("quote"),
+    quoteEs: formData.get("quoteEs"),
     removeAvatar: formData.has("removeAvatar"),
     role: formData.get("role"),
+    roleEs: formData.get("roleEs"),
     testimonialId: formData.get("testimonialId"),
   };
 }
@@ -187,8 +188,10 @@ export function buildNormalizedTestimonialPayload(
       name: input.name.trim(),
       published: input.published,
       quote: input.quote.trim(),
+      quote_es: normalizeOptionalText(input.quoteEs),
       role: normalizeOptionalText(input.role),
-    } satisfies Database["public"]["Tables"]["testimonials"]["Insert"],
+      role_es: normalizeOptionalText(input.roleEs),
+    },
   };
 }
 

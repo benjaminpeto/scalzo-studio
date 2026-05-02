@@ -9,14 +9,19 @@ import { AdminEditorTextarea } from "../shared/admin-editor-textarea";
 
 export function ServiceEditorFormSections({
   contentId,
+  contentEsId,
   deliverablesId,
   errors,
   seoDescriptionId,
+  seoDescriptionEsId,
   seoTitleId,
+  seoTitleEsId,
   service,
   slugId,
   summaryId,
+  summaryEsId,
   titleId,
+  titleEsId,
 }: ServiceEditorFormSectionsProps) {
   return (
     <>
@@ -144,6 +149,86 @@ export function ServiceEditorFormSections({
       </section>
 
       <section className="rounded-[1.6rem] border border-border/70 bg-surface-container-lowest/82 p-5 md:p-6">
+        <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Spanish (ES)
+        </p>
+
+        <div className="mt-0">
+          <AdminEditorField
+            error={errors.titleEs}
+            hint="Spanish title shown to Spanish-locale visitors."
+            htmlFor={titleEsId}
+            label="Title (ES)"
+            optionalLabel="Optional"
+          >
+            <Input
+              id={titleEsId}
+              name="titleEs"
+              defaultValue={service?.titleEs ?? ""}
+              aria-invalid={Boolean(errors.titleEs)}
+              aria-describedby={buildDescribedBy({
+                error: errors.titleEs,
+                hint: "Spanish title shown to Spanish-locale visitors.",
+                id: titleEsId,
+              })}
+              placeholder="Estrategia de conversión"
+            />
+          </AdminEditorField>
+        </div>
+
+        <div className="mt-5">
+          <AdminEditorField
+            error={errors.summaryEs}
+            hint="Spanish summary shown to Spanish-locale visitors."
+            htmlFor={summaryEsId}
+            label="Summary (ES)"
+            optionalLabel="Optional"
+          >
+            <AdminEditorTextarea
+              id={summaryEsId}
+              name="summaryEs"
+              defaultValue={service?.summaryEs ?? ""}
+              aria-invalid={Boolean(errors.summaryEs)}
+              aria-describedby={buildDescribedBy({
+                error: errors.summaryEs,
+                hint: "Spanish summary shown to Spanish-locale visitors.",
+                id: summaryEsId,
+              })}
+              className="min-h-28"
+              placeholder="Posiciona el servicio en un párrafo claro."
+            />
+          </AdminEditorField>
+        </div>
+
+        <div className="mt-5">
+          <AdminEditorField
+            error={errors.contentMdEs}
+            hint="Spanish markdown body. Leave blank to fall back to the English version."
+            htmlFor={contentEsId}
+            label="Markdown body (ES)"
+            optionalLabel="Optional"
+          >
+            <MarkdownEditor
+              id={contentEsId}
+              name="contentMdEs"
+              defaultValue={service?.contentMdEs ?? ""}
+              aria-invalid={Boolean(errors.contentMdEs)}
+              aria-describedby={buildDescribedBy({
+                error: errors.contentMdEs,
+                hint: "Spanish markdown body. Leave blank to fall back to the English version.",
+                id: contentEsId,
+              })}
+              className="min-h-88"
+              placeholder={
+                "## Qué resuelve este servicio\n\nDescribe el problema, el enfoque y el cambio esperado."
+              }
+              spellCheck={false}
+            />
+          </AdminEditorField>
+        </div>
+      </section>
+
+      <section className="rounded-[1.6rem] border border-border/70 bg-surface-container-lowest/82 p-5 md:p-6">
         <div className="grid gap-5">
           <AdminEditorField
             error={errors.seoTitle}
@@ -185,6 +270,49 @@ export function ServiceEditorFormSections({
               })}
               className="min-h-28"
               placeholder="Define what the service is, who it helps, and the commercial shift it supports."
+            />
+          </AdminEditorField>
+
+          <AdminEditorField
+            error={errors.seoTitleEs}
+            hint="Spanish SEO title override. Leave blank to fall back to the English version."
+            htmlFor={seoTitleEsId}
+            label="SEO title (ES)"
+            optionalLabel="Optional"
+          >
+            <Input
+              id={seoTitleEsId}
+              name="seoTitleEs"
+              defaultValue={service?.seoTitleEs ?? ""}
+              aria-invalid={Boolean(errors.seoTitleEs)}
+              aria-describedby={buildDescribedBy({
+                error: errors.seoTitleEs,
+                hint: "Spanish SEO title override. Leave blank to fall back to the English version.",
+                id: seoTitleEsId,
+              })}
+              placeholder="Estrategia de conversión | Scalzo Studio"
+            />
+          </AdminEditorField>
+
+          <AdminEditorField
+            error={errors.seoDescriptionEs}
+            hint="Spanish SEO description override. Leave blank to fall back to the English version."
+            htmlFor={seoDescriptionEsId}
+            label="SEO description (ES)"
+            optionalLabel="Optional"
+          >
+            <AdminEditorTextarea
+              id={seoDescriptionEsId}
+              name="seoDescriptionEs"
+              defaultValue={service?.seoDescriptionEs ?? ""}
+              aria-invalid={Boolean(errors.seoDescriptionEs)}
+              aria-describedby={buildDescribedBy({
+                error: errors.seoDescriptionEs,
+                hint: "Spanish SEO description override. Leave blank to fall back to the English version.",
+                id: seoDescriptionEsId,
+              })}
+              className="min-h-28"
+              placeholder="Define qué es el servicio, a quién ayuda y el cambio comercial que sustenta."
             />
           </AdminEditorField>
         </div>

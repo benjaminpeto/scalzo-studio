@@ -8,11 +8,13 @@ import { getResolvedWorkDetailRouteData } from "@/actions/work/get-resolved-work
 import { getWorkDetailPageData } from "@/actions/work/get-work-detail-page-data";
 import WorkDetailFallback from "@/components/work/work-detail-fallback";
 import WorkDetailLayout from "@/components/work/work-detail-layout";
+import type { Locale } from "@/lib/i18n/routing";
 import { getCurrentUserAdminState } from "@/lib/supabase/auth";
 import {
   buildNotFoundRouteMetadata,
   buildRouteMetadata,
 } from "@/lib/seo/route-metadata";
+import { getDetailSectionLabel } from "@/lib/seo/marketing-route-metadata";
 
 interface WorkDetailPageProps {
   params: Promise<{
@@ -25,11 +27,17 @@ export async function generateMetadata({
   params,
 }: WorkDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const detailPageData = await getWorkDetailPageData(slug);
+  const detailPageData = await getWorkDetailPageData(slug, {
+    locale: locale as Locale,
+  });
 
   if (!detailPageData) {
-    return buildNotFoundRouteMetadata();
+    return buildNotFoundRouteMetadata(locale);
   }
+
+  const preview = await draftMode();
+  const { isAdmin } = await getCurrentUserAdminState();
+  const isPreview = preview.isEnabled && isAdmin;
 
   return buildRouteMetadata({
     canonical: `/work/${detailPageData.slug}`,
@@ -38,24 +46,32 @@ export async function generateMetadata({
       detailPageData.description ??
       detailPageData.outcomes,
     locale,
+    noIndex: isPreview,
     publishedTime: detailPageData.publishedAt,
     socialFallbackPath: `/work/${detailPageData.slug}/opengraph-image`,
     socialImage: detailPageData.image?.src ?? null,
     socialImageAlt: detailPageData.image?.alt,
     title:
       detailPageData.seoTitle ??
-      `${detailPageData.title} | Work | Scalzo Studio`,
+      `${detailPageData.title} | ${getDetailSectionLabel(locale, "work")} | Scalzo Studio`,
     updatedTime: detailPageData.updatedAt,
   });
 }
 
-async function WorkDetailContent({ slug }: { slug: string }) {
+async function WorkDetailContent({
+  locale,
+  slug,
+}: {
+  locale: Locale;
+  slug: string;
+}) {
   const preview = await draftMode();
   const { isAdmin } = await getCurrentUserAdminState();
   const isPreview = preview.isEnabled && isAdmin;
   const { detailPageData } = await getResolvedWorkDetailRouteData(
     slug,
     isPreview,
+    locale,
   );
 
   if (!detailPageData) {
@@ -85,7 +101,7 @@ async function ResolvedWorkDetailPage({ params }: WorkDetailPageProps) {
 
   return (
     <Suspense fallback={<WorkDetailFallback slug={slug} />}>
-      <WorkDetailContent slug={slug} />
+      <WorkDetailContent locale={locale as Locale} slug={slug} />
     </Suspense>
   );
 }

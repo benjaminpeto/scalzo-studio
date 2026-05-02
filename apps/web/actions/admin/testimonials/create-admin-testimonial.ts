@@ -40,7 +40,9 @@ export async function createAdminTestimonial(
     name: normalizeStringEntry(rawInput.name),
     published: rawInput.published,
     quote: normalizeStringEntry(rawInput.quote),
+    quoteEs: normalizeStringEntry(rawInput.quoteEs),
     role: normalizeStringEntry(rawInput.role),
+    roleEs: normalizeStringEntry(rawInput.roleEs),
   });
 
   if (!parsedInput.success) {
@@ -97,7 +99,9 @@ export async function createAdminTestimonial(
         name: normalizedInput.payload.name,
         published: normalizedInput.payload.published,
         quote: normalizedInput.payload.quote,
+        quote_es: normalizedInput.payload.quote_es,
         role: normalizedInput.payload.role,
+        role_es: normalizedInput.payload.role_es,
       };
     const supabase = await createServerSupabaseClient();
     const { error } = await supabase.from("testimonials").insert(insertPayload);

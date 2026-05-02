@@ -42,15 +42,20 @@ export const createActionSuccessState =
 export function readServiceEditorFormData(formData: FormData) {
   return {
     contentMd: formData.get("contentMd"),
+    contentMdEs: formData.get("contentMdEs"),
     currentSlug: formData.get("currentSlug"),
     deliverables: formData.get("deliverables"),
     published: formData.has("published"),
     seoDescription: formData.get("seoDescription"),
+    seoDescriptionEs: formData.get("seoDescriptionEs"),
     seoTitle: formData.get("seoTitle"),
+    seoTitleEs: formData.get("seoTitleEs"),
     serviceId: formData.get("serviceId"),
     slug: formData.get("slug"),
     summary: formData.get("summary"),
+    summaryEs: formData.get("summaryEs"),
     title: formData.get("title"),
+    titleEs: formData.get("titleEs"),
   };
 }
 
@@ -214,22 +219,18 @@ export function buildNormalizedServicePayload(input: ServiceEditorInput) {
     errorState: null,
     payload: {
       contentMd: normalizeOptionalText(input.contentMd),
+      contentMdEs: normalizeOptionalText(input.contentMdEs),
       deliverables: normalizedDeliverables.deliverables,
       published: input.published,
       seoDescription: normalizeOptionalText(input.seoDescription),
+      seoDescriptionEs: normalizeOptionalText(input.seoDescriptionEs),
       seoTitle: normalizeOptionalText(input.seoTitle),
+      seoTitleEs: normalizeOptionalText(input.seoTitleEs),
       slug: normalizedSlug,
       summary: normalizeOptionalText(input.summary),
+      summaryEs: normalizeOptionalText(input.summaryEs),
       title: input.title.trim(),
-    } satisfies {
-      contentMd: string | null;
-      deliverables: string[];
-      published: boolean;
-      seoDescription: string | null;
-      seoTitle: string | null;
-      slug: string;
-      summary: string | null;
-      title: string;
+      titleEs: normalizeOptionalText(input.titleEs),
     },
   };
 }

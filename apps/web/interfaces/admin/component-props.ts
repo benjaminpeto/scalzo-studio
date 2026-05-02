@@ -82,14 +82,19 @@ export interface ServiceEditorOverviewProps {
 
 export interface ServiceEditorFormSectionsProps {
   contentId: string;
+  contentEsId: string;
   deliverablesId: string;
   errors: AdminServiceEditorFieldErrors;
   seoDescriptionId: string;
+  seoDescriptionEsId: string;
   seoTitleId: string;
+  seoTitleEsId: string;
   service?: AdminServiceEditorRecord;
   slugId: string;
   summaryId: string;
+  summaryEsId: string;
   titleId: string;
+  titleEsId: string;
 }
 
 export interface ServiceEditorSidebarProps {

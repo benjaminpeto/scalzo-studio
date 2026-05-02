@@ -47,19 +47,25 @@ export async function updateAdminCaseStudy(
 
   const parsedInput = caseStudyUpdateSchema.safeParse({
     approach: normalizeStringEntry(rawInput.approach),
+    approachEs: normalizeStringEntry(rawInput.approachEs),
     caseStudyId: normalizeStringEntry(rawInput.caseStudyId),
     challenge: normalizeStringEntry(rawInput.challenge),
+    challengeEs: normalizeStringEntry(rawInput.challengeEs),
     clientName: normalizeStringEntry(rawInput.clientName),
     currentSlug,
     industry: normalizeStringEntry(rawInput.industry),
     outcomes: normalizeStringEntry(rawInput.outcomes),
+    outcomesEs: normalizeStringEntry(rawInput.outcomesEs),
     published: rawInput.published,
     removeCoverImage: rawInput.removeCoverImage,
     seoDescription: normalizeStringEntry(rawInput.seoDescription),
+    seoDescriptionEs: normalizeStringEntry(rawInput.seoDescriptionEs),
     seoTitle: normalizeStringEntry(rawInput.seoTitle),
+    seoTitleEs: normalizeStringEntry(rawInput.seoTitleEs),
     serviceLines: normalizeStringEntry(rawInput.serviceLines),
     slug: normalizeStringEntry(rawInput.slug),
     title: normalizeStringEntry(rawInput.title),
+    titleEs: normalizeStringEntry(rawInput.titleEs),
   });
 
   if (!parsedInput.success) {
@@ -260,12 +266,15 @@ export async function updateAdminCaseStudy(
     const updatePayload: Database["public"]["Tables"]["case_studies"]["Update"] =
       {
         approach: normalizedInput.payload.approach,
+        approach_es: normalizedInput.payload.approachEs,
         challenge: normalizedInput.payload.challenge,
+        challenge_es: normalizedInput.payload.challengeEs,
         client_name: normalizedInput.payload.clientName,
         cover_image_url: nextCoverImageUrl,
         gallery_urls: nextGalleryUrls,
         industry: normalizedInput.payload.industry,
         outcomes: normalizedInput.payload.outcomes,
+        outcomes_es: normalizedInput.payload.outcomesEs,
         outcomes_metrics:
           metricsResult.rows.length > 0
             ? (normalizedInput.payload.metrics as Json)
@@ -273,10 +282,13 @@ export async function updateAdminCaseStudy(
         published: normalizedInput.payload.published,
         published_at: nextPublishedAt,
         seo_description: normalizedInput.payload.seoDescription,
+        seo_description_es: normalizedInput.payload.seoDescriptionEs,
         seo_title: normalizedInput.payload.seoTitle,
+        seo_title_es: normalizedInput.payload.seoTitleEs,
         services: normalizedInput.payload.services,
         slug: normalizedInput.payload.slug,
         title: normalizedInput.payload.title,
+        title_es: normalizedInput.payload.titleEs,
       };
     const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase
